@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Apply for <%= product.product_name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  
+  <h1>Apply for <%= product.product_name %></h1>
+
+  <% if (error) { %>
+    <div style="color: red; margin-bottom: 15px;"><%= error %></div>
+  <% } %>
+
+  <form action="/customer/apply/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
+    
+    <fieldset disabled>
+      <legend>Product Information</legend>
+      <p><strong>Type:</strong> <%= product.product_type.replace('_', ' ') %></p>
+      <p><strong>Description:</strong> <%= product.description || '-' %></p>
+      <p><strong>Interest Rate:</strong> <%= product.interest_rate %>%</p>
+      <% if (product.annual_fee) { %>
+        <p><strong>Annual Fee:</strong> $<%= parseFloat(product.annual_fee).toFixed(2) %></p>
+      <% } %>
+      <% if (product.min_balance) { %>
+        <p><strong>Minimum Balance:</strong> $<%= parseFloat(product.min_balance).toFixed(2) %></p>
+      <% } %>
+      <% if (product.tenure_months) { %>
+        <p><strong>Tenure:</strong> <%= product.tenure_months %> months</p>
+      <% } %>
+    </fieldset>
+
+    <hr>
+
+    <fieldset>
+      <legend>KYC Verification</legend>
+
+      <label for="id_type">ID Type:</label>
+      <select name="id_type" id="id_type" required>
+        <option value="nric">NRIC</option>
+        <option value="passport">Passport</option>
+      </select>
+
+      <label for="id_number">ID Number:</label>
+      <input type="text" name="id_number" id="id_number" required>
+
+      <label for="kyc_document">Upload Document (PDF/JPG/PNG):</label>
+      <input type="file" name="kyc_document" id="kyc_document" accept=".pdf,.jpg,.jpeg,.png" required>
+    </fieldset>
+
+    <hr>
+
+    <label for="initial_deposit">Initial Deposit Amount ($):</label>
+    <input type="number" name="initial_deposit" id="initial_deposit" step="0.01" required>
+
+    <div>
+      <input type="checkbox" id="declaration" name="declaration" required>
+      <label for="declaration">I declare that the above information is true and I agree to the bank’s terms.</label>
+    </div>
+
+    <button type="submit">Submit Application</button>
+  </form>
+
+  <nav style="margin-top: 20px;">
+    <a href="/user/dashboard">Cancel & Return to Dashboard</a>
+  </nav>
+</body>
+</html>

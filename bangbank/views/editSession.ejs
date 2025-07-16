@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Session</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <h1>Edit Session</h1>
+
+    <% if (success) { %>
+        <div style="color: green;">
+            <%= success %>
+        </div>
+        <% } %>
+            <% if (error) { %>
+                <div style="color: red;">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/advisor/sessions/edit/<%= session.session_id %>" method="POST"
+                        class="create-session">
+                        <label for="session_date">Date:</label>
+                        <input type="date" name="session_date"
+                            value="<%= session.session_date.toISOString().split('T')[0] %>"
+                            min="<%= new Date().toISOString().split('T')[0] %>" required>
+
+                        <label for="start_time">Start Time:</label>
+                        <input type="time" name="start_time" value="<%= session.session_time.slice(0,5) %>" min="09:00"
+                            max="17:00" step="3600" required>
+
+                        <button type="submit" class="btn">Update Session</button>
+                    </form>
+
+                    <a href="/advisor/dashboard">← Back to Dashboard</a>
+</body>
+
+</html>

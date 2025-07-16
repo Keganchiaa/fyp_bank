@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Apply for Credit Card</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <h1>Apply for <%= product.product_name %></h1>
+
+  <% if (error) { %>
+    <div style="color: red; margin-bottom: 10px;"><%= error %></div>
+  <% } %>
+
+  <form action="/customer/creditcard/apply/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
+
+    <!-- Product Info (read-only) -->
+    <fieldset style="margin-bottom: 20px;">
+      <legend>Credit Card Details</legend>
+      <p><strong>Product Name:</strong> <%= product.product_name %></p>
+      <p><strong>Description:</strong> <%= product.description || '—' %></p>
+      <p><strong>Interest Rate:</strong> <%= product.interest_rate != null ? product.interest_rate + '%' : '—' %></p>
+      <p><strong>Annual Fee:</strong> <%= product.annual_fee != null ? '$' + parseFloat(product.annual_fee).toFixed(2) : '—' %></p>
+    </fieldset>
+
+    <!-- Desired Credit Limit -->
+    <label for="desired_limit">Desired Credit Limit ($):</label>
+    <input type="number" name="desired_limit" id="desired_limit" step="0.01" min="0" required>
+    <br /><br />
+
+    <!-- KYC Upload -->
+    <label for="id_type">ID Type:</label>
+    <select name="id_type" id="id_type" required>
+      <option value="">Select ID Type</option>
+      <option value="nric">NRIC</option>
+      <option value="passport">Passport</option>
+    </select>
+    <br /><br />
+
+    <label for="id_number">ID Number:</label>
+    <input type="text" name="id_number" id="id_number" required>
+    <br /><br />
+
+    <label for="kyc_document">Upload KYC Document (PDF/JPG/PNG):</label>
+    <input type="file" name="kyc_document" id="kyc_document" accept=".pdf,.jpg,.jpeg,.png" required>
+    <br /><br />
+
+    <!-- Declaration -->
+    <label>
+      <input type="checkbox" name="declaration" value="yes" required>
+      I declare that the information provided is true and correct.
+    </label>
+    <br /><br />
+
+    <button type="submit">Submit Application</button>
+  </form>
+
+  <br />
+  <a href="/user/dashboard">← Back to Dashboard</a>
+</body>
+</html>

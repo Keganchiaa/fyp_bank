@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Book a Video Consultation</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .btn.cancel {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Welcome, <%= user.username %>!</h1>
+
+    <% if (typeof success !=='undefined' && success) { %>
+        <div style="color: green;">
+            <%= success %>
+        </div>
+        <% } %>
+            <% if (typeof error !=='undefined' && error) { %>
+                <div style="color: red;">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <!-- 🔍 Available Sessions -->
+                    <section>
+                        <h2>Available Sessions</h2>
+
+                        <% if (sessions.length===0) { %>
+                            <p>No available sessions at the moment.</p>
+                            <% } else { %>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Start Time</th>
+                                            <th>End Time</th>
+                                            <th>Advisor Username</th>
+                                            <th>Advisor Email</th>
+                                            <th>Booked Count</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% sessions.forEach(session=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= session.session_date %>
+                                                </td>
+                                                <td>
+                                                    <%= session.session_time %>
+                                                </td>
+                                                <td>
+                                                    <%= session.end_time %>
+                                                </td>
+                                                <td>
+                                                    <%= session.advisor_name %>
+                                                </td>
+                                                <td>
+                                                    <%= session.advisor_email %>
+                                                </td>
+                                                <td>
+                                                    <%= session.booking_count %>
+                                                </td>
+                                                <td>
+                                                    <form
+                                                        action="/customer/consultations/book/<%= session.session_id %>"
+                                                        method="POST">
+                                                        <button type="submit" class="btn">Book</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                                <% } %>
+                    </section>
+
+                    <!-- ✅ Booked Consultations -->
+                    <% if (typeof myConsultations !=='undefined' ) { %>
+                        <section>
+                            <h2>My Booked Consultations</h2>
+
+                            <% if (myConsultations.length===0) { %>
+                                <p>You have no booked consultations.</p>
+                                <% } else { %>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Advisor Username</th>
+                                                <th>Advisor Email</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% myConsultations.forEach(c=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= c.session_date %>
+                                                    </td>
+                                                    <td>
+                                                        <%= c.session_time %>
+                                                    </td>
+                                                    <td>
+                                                        <%= c.advisor_name %>
+                                                    </td>
+                                                    <td>
+                                                        <%= c.advisor_email %>
+                                                    </td>
+                                                    <td>
+                                                        <%= c.status %>
+                                                    </td>
+                                                    <td>
+                                                        <% if (c.status==='booked' ) { %>
+                                                            <form
+                                                                action="/customer/consultations/cancel/<%= c.consultation_id %>"
+                                                                method="POST">
+                                                                <button type="submit" class="btn cancel">Cancel</button>
+                                                            </form>
+                                                            <% } else { %>
+                                                                -
+                                                                <% } %>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                    <% } %>
+                        </section>
+                        <% } %>
+
+                            <nav style="margin-top: 20px;">
+                                <a href="/user/dashboard">Back to Dashboard</a> |
+                                <a href="/logout">Logout</a>
+                            </nav>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Account Applications</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <nav style="background: #f0f0f0; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <a href="/admin/dashboard">Dashboard</a> |
+      <a href="/admin/products">Manage Products</a> |
+      <a href="/admin/accounts">Account Applications</a> |
+      <a href="/admin/creditcards">Credit Card Applications</a>
+    </div>
+    <div>
+      <strong>Welcome, <%= user.username %> (<%= user.role %>)</strong>
+    </div>
+
+    <form action="/logout" method="GET" style="margin: 0;">
+      <button type="submit">Logout</button>
+    </form>
+  </nav>
+
+  <h1>Pending Account Applications</h1>
+
+  <% if (accounts.length===0) { %>
+    <p>No pending account applications found.</p>
+    <% } else { %>
+      <table border="1">
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Product</th>
+          <th>KYC Type</th>
+          <th>ID Number</th>
+          <th>Document</th>
+          <th>Actions</th>
+        </tr>
+        <% accounts.forEach(app=> { %>
+          <tr>
+            <td>
+              <%= app.username %>
+            </td>
+            <td>
+              <%= app.userEmail %>
+            </td>
+            <td>
+              <%= app.product_name %>
+            </td>
+            <td>
+              <%= app.id_type %>
+            </td>
+            <td>
+              <%= app.id_number %>
+            </td>
+            <td>
+              <a href="<%= app.document_path %>" target="_blank">View</a>
+            </td>
+            <td>
+              <form action="/admin/accounts/approve/<%= app.account_id %>" method="POST" style="display:inline;">
+                <button type="submit">Approve</button>
+              </form>
+              <form action="/admin/accounts/reject/<%= app.account_id %>" method="POST" style="display:inline;">
+                <button type="submit">Reject</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+      </table>
+      <% } %>
+
+        <nav style="margin-top: 20px;">
+          <a href="/admin/dashboard">Back to Dashboard</a>
+        </nav>
+</body>
+
+</html>

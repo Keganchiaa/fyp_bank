@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>User Details</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+
+<body>
+  <h1>User Details for <%= user.username %>
+  </h1>
+
+  <img src="/uploads/<%= user.userImage %>" alt="Profile Image" style="max-width: 150px; border-radius: 8px;" />
+
+  <table border="1" style="margin-top: 20px;">
+    <tr>
+      <th>Username</th>
+      <td>
+        <%= user.username %>
+      </td>
+    </tr>
+    <tr>
+      <th>Email</th>
+      <td>
+        <%= user.userEmail %>
+      </td>
+    </tr>
+    <tr>
+      <th>Role</th>
+      <td>
+        <%= user.userRole %>
+      </td>
+    </tr>
+    <tr>
+      <th>First Name</th>
+      <td>
+        <%= user.first_name %>
+      </td>
+    </tr>
+    <tr>
+      <th>Last Name</th>
+      <td>
+        <%= user.last_name %>
+      </td>
+    </tr>
+    <tr>
+      <th>Alias</th>
+      <td>
+        <%= user.alias || '—' %>
+      </td>
+    </tr>
+    <tr>
+      <th>Date of Birth</th>
+      <td>
+        <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %>
+      </td>
+    </tr>
+    <tr>
+      <th>Phone Number</th>
+      <td>
+        <%= user.phone_number %>
+      </td>
+    </tr>
+    <tr>
+      <th>Country</th>
+      <td>
+        <%= user.country %>
+      </td>
+    </tr>
+    <tr>
+      <th>Address Line 1</th>
+      <td>
+        <%= user.address_line_1 %>
+      </td>
+    </tr>
+    <tr>
+      <th>Address Line 2</th>
+      <td>
+        <%= user.address_line_2 || '—' %>
+      </td>
+    </tr>
+    <tr>
+      <th>Postal Code</th>
+      <td>
+        <%= user.postcode %>
+      </td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <!-- ✅ Bank Accounts -->
+  <h2>User Bank Accounts</h2>
+  <% if (accounts.length===0) { %>
+    <p>No accounts found.</p>
+    <% } else { %>
+      <table border="1">
+        <tr>
+          <th>Product Name</th>
+          <th>Product Type</th>
+          <th>Account Number</th>
+          <th>Balance</th>
+          <th>Status</th>
+          <th>Opened At</th>
+          <th>KYC ID Type</th>
+          <th>KYC ID Number</th>
+          <th>KYC Document</th>
+          <th>KYC Status</th>
+        </tr>
+        <% accounts.forEach(account=> { %>
+          <tr>
+            <td>
+              <%= account.product_name %>
+            </td>
+            <td>
+              <%= account.product_type %>
+            </td>
+            <td>
+              <%= account.account_number %>
+            </td>
+            <td>$<%= parseFloat(account.balance).toFixed(2) %>
+            </td>
+            <td>
+              <%= account.status %>
+            </td>
+            <td>
+              <%= new Date(account.opened_at).toISOString().split('T')[0] %>
+            </td>
+
+            <% if (account.kycDoc) { %>
+              <td>
+                <%= account.kycDoc.id_type %>
+              </td>
+              <td>
+                <%= account.kycDoc.id_number %>
+              </td>
+              <td>
+                <a href="<%= account.kycDoc.document_path %>" target="_blank">View</a>
+              </td>
+              <td>
+                <%= account.kycDoc.status %>
+              </td>
+              <% } else { %>
+                <td colspan="4" style="text-align: center;">— No KYC Document —</td>
+                <% } %>
+          </tr>
+          <% }) %>
+      </table>
+      <% } %>
+      
+        <hr />
+
+        <!-- ✅ Credit Cards -->
+        <h2>User Credit Cards</h2>
+        <% if (cards.length===0) { %>
+          <p>No credit cards found.</p>
+          <% } else { %>
+            <table border="1">
+              <tr>
+                <th>Product Name</th>
+                <th>Card Number</th>
+                <th>Expiry Date</th>
+                <th>Credit Limit</th>
+                <th>Outstanding Balance</th>
+                <th>Status</th>
+                <th>Issued At</th>
+                <th>KYC ID Type</th>
+                <th>KYC ID Number</th>
+                <th>KYC Document</th>
+                <th>KYC Status</th>
+              </tr>
+              <% cards.forEach(card=> { %>
+                <tr>
+                  <td>
+                    <%= card.product_name %>
+                  </td>
+                  <td>
+                    <%= card.card_number %>
+                  </td>
+                  <td>
+                    <%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %>
+                  </td>
+                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
+                  </td>
+                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %>
+                  </td>
+                  <td>
+                    <%= card.status %>
+                  </td>
+                  <td>
+                    <%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %>
+                  </td>
+
+                  <% if (card.kycDoc) { %>
+                    <td>
+                      <%= card.kycDoc.id_type %>
+                    </td>
+                    <td>
+                      <%= card.kycDoc.id_number %>
+                    </td>
+                    <td>
+                      <a href="<%= card.kycDoc.document_path %>" target="_blank">View</a>
+                    </td>
+                    <td>
+                      <%= card.kycDoc.status %>
+                    </td>
+                    <% } else { %>
+                      <td colspan="4" style="text-align: center;">— No KYC Document —</td>
+                      <% } %>
+                </tr>
+                <% }) %>
+            </table>
+            <% } %>
+
+              <br />
+              <a href="/admin/dashboard">← Back to Dashboard</a>
+</body>
+
+</html>

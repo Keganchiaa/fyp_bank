@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Your Profile</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <h1>My Profile</h1>
+
+    <% if (success) { %>
+        <div style="color: green;">
+            <%= success %>
+        </div>
+        <% } %>
+            <% if (error) { %>
+                <div style="color: red;">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <section>
+                        <img src="/uploads/<%= user.userImage %>" alt="Profile Picture" width="150" />
+
+                        <ul>
+                            <li><strong>Username:</strong>
+                                <%= user.username %>
+                            </li>
+                            <li><strong>Email:</strong>
+                                <%= user.userEmail %>
+                            </li>
+                            <li><strong>First Name:</strong>
+                                <%= user.first_name %>
+                            </li>
+                            <li><strong>Last Name:</strong>
+                                <%= user.last_name %>
+                            </li>
+                            <li><strong>Alias:</strong>
+                                <%= user.alias || '—' %>
+                            </li>
+                            <li><strong>Date of Birth:</strong>
+                                <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—'
+                                    %>
+                            </li>
+
+                            <li><strong>Phone:</strong>
+                                <%= user.phone_number %>
+                            </li>
+                            <li><strong>Country:</strong>
+                                <%= user.country %>
+                            </li>
+                            <li><strong>Address:</strong>
+                                <%= user.address_line_1 %>, <%= user.address_line_2 || '' %>, <%= user.postcode %>
+                            </li>
+                            <li><strong>Role:</strong>
+                                <%= user.userRole %>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <form action="/profile/edit" method="GET">
+                        <button type="submit">Edit Profile</button>
+                    </form>
+
+                    <br>
+                    <% if (user.userRole==='admin' || user.userRole==='super_admin' ) { %>
+                        <a href="/admin/dashboard">Back to Dashboard</a>
+                        <% } else if (user.userRole==='advisor' ) { %>
+                            <a href="/advisor/dashboard">Back to Dashboard</a>
+                            <% } else { %>
+                                <a href="/user/dashboard">Back to Dashboard</a>
+                                <% } %>
+
+</body>
+
+</html>

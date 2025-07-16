@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <h1>Hi, <%= user.username %>! Welcome to RP Digital Bank.</h1>
+
+  <% if (success) { %>
+    <div style="color: green; margin-bottom: 15px;"><%= success %></div>
+  <% } %>
+
+  <hr>
+
+  <% 
+    const activeAccounts = accounts.filter(a => a.status === 'active');
+    const pendingAccounts = accounts.filter(a => a.status === 'pending');
+    const activeCards = cards.filter(c => c.status === 'active');
+    const pendingCards = cards.filter(c => c.status === 'pending');
+  %>
+
+  <% if (accounts.length === 0 && cards.length === 0) { %>
+    <p><strong>You don’t have any bank accounts or credit cards yet. Get started below.</strong></p>
+    <a href="/customer/apply">
+      <button type="button">View Available Products</button>
+    </a>
+  <% } else { %>
+
+    <% if (pendingAccounts.length > 0 || pendingCards.length > 0) { %>
+      <h2>Pending Applications</h2>
+      <table border="1">
+        <tr>
+          <th>Product Type</th>
+          <th>Product Name</th>
+          <th>Specific Type</th>
+          <th>Amount / Credit Limit</th>
+          <th>Status</th>
+          <th>Opened At</th>
+          <th>Action</th>
+        </tr>
+
+        <% pendingAccounts.forEach(account => { %>
+          <tr>
+            <td>Bank Account</td>
+            <td><%= account.account_type %></td>
+            <td><%= account.product_type.replace('_',' ') %></td>
+            <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+            <td><span style="color: orange;"><%= account.status %></span></td>
+            <td><%= account.opened_at.toDateString() %></td>
+            <td>
+              <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure you want to cancel this application?');">
+                  Cancel Application
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+
+        <% pendingCards.forEach(card => { %>
+          <tr>
+            <td>Credit Card</td>
+            <td><%= card.product_name %></td>
+            <td>Credit Card</td>
+            <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+            <td><span style="color: orange;"><%= card.status %></span></td>
+            <td><%= new Date(card.created_at).toDateString() %></td>
+            <td>
+              <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure you want to cancel this credit card application?');">
+                  Cancel Application
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+      <br>
+    <% } %>
+
+    <% if (activeAccounts.length > 0) { %>
+      <h2>Your Active Bank Accounts</h2>
+      <table border="1">
+        <tr>
+          <th>Account Name</th>
+          <th>Product Type</th>
+          <th>Balance</th>
+          <th>Status</th>
+          <th>Opened At</th>
+          <th>Action</th>
+        </tr>
+        <% activeAccounts.forEach(account => { %>
+          <tr>
+            <td><%= account.account_type %></td>
+            <td><%= account.product_type.replace('_',' ') %></td>
+            <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+            <td><span style="color: green;"><%= account.status %></span></td>
+            <td><%= account.opened_at.toDateString() %></td>
+            <td>
+              <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure you want to close this account?');">
+                  Close Account
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+      <br>
+    <% } %>
+
+    <% if (activeCards.length > 0) { %>
+      <h2>Your Active Credit Cards</h2>
+      <table border="1">
+        <tr>
+          <th>Card Type</th>
+          <th>Card Number</th>
+          <th>Credit Limit</th>
+          <th>Outstanding Balance</th>
+          <th>Status</th>
+          <th>Issued At</th>
+          <th>Action</th>
+        </tr>
+        <% activeCards.forEach(card => { %>
+          <tr>
+            <td><%= card.product_name %></td>
+            <td><%= card.card_number %></td>
+            <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+            <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
+            <td><span style="color: green;"><%= card.status %></span></td>
+            <td><%= new Date(card.created_at).toDateString() %></td>
+            <td>
+              <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
+                <button type="submit" onclick="return confirm('Are you sure you want to close this credit card?');">
+                  Close Credit Card
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+      <br>
+    <% } %>
+
+    <p><strong>Apply for more products?</strong></p>
+    <a href="/customer/apply">
+      <button type="button">View Available Products</button>
+    </a>
+
+  <% } %>
+
+  <nav style="margin-top: 20px;">
+    <a href="/customer/transactions">View Transaction History</a> |
+    <a href="/customer/consultations">Book Video Consultation</a> |
+    <a href="/profile">Profile</a> |
+    <a href="/logout">Logout</a>
+  </nav>
+</body>
+</html>

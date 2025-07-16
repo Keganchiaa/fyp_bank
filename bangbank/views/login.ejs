@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h2>Login</h2>
+
+  <!-- Show error message if exists -->
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div style="color: red;"><%= error %></div>
+  <% } %>
+
+  <!-- Show success message if redirected from registration -->
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div style="color: green;"><%= success %></div>
+  <% } %>
+
+  <form action="/login" method="POST">
+    <label for="userEmail">Email:</label>
+    <input type="email" name="userEmail" required>
+
+    <label for="userPassword">Password:</label>
+    <input type="password" name="userPassword" required>
+
+    <button type="submit">Login</button>
+  </form>
+</body>
+</html>

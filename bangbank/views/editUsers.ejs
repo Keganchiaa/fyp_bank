@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Edit User - <%= user.username %>
+  </title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <h2>Edit User: <%= user.username %> (<%= user.userRole %>)</h2>
+
+  <% if (typeof error !=='undefined' ) { %>
+    <div style="color: red;">
+      <%= error %>
+    </div>
+    <% } %>
+      <% if (typeof success !=='undefined' ) { %>
+        <div style="color: green;">
+          <%= success %>
+        </div>
+        <% } %>
+
+          <form action="/admin/edit/<%= user.userId %>" method="POST" enctype="multipart/form-data">
+            <label>Username:</label>
+            <input type="text" name="username" value="<%= user.username %>" required>
+
+            <label>Email:</label>
+            <input type="email" name="userEmail" value="<%= user.userEmail %>" required>
+
+            <label>Password (leave blank to keep current):</label>
+            <input type="password" name="userPassword">
+
+            <label>First Name:</label>
+            <input type="text" name="first_name" value="<%= user.first_name %>" required>
+
+            <label>Last Name:</label>
+            <input type="text" name="last_name" value="<%= user.last_name %>" required>
+
+            <label>Alias:</label>
+            <input type="text" name="alias" value="<%= user.alias || '' %>">
+
+            <label>Date of Birth:</label>
+            <input type="date" name="date_of_birth"
+              value="<%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '' %>"
+              required>
+
+            <label>Phone Number:</label>
+            <input type="text" name="phone_number" value="<%= user.phone_number %>" required>
+
+            <label>Country:</label>
+            <input type="text" name="country" value="<%= user.country %>" required>
+
+            <label>Address Line 1:</label>
+            <input type="text" name="address_line_1" value="<%= user.address_line_1 %>" required>
+
+            <label>Address Line 2 (optional):</label>
+            <input type="text" name="address_line_2" value="<%= user.address_line_2 || '' %>">
+
+            <label for="postcode">Postal Code:</label>
+            <input type="text" name="postcode" id="postcode" value="<%= user.postcode %>" required pattern="\d{6}"
+              title="Postal code must be exactly 6 digits">
+
+            <label>Current Profile Image:</label><br>
+            <img src="/uploads/<%= user.userImage %>" alt="User Image" width="100"><br>
+
+            <label>New Profile Image (optional):</label>
+            <input type="file" name="userImage" accept="image/*">
+
+            <% if (currentUser.role==='super_admin' ) { %>
+              <label>Role:</label>
+              <select name="userRole" required>
+                <option value="admin" <%=user.userRole==='admin' ? 'selected' : '' %>>Admin</option>
+                <option value="advisor" <%=user.userRole==='advisor' ? 'selected' : '' %>>Advisor</option>
+                <option value="user" <%=user.userRole==='user' ? 'selected' : '' %>>Customer</option>
+              </select>
+              <% } else if (currentUser.role==='admin' ) { %>
+                <label>Role:</label>
+                <select name="userRole" required>
+                  <option value="advisor" <%=user.userRole==='advisor' ? 'selected' : '' %>>Advisor</option>
+                  <option value="user" <%=user.userRole==='user' ? 'selected' : '' %>>Customer</option>
+                </select>
+                <% } else { %>
+                  <input type="hidden" name="userRole" value="<%= user.userRole %>">
+                  <% } %>
+
+                    <button type="submit">Update User</button>
+          </form>
+</body>
+
+</html>

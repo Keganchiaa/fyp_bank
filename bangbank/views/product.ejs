@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Available Bank Products</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <h1>Available Banking Products</h1>
+
+  <% if (error) { %>
+    <div style="color: red; margin-bottom: 15px;">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <% if (products.length===0) { %>
+        <p>No products are available at the moment. Please check back later.</p>
+        <% } else { %>
+
+          <% const grouped={ savings: [], fixed_deposit: [], credit_card: [] }; %>
+            <% products.forEach(p=> { grouped[p.product_type].push(p); }); %>
+
+              <% Object.entries(grouped).forEach(([type, list])=> { %>
+                <% if (list.length> 0) { %>
+                  <h2>
+                    <%= type.replace('_', ' ' ).toUpperCase() %> Products
+                  </h2>
+                  <table border="1" cellpadding="8">
+                    <tr>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>Interest Rate</th>
+                      <% if (type==='credit_card' ) { %>
+                        <th>Annual Fee</th>
+                        <% } %>
+                          <% if (type==='savings' || type==='fixed_deposit' ) { %>
+                            <th>Min Balance</th>
+                            <% } %>
+                              <% if (type==='fixed_deposit' ) { %>
+                                <th>Tenure (Months)</th>
+                                <% } %>
+                                  <th>Action</th>
+                    </tr>
+
+                    <% list.forEach(p=> { %>
+                      <tr>
+                        <td>
+                          <%= p.product_name %>
+                        </td>
+                        <td>
+                          <%= p.description || '-' %>
+                        </td>
+                        <td>
+                          <%= p.interest_rate !=null ? p.interest_rate + '%' : '-' %>
+                        </td>
+
+                        <% if (p.product_type==='credit_card' ) { %>
+                          <td>
+                            <%= p.annual_fee !=null ? '$' + parseFloat(p.annual_fee).toFixed(2) : '-' %>
+                          </td>
+                          <% } %>
+
+                            <% if (p.product_type==='savings' || p.product_type==='fixed_deposit' ) { %>
+                              <td>
+                                <%= p.min_balance !=null ? '$' + parseFloat(p.min_balance).toFixed(2) : '-' %>
+                              </td>
+                              <% } %>
+
+                                <% if (p.product_type==='fixed_deposit' ) { %>
+                                  <td>
+                                    <%= p.tenure_months !=null ? p.tenure_months : '-' %>
+                                  </td>
+                                  <% } %>
+
+                                    <td>
+                                      <% if (p.product_type==='credit_card' ) { %>
+                                        <form action="/customer/creditcard/apply/<%= p.product_id %>" method="GET">
+                                          <button type="submit">Apply Now</button>
+                                        </form>
+                                        <% } else { %>
+                                          <form action="/customer/apply/<%= p.product_id %>" method="GET">
+                                            <button type="submit">Apply Now</button>
+                                          </form>
+                                          <% } %>
+                                    </td>
+
+                      </tr>
+                      <% }) %>
+                  </table>
+                  <br>
+                  <% } %>
+                    <% }) %>
+
+                      <% } %>
+
+                        <nav style="margin-top: 20px;">
+                          <a href="/user/dashboard">Back to Dashboard</a> |
+                          <a href="/logout">Logout</a>
+                        </nav>
+</body>
+
+</html>

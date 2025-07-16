@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>User Registration</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <h2>User Registration</h2>
+
+  <% if (typeof error !=='undefined' ) { %>
+    <div style="color: red;">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <form action="/register" method="POST" enctype="multipart/form-data">
+        <!-- Account Details -->
+        <label for="username">Username:</label>
+        <input type="text" name="username" required>
+
+        <label for="userEmail">Email Address:</label>
+        <input type="email" name="userEmail" required>
+
+        <label for="phone_number">Phone Number:</label>
+        <input type="tel" name="phone_number" required>
+
+        <label for="userPassword">Password:</label>
+        <input type="password" name="userPassword" required>
+
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" name="confirmPassword" required>
+
+        <!-- Personal Details -->
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" required>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" name="last_name" required>
+
+        <label for="alias">Alias (Optional):</label>
+        <input type="text" name="alias">
+
+        <label for="date_of_birth">Date of Birth:</label>
+        <input type="date" name="date_of_birth" required>
+
+        <!-- Address -->
+        <label for="country">Country:</label>
+        <select name="country" required>
+          <option value="" disabled selected>Select your country</option>
+          <option value="Singapore">Singapore</option>
+          <option value="Malaysia">Malaysia</option>
+          <option value="Indonesia">Indonesia</option>
+          <option value="Thailand">Thailand</option>
+        </select>
+
+        <label for="address_line_1">Address Line 1:</label>
+        <input type="text" name="address_line_1" required>
+
+        <label for="address_line_2">Address Line 2 (Optional):</label>
+        <input type="text" name="address_line_2">
+
+        <label for="postcode">Postal Code:</label>
+        <input type="text" name="postcode" required pattern="\d{6}" title="Postal code must be exactly 6 digits">
+
+        <!-- Image Upload -->
+        <label for="userImage">Profile Image (optional):</label>
+        <input type="file" name="userImage" accept="image/*">
+
+        <button type="submit">Register</button>
+      </form>
+</body>
+
+</html>

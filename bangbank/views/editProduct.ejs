@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Product</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>Edit Product</h1>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <div style="color: green;"><%= success %></div>
+  <% } %>
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div style="color: red;"><%= error %></div>
+  <% } %>
+
+  <form action="/admin/products/edit/<%= product.product_id %>" method="POST">
+    <label>Product Name:</label>
+    <input type="text" name="product_name" value="<%= product.product_name %>" required>
+
+    <label>Product Type:</label>
+    <select name="product_type" id="product_type" required onchange="toggleFields()">
+      <option value="savings" <%= product.product_type === 'savings' ? 'selected' : '' %>>Savings</option>
+      <option value="fixed_deposit" <%= product.product_type === 'fixed_deposit' ? 'selected' : '' %>>Fixed Deposit</option>
+      <option value="credit_card" <%= product.product_type === 'credit_card' ? 'selected' : '' %>>Credit Card</option>
+    </select>
+
+    <label>Description:</label>
+    <textarea name="description" required><%= product.description || '' %></textarea>
+
+    <label>Interest Rate (%):</label>
+    <input type="number" name="interest_rate" step="0.01" value="<%= product.interest_rate ?? '' %>" required>
+
+    <div id="annual_fee_group">
+      <label>Annual Fee ($):</label>
+      <input type="number" name="annual_fee" step="0.01" value="<%= product.annual_fee ?? '' %>">
+    </div>
+
+    <div id="min_balance_group">
+      <label>Minimum Balance ($):</label>
+      <input type="number" name="min_balance" step="0.01" value="<%= product.min_balance ?? '' %>">
+    </div>
+
+    <div id="tenure_group">
+      <label>Tenure (Months):</label>
+      <input type="number" name="tenure_months" value="<%= product.tenure_months ?? '' %>">
+    </div>
+
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <script>
+    function toggleFields() {
+      const type = document.getElementById('product_type').value;
+
+      const annualFee = document.getElementById('annual_fee_group');
+      const minBalance = document.getElementById('min_balance_group');
+      const tenure = document.getElementById('tenure_group');
+
+      annualFee.style.display = 'none';
+      minBalance.style.display = 'none';
+      tenure.style.display = 'none';
+
+      if (type === 'savings') {
+        minBalance.style.display = 'block';
+      } else if (type === 'fixed_deposit') {
+        minBalance.style.display = 'block';
+        tenure.style.display = 'block';
+      } else if (type === 'credit_card') {
+        annualFee.style.display = 'block';
+      }
+    }
+
+    // Ensure fields are set correctly on page load
+    window.onload = toggleFields;
+  </script>
+</body>
+</html>
