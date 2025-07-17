@@ -2,161 +2,564 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Customer Dashboard</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard - BangBank</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 5rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .welcome-message {
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .nav-links a {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    .nav-links a:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    /* Main container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Success message */
+    .success-message {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.1);
+    }
+
+    /* Empty state */
+    .empty-state {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      padding: 3rem;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      text-align: center;
+      margin: 8.5rem 0;
+    }
+
+    .empty-state h2 {
+      color: #ffffff;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .empty-state p {
+      color: rgba(224, 224, 224, 0.8);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Section headers */
+    .section-header {
+      color: #00ffff;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem 0;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      text-align: center;
+    }
+
+    /* Table styles */
+    .table-container {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.1);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e0e0e0;
+    }
+
+    tr:hover {
+      background: rgba(0, 255, 255, 0.05);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Status indicators */
+    .status-active {
+      color: #00ff00;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    }
+
+    .status-pending {
+      color: #ffaa00;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(255, 170, 0, 0.5);
+    }
+
+    /* Button styles */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff4757, #ff3838);
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    }
+
+    /* Navigation */
+    .nav-section {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 2rem;
+      margin-top: 2rem;
+      text-align: center;
+      display: none; /* Hidden since nav is now in header */
+    }
+
+    .nav-section h3 {
+      color: #00ffff;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 15px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .welcome-message {
+        text-align: center;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-links a {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 600px;
+      }
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    } 
+
+    .container > * {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus,
+    .nav-links a:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Hi, <%= user.username %>! Welcome to RP Digital Bank.</h1>
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="welcome-message">Hi, <%= user.username %>! Welcome to RP Digital Bank.</div>
+      <nav class="nav-links">
+        <a href="/customer/transactions">Transaction History</a>
+        <a href="/customer/consultations">Book Consultation</a>
+        <a href="/profile">Profile Settings</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </div>
+  </header>
 
-  <% if (success) { %>
-    <div style="color: green; margin-bottom: 15px;"><%= success %></div>
-  <% } %>
-
-  <hr>
-
-  <% 
-    const activeAccounts = accounts.filter(a => a.status === 'active');
-    const pendingAccounts = accounts.filter(a => a.status === 'pending');
-    const activeCards = cards.filter(c => c.status === 'active');
-    const pendingCards = cards.filter(c => c.status === 'pending');
-  %>
-
-  <% if (accounts.length === 0 && cards.length === 0) { %>
-    <p><strong>You don’t have any bank accounts or credit cards yet. Get started below.</strong></p>
-    <a href="/customer/apply">
-      <button type="button">View Available Products</button>
-    </a>
-  <% } else { %>
-
-    <% if (pendingAccounts.length > 0 || pendingCards.length > 0) { %>
-      <h2>Pending Applications</h2>
-      <table border="1">
-        <tr>
-          <th>Product Type</th>
-          <th>Product Name</th>
-          <th>Specific Type</th>
-          <th>Amount / Credit Limit</th>
-          <th>Status</th>
-          <th>Opened At</th>
-          <th>Action</th>
-        </tr>
-
-        <% pendingAccounts.forEach(account => { %>
-          <tr>
-            <td>Bank Account</td>
-            <td><%= account.account_type %></td>
-            <td><%= account.product_type.replace('_',' ') %></td>
-            <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
-            <td><span style="color: orange;"><%= account.status %></span></td>
-            <td><%= account.opened_at.toDateString() %></td>
-            <td>
-              <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Are you sure you want to cancel this application?');">
-                  Cancel Application
-                </button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-
-        <% pendingCards.forEach(card => { %>
-          <tr>
-            <td>Credit Card</td>
-            <td><%= card.product_name %></td>
-            <td>Credit Card</td>
-            <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-            <td><span style="color: orange;"><%= card.status %></span></td>
-            <td><%= new Date(card.created_at).toDateString() %></td>
-            <td>
-              <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Are you sure you want to cancel this credit card application?');">
-                  Cancel Application
-                </button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </table>
-      <br>
+  <div class="container">
+    <% if (success) { %>
+      <div class="success-message"><%= success %></div>
     <% } %>
 
-    <% if (activeAccounts.length > 0) { %>
-      <h2>Your Active Bank Accounts</h2>
-      <table border="1">
-        <tr>
-          <th>Account Name</th>
-          <th>Product Type</th>
-          <th>Balance</th>
-          <th>Status</th>
-          <th>Opened At</th>
-          <th>Action</th>
-        </tr>
-        <% activeAccounts.forEach(account => { %>
-          <tr>
-            <td><%= account.account_type %></td>
-            <td><%= account.product_type.replace('_',' ') %></td>
-            <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
-            <td><span style="color: green;"><%= account.status %></span></td>
-            <td><%= account.opened_at.toDateString() %></td>
-            <td>
-              <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Are you sure you want to close this account?');">
-                  Close Account
-                </button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </table>
-      <br>
+    <% 
+      const activeAccounts = accounts.filter(a => a.status === 'active');
+      const pendingAccounts = accounts.filter(a => a.status === 'pending');
+      const activeCards = cards.filter(c => c.status === 'active');
+      const pendingCards = cards.filter(c => c.status === 'pending');
+    %>
+
+    <% if (accounts.length === 0 && cards.length === 0) { %>
+      <div class="empty-state">
+        <h2>Get Started with BangBank</h2>
+        <p>You don't have any bank accounts or credit cards yet. Explore our available products and start your digital banking journey today.</p>
+        <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+      </div>
+    <% } else { %>
+
+      <% if (pendingAccounts.length > 0 || pendingCards.length > 0) { %>
+        <h2 class="section-header">Pending Applications</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Type</th>
+                <th>Product Name</th>
+                <th>Specific Type</th>
+                <th>Amount / Credit Limit</th>
+                <th>Status</th>
+                <th>Opened At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% pendingAccounts.forEach(account => { %>
+                <tr>
+                  <td>Bank Account</td>
+                  <td><%= account.account_type %></td>
+                  <td><%= account.product_type.replace('_',' ') %></td>
+                  <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+                  <td><span class="status-pending"><%= account.status %></span></td>
+                  <td><%= account.opened_at.toDateString() %></td>
+                  <td>
+                    <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this application?');">
+                        Cancel
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+
+              <% pendingCards.forEach(card => { %>
+                <tr>
+                  <td>Credit Card</td>
+                  <td><%= card.product_name %></td>
+                  <td>Credit Card</td>
+                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+                  <td><span class="status-pending"><%= card.status %></span></td>
+                  <td><%= new Date(card.created_at).toDateString() %></td>
+                  <td>
+                    <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this credit card application?');">
+                        Cancel
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+
+      <% if (activeAccounts.length > 0) { %>
+        <h2 class="section-header">Your Active Bank Accounts</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Account Name</th>
+                <th>Product Type</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Opened At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% activeAccounts.forEach(account => { %>
+                <tr>
+                  <td><%= account.account_type %></td>
+                  <td><%= account.product_type.replace('_',' ') %></td>
+                  <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+                  <td><span class="status-active"><%= account.status %></span></td>
+                  <td><%= account.opened_at.toDateString() %></td>
+                  <td>
+                    <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this account?');">
+                        Close
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+
+      <% if (activeCards.length > 0) { %>
+        <h2 class="section-header">Your Active Credit Cards</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Card Type</th>
+                <th>Card Number</th>
+                <th>Credit Limit</th>
+                <th>Outstanding Balance</th>
+                <th>Status</th>
+                <th>Issued At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% activeCards.forEach(card => { %>
+                <tr>
+                  <td><%= card.product_name %></td>
+                  <td><%= card.card_number %></td>
+                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
+                  <td><span class="status-active"><%= card.status %></span></td>
+                  <td><%= new Date(card.created_at).toDateString() %></td>
+                  <td>
+                    <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this credit card?');">
+                        Close
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+
+      <div style="text-align: center; margin: 2rem 0;">
+        <p style="color: #e0e0e0; font-size: 1.1rem; margin-bottom: 1rem;">Ready to expand your banking experience?</p>
+        <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+      </div>
+
     <% } %>
 
-    <% if (activeCards.length > 0) { %>
-      <h2>Your Active Credit Cards</h2>
-      <table border="1">
-        <tr>
-          <th>Card Type</th>
-          <th>Card Number</th>
-          <th>Credit Limit</th>
-          <th>Outstanding Balance</th>
-          <th>Status</th>
-          <th>Issued At</th>
-          <th>Action</th>
-        </tr>
-        <% activeCards.forEach(card => { %>
-          <tr>
-            <td><%= card.product_name %></td>
-            <td><%= card.card_number %></td>
-            <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-            <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
-            <td><span style="color: green;"><%= card.status %></span></td>
-            <td><%= new Date(card.created_at).toDateString() %></td>
-            <td>
-              <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
-                <button type="submit" onclick="return confirm('Are you sure you want to close this credit card?');">
-                  Close Credit Card
-                </button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </table>
-      <br>
-    <% } %>
-
-    <p><strong>Apply for more products?</strong></p>
-    <a href="/customer/apply">
-      <button type="button">View Available Products</button>
-    </a>
-
-  <% } %>
-
-  <nav style="margin-top: 20px;">
-    <a href="/customer/transactions">View Transaction History</a> |
-    <a href="/customer/consultations">Book Video Consultation</a> |
-    <a href="/profile">Profile</a> |
-    <a href="/logout">Logout</a>
-  </nav>
+    <div class="nav-section" style="display: none;">
+      <h3>Quick Actions</h3>
+      <div class="nav-links">
+        <a href="/customer/transactions">Transaction History</a>
+        <a href="/customer/consultations">Book Consultation</a>
+        <a href="/profile">Profile Settings</a>
+        <a href="/logout">Logout</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

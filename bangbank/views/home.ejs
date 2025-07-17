@@ -2,19 +2,503 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BangBank - Home</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #e0e0e0;
+      font-weight: 500;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      background: rgba(0, 255, 255, 0.2);
+      border-color: rgba(0, 255, 255, 0.5);
+      color: #00ffff;
+    }
+
+    .nav-links a:active {
+      transform: translateY(0);
+    }
+
+    /* Main content styles */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .hero-content {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      padding: 3rem 4rem;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .hero-content:hover::before {
+      left: 100%;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      color: #ffffff;
+      font-weight: 300;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      color: rgba(224, 224, 224, 0.9);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-btn {
+      text-decoration: none;
+      padding: 1.2rem 3rem;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.95rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .cta-btn:hover::before {
+      left: 100%;
+    }
+
+    .cta-btn.primary {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      border: none;
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+      font-weight: 700;
+    }
+
+    .cta-btn.primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0, 255, 255, 0.6);
+    }
+
+    /* Features section */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+      max-width: 1000px;
+    }
+
+    .feature-card {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 0, 255, 0.5);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.2);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+    }
+
+    .feature-title {
+      color: #ffffff;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .feature-description {
+      color: rgba(224, 224, 224, 0.8);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Footer styles */
+    footer {
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 3rem 2rem 1rem;
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-section h3 {
+      color: #00ffff;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .footer-section p,
+    .footer-section li {
+      color: rgba(224, 224, 224, 0.8);
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-section ul {
+      list-style: none;
+    }
+
+    .footer-section a {
+      color: rgba(224, 224, 224, 0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .footer-section a:hover {
+      color: #00ffff;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
+      margin-top: 2rem;
+      padding-top: 1rem;
+      text-align: center;
+    }
+
+    .footer-bottom p {
+      color: rgba(224, 224, 224, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      display: inline-block;
+      padding: 0.5rem;
+      border-radius: 50%;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 255, 255, 0.3);
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      
+      header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .nav-links {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .nav-links a {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem 1rem;
+      }
+      
+      .hero-content {
+        padding: 2rem;
+        margin: 1rem;
+      }
+
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.1rem;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-btn {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .nav-links a {
+        width: 100%;
+      }
+      
+      .hero-content {
+        padding: 1.5rem;
+      }
+
+      .hero-title {
+        font-size: 1.8rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+        margin-top: 2rem;
+      }
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    header, main {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    main {
+      animation-delay: 0.2s;
+    }
+
+    /* Focus states for accessibility */
+    .nav-links a:focus,
+    .cta-btn:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>Welcome to BangBank</h1>
+    <h1>BangBank</h1>
+    <nav class="nav-links">
       <a href="/login">Login</a>
       <a href="/register">Register</a>
-    
+    </nav>
   </header>
 
   <main>
-    <p>This is your trusted digital banking solution.</p>
+    <div class="hero-content">
+      <h2 class="hero-title">Welcome to BangBank</h2>
+      <p class="hero-subtitle">Experience next-generation digital banking with enterprise-grade security, seamless transactions, and personalized financial solutions designed for your success.</p>
+      <div class="cta-buttons">
+        <a href="/register" class="cta-btn primary">Open Account</a>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">Enterprise Security</h3>
+        <p class="feature-description">Multi-layer security protocols with biometric authentication, fraud detection, and 256-bit encryption standards.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💼</div>
+        <h3 class="feature-title">Digital Excellence</h3>
+        <p class="feature-description">Award-winning digital platform with intuitive design, advanced analytics, and seamless cross-device synchronization.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3 class="feature-title">Smart Banking</h3>
+        <p class="feature-description">AI-powered insights, real-time transaction processing, and personalized financial management tools.</p>
+      </div>
+    </div>
   </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About BangBank</h3>
+        <p>Leading the future of digital banking with innovative solutions, enterprise-grade security, and customer-centric approach.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="#">Personal Banking</a></li>
+          <li><a href="#">Business Accounts</a></li>
+          <li><a href="#">Investment Solutions</a></li>
+          <li><a href="#">Loan Services</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Security Center</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Connect</h3>
+        <p>Stay updated with the latest banking innovations and financial insights.</p>
+        <div class="social-links">
+          <a href="#">📱</a>
+          <a href="#">💼</a>
+          <a href="#">🔗</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 BangBank. All rights reserved. | Licensed Financial Institution</p>
+    </div>
+  </footer>
 </body>
 </html>

@@ -3,76 +3,469 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Your Profile</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - BangBank</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1500px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            flex-shrink: 0;
+        }
+
+        .welcome-message {
+            font-size: 1.2rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .nav-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        .nav-links a:hover {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Page title */
+        .page-title {
+            color: #00ffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 2rem 0;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Success message */
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.1);
+        }
+
+        /* Error message */
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff4757;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+        }
+
+        /* Profile section */
+        .profile-section {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(0, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .profile-info li {
+            margin-bottom: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-info li:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info strong {
+            color: #00ffff;
+            font-weight: 600;
+            min-width: 140px;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        .profile-info li span {
+            color: #e0e0e0;
+            margin-left: 1rem;
+        }
+
+        /* Button styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0.5rem;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000000;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        /* Action buttons container */
+        .action-buttons {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        /* Bottom navigation */
+        .bottom-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.1);
+        }
+
+        .bottom-nav a {
+            color: #00ffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        .bottom-nav a:hover {
+            color: #ffffff;
+            background: rgba(0, 255, 255, 0.1);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .welcome-message {
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .profile-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .profile-image {
+                justify-self: center;
+            }
+
+            .profile-info li {
+                flex-direction: column;
+                text-align: left;
+                gap: 0.5rem;
+            }
+
+            .profile-info strong {
+                min-width: auto;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        } 
+
+        .container > * {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Focus states for accessibility */
+        .btn:focus,
+        .nav-links a:focus {
+            outline: 2px solid rgba(0, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>My Profile</h1>
-
-    <% if (success) { %>
-        <div style="color: green;">
-            <%= success %>
-        </div>
-        <% } %>
-            <% if (error) { %>
-                <div style="color: red;">
-                    <%= error %>
-                </div>
+    <header>
+        <div class="header-content">
+            <div class="logo">BangBank</div>
+            <div class="welcome-message">My Profile Settings</div>
+            <nav class="nav-links">
+                <% if (user.userRole === 'admin' || user.userRole === 'super_admin') { %>
+                    <a href="/admin/dashboard">Dashboard</a>
+                <% } else if (user.userRole === 'advisor') { %>
+                    <a href="/advisor/dashboard">Dashboard</a>
+                <% } else { %>
+                    <a href="/user/dashboard">Dashboard</a>
                 <% } %>
+                <a href="/customer/transactions">Transactions</a>
+                <a href="/customer/consultations">Consultations</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </div>
+    </header>
 
-                    <section>
-                        <img src="/uploads/<%= user.userImage %>" alt="Profile Picture" width="150" />
+    <div class="container">
+        <h1 class="page-title">My Profile</h1>
 
-                        <ul>
-                            <li><strong>Username:</strong>
-                                <%= user.username %>
-                            </li>
-                            <li><strong>Email:</strong>
-                                <%= user.userEmail %>
-                            </li>
-                            <li><strong>First Name:</strong>
-                                <%= user.first_name %>
-                            </li>
-                            <li><strong>Last Name:</strong>
-                                <%= user.last_name %>
-                            </li>
-                            <li><strong>Alias:</strong>
-                                <%= user.alias || '—' %>
-                            </li>
-                            <li><strong>Date of Birth:</strong>
-                                <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—'
-                                    %>
-                            </li>
+        <% if (success) { %>
+            <div class="success-message"><%= success %></div>
+        <% } %>
 
-                            <li><strong>Phone:</strong>
-                                <%= user.phone_number %>
-                            </li>
-                            <li><strong>Country:</strong>
-                                <%= user.country %>
-                            </li>
-                            <li><strong>Address:</strong>
-                                <%= user.address_line_1 %>, <%= user.address_line_2 || '' %>, <%= user.postcode %>
-                            </li>
-                            <li><strong>Role:</strong>
-                                <%= user.userRole %>
-                            </li>
-                        </ul>
-                    </section>
+        <% if (error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
 
-                    <form action="/profile/edit" method="GET">
-                        <button type="submit">Edit Profile</button>
-                    </form>
+        <section class="profile-section">
+            <div class="profile-content">
+                <img src="/uploads/<%= user.userImage %>" alt="Profile Picture" class="profile-image" />
+                
+                <div class="profile-info">
+                    <ul>
+                        <li>
+                            <strong>Username:</strong>
+                            <span><%= user.username %></span>
+                        </li>
+                        <li>
+                            <strong>Email:</strong>
+                            <span><%= user.userEmail %></span>
+                        </li>
+                        <li>
+                            <strong>First Name:</strong>
+                            <span><%= user.first_name %></span>
+                        </li>
+                        <li>
+                            <strong>Last Name:</strong>
+                            <span><%= user.last_name %></span>
+                        </li>
+                        <li>
+                            <strong>Alias:</strong>
+                            <span><%= user.alias || '—' %></span>
+                        </li>
+                        <li>
+                            <strong>Date of Birth:</strong>
+                            <span><%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %></span>
+                        </li>
+                        <li>
+                            <strong>Phone:</strong>
+                            <span><%= user.phone_number %></span>
+                        </li>
+                        <li>
+                            <strong>Country:</strong>
+                            <span><%= user.country %></span>
+                        </li>
+                        <li>
+                            <strong>Address:</strong>
+                            <span><%= user.address_line_1 %>, <%= user.address_line_2 || '' %>, <%= user.postcode %></span>
+                        </li>
+                        <li>
+                            <strong>Role:</strong>
+                            <span><%= user.userRole %></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-                    <br>
-                    <% if (user.userRole==='admin' || user.userRole==='super_admin' ) { %>
-                        <a href="/admin/dashboard">Back to Dashboard</a>
-                        <% } else if (user.userRole==='advisor' ) { %>
-                            <a href="/advisor/dashboard">Back to Dashboard</a>
-                            <% } else { %>
-                                <a href="/user/dashboard">Back to Dashboard</a>
-                                <% } %>
+        <div class="action-buttons">
+            <form action="/profile/edit" method="GET" style="display: inline-block;">
+                <button type="submit" class="btn btn-primary">Edit Profile</button>
+            </form>
+        </div>
 
+    </div>
 </body>
 
 </html>

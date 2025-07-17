@@ -1,4 +1,3 @@
-//shane1
 const db = require('../db');
 const multer = require('multer');
 const path = require('path');
