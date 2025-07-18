@@ -1,53 +1,352 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Edit Product</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Product - BangBank Admin</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .page-title {
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    /* Main container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Form container */
+    .form-container {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      padding: 2.5rem;
+      margin-top: 2rem;
+    }
+
+    .form-title {
+      color: #00ffff;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Success/Error messages */
+    .success-message {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.1);
+    }
+
+    .error-message {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      color: #ff4757;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+    }
+
+    /* Form styles */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 1rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      padding: 1rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    select option {
+      background: #1a1a2e;
+      color: #e0e0e0;
+    }
+
+    /* Button styles */
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    /* Field groups for conditional display */
+    .form-group {
+      transition: all 0.3s ease;
+    }
+
+    .form-group[style*="display: none"] {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container > * {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus,
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Edit Product</h1>
-
-  <% if (typeof success !== 'undefined' && success) { %>
-    <div style="color: green;"><%= success %></div>
-  <% } %>
-  <% if (typeof error !== 'undefined' && error) { %>
-    <div style="color: red;"><%= error %></div>
-  <% } %>
-
-  <form action="/admin/products/edit/<%= product.product_id %>" method="POST">
-    <label>Product Name:</label>
-    <input type="text" name="product_name" value="<%= product.product_name %>" required>
-
-    <label>Product Type:</label>
-    <select name="product_type" id="product_type" required onchange="toggleFields()">
-      <option value="savings" <%= product.product_type === 'savings' ? 'selected' : '' %>>Savings</option>
-      <option value="fixed_deposit" <%= product.product_type === 'fixed_deposit' ? 'selected' : '' %>>Fixed Deposit</option>
-      <option value="credit_card" <%= product.product_type === 'credit_card' ? 'selected' : '' %>>Credit Card</option>
-    </select>
-
-    <label>Description:</label>
-    <textarea name="description" required><%= product.description || '' %></textarea>
-
-    <label>Interest Rate (%):</label>
-    <input type="number" name="interest_rate" step="0.01" value="<%= product.interest_rate ?? '' %>" required>
-
-    <div id="annual_fee_group">
-      <label>Annual Fee ($):</label>
-      <input type="number" name="annual_fee" step="0.01" value="<%= product.annual_fee ?? '' %>">
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="page-title">Admin Panel - Edit Product</div>
     </div>
+  </header>
 
-    <div id="min_balance_group">
-      <label>Minimum Balance ($):</label>
-      <input type="number" name="min_balance" step="0.01" value="<%= product.min_balance ?? '' %>">
+  <div class="container">
+    <div class="form-container">
+      <h1 class="form-title">Edit Product</h1>
+
+      <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success-message"><%= success %></div>
+      <% } %>
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message"><%= error %></div>
+      <% } %>
+
+      <form action="/admin/products/edit/<%= product.product_id %>" method="POST">
+        <div class="form-group">
+          <label for="product_name">Product Name:</label>
+          <input type="text" id="product_name" name="product_name" value="<%= product.product_name %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="product_type">Product Type:</label>
+          <select name="product_type" id="product_type" required onchange="toggleFields()">
+            <option value="savings" <%= product.product_type === 'savings' ? 'selected' : '' %>>Savings</option>
+            <option value="fixed_deposit" <%= product.product_type === 'fixed_deposit' ? 'selected' : '' %>>Fixed Deposit</option>
+            <option value="credit_card" <%= product.product_type === 'credit_card' ? 'selected' : '' %>>Credit Card</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" name="description" required><%= product.description || '' %></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="interest_rate">Interest Rate (%):</label>
+          <input type="number" id="interest_rate" name="interest_rate" step="0.01" value="<%= product.interest_rate ?? '' %>" required>
+        </div>
+
+        <div class="form-group" id="annual_fee_group">
+          <label for="annual_fee">Annual Fee ($):</label>
+          <input type="number" id="annual_fee" name="annual_fee" step="0.01" value="<%= product.annual_fee ?? '' %>">
+        </div>
+
+        <div class="form-group" id="min_balance_group">
+          <label for="min_balance">Minimum Balance ($):</label>
+          <input type="number" id="min_balance" name="min_balance" step="0.01" value="<%= product.min_balance ?? '' %>">
+        </div>
+
+        <div class="form-group" id="tenure_group">
+          <label for="tenure_months">Tenure (Months):</label>
+          <input type="number" id="tenure_months" name="tenure_months" value="<%= product.tenure_months ?? '' %>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
     </div>
-
-    <div id="tenure_group">
-      <label>Tenure (Months):</label>
-      <input type="number" name="tenure_months" value="<%= product.tenure_months ?? '' %>">
-    </div>
-
-    <button type="submit">Save Changes</button>
-  </form>
+  </div>
 
   <script>
     function toggleFields() {

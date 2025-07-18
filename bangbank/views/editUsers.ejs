@@ -1,92 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <title>Edit User - <%= user.username %>
-  </title>
-  <link rel="stylesheet" href="/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit User - <%= user.username %></title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    }
+
+    .page-title {
+      font-size: 1.3rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .back-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    }
+
+    /* Main container */
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+    }
+
+    /* Form container */
+    .form-container {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-title {
+      color: #00ffff;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Alert messages */
+    .alert {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background: rgba(255, 71, 87, 0.1);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      color: #ff4757;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.1);
+    }
+
+    .alert-success {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.1);
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    label {
+      display: block;
+      color: #00ffff;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #00ffff;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.7);
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"]:hover {
+      border-color: #00ffff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    /* Profile image styles */
+    .profile-image-container {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .current-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+      object-fit: cover;
+      margin: 0.5rem 0;
+    }
+
+    /* Button styles */
+    .btn {
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0.5rem;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+    }
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+  flex-wrap: wrap;
+}
+
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+      }
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-container {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus,
+    .back-link:focus,
+    input:focus,
+    select:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 
 <body>
-  <h2>Edit User: <%= user.username %> (<%= user.userRole %>)</h2>
-
-  <% if (typeof error !=='undefined' ) { %>
-    <div style="color: red;">
-      <%= error %>
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="page-title">Edit User: <%= user.username %> (<%= user.userRole %>)</div>
+      <a href="<%= currentUser.role === 'user' 
+          ? '/user/dashboard' 
+          : currentUser.role === 'advisor' 
+              ? '/advisor/dashboard' 
+              : '/admin/dashboard' %>" class="back-link">
+        ← Back to Dashboard
+      </a>
     </div>
-    <% } %>
-      <% if (typeof success !=='undefined' ) { %>
-        <div style="color: green;">
-          <%= success %>
-        </div>
-        <% } %>
+  </header>
 
-          <form action="/admin/edit/<%= user.userId %>" method="POST" enctype="multipart/form-data">
+  <div class="container">
+    <div class="form-container">
+      <h2 class="form-title">User Profile Settings</h2>
+
+<% if (error && error.trim()) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<% if (success && success.trim()) { %>
+  <div class="alert alert-success"><%= success %></div>
+<% } %>
+
+
+      <form action="/admin/edit/<%= user.userId %>" method="POST" enctype="multipart/form-data">
+        
+        <!-- Profile Image Section -->
+        <div class="form-group">
+          <label>Current Profile Image:</label>
+          <div class="profile-image-container">
+            <img src="/uploads/<%= user.userImage %>" alt="User Image" class="current-image">
+          </div>
+          <label>New Profile Image (optional):</label>
+          <input type="file" name="userImage" accept="image/*">
+        </div>
+
+        <!-- Personal Information -->
+        <div class="form-row">
+          <div class="form-group">
             <label>Username:</label>
             <input type="text" name="username" value="<%= user.username %>" required>
-
+          </div>
+          <div class="form-group">
             <label>Email:</label>
             <input type="email" name="userEmail" value="<%= user.userEmail %>" required>
+          </div>
+        </div>
 
-            <label>Password (leave blank to keep current):</label>
-            <input type="password" name="userPassword">
+        <div class="form-group">
+          <label>Password (leave blank to keep current):</label>
+          <input type="password" name="userPassword" placeholder="Enter new password or leave blank">
+        </div>
 
+        <div class="form-row">
+          <div class="form-group">
             <label>First Name:</label>
             <input type="text" name="first_name" value="<%= user.first_name %>" required>
-
+          </div>
+          <div class="form-group">
             <label>Last Name:</label>
             <input type="text" name="last_name" value="<%= user.last_name %>" required>
+          </div>
+        </div>
 
+        <div class="form-row">
+          <div class="form-group">
             <label>Alias:</label>
-            <input type="text" name="alias" value="<%= user.alias || '' %>">
-
+            <input type="text" name="alias" value="<%= user.alias || '' %>" placeholder="Optional">
+          </div>
+          <div class="form-group">
             <label>Date of Birth:</label>
             <input type="date" name="date_of_birth"
               value="<%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '' %>"
               required>
+          </div>
+        </div>
 
+        <div class="form-row">
+          <div class="form-group">
             <label>Phone Number:</label>
             <input type="text" name="phone_number" value="<%= user.phone_number %>" required>
-
+          </div>
+          <div class="form-group">
             <label>Country:</label>
             <input type="text" name="country" value="<%= user.country %>" required>
+          </div>
+        </div>
 
-            <label>Address Line 1:</label>
-            <input type="text" name="address_line_1" value="<%= user.address_line_1 %>" required>
+        <!-- Address Information -->
+        <div class="form-group">
+          <label>Address Line 1:</label>
+          <input type="text" name="address_line_1" value="<%= user.address_line_1 %>" required>
+        </div>
 
+        <div class="form-row">
+          <div class="form-group">
             <label>Address Line 2 (optional):</label>
-            <input type="text" name="address_line_2" value="<%= user.address_line_2 || '' %>">
-
-            <label for="postcode">Postal Code:</label>
-            <input type="text" name="postcode" id="postcode" value="<%= user.postcode %>" required pattern="\d{6}"
+            <input type="text" name="address_line_2" value="<%= user.address_line_2 || '' %>" placeholder="Optional">
+          </div>
+          <div class="form-group">
+            <label>Postal Code:</label>
+            <input type="text" name="postcode" value="<%= user.postcode %>" required pattern="\d{6}"
               title="Postal code must be exactly 6 digits">
+          </div>
+        </div>
 
-            <label>Current Profile Image:</label><br>
-            <img src="/uploads/<%= user.userImage %>" alt="User Image" width="100"><br>
+        <!-- Role Selection -->
+        <% if (currentUser.role === 'super_admin') { %>
+          <div class="form-group">
+            <label>Role:</label>
+            <select name="userRole" required>
+              <option value="admin" <%= user.userRole === 'admin' ? 'selected' : '' %>>Admin</option>
+              <option value="advisor" <%= user.userRole === 'advisor' ? 'selected' : '' %>>Advisor</option>
+              <option value="user" <%= user.userRole === 'user' ? 'selected' : '' %>>Customer</option>
+            </select>
+          </div>
+        <% } else if (currentUser.role === 'admin') { %>
+          <div class="form-group">
+            <label>Role:</label>
+            <select name="userRole" required>
+              <option value="advisor" <%= user.userRole === 'advisor' ? 'selected' : '' %>>Advisor</option>
+              <option value="user" <%= user.userRole === 'user' ? 'selected' : '' %>>Customer</option>
+            </select>
+          </div>
+        <% } else { %>
+          <input type="hidden" name="userRole" value="<%= user.userRole %>">
+        <% } %>
 
-            <label>New Profile Image (optional):</label>
-            <input type="file" name="userImage" accept="image/*">
-
-            <% if (currentUser.role==='super_admin' ) { %>
-              <label>Role:</label>
-              <select name="userRole" required>
-                <option value="admin" <%=user.userRole==='admin' ? 'selected' : '' %>>Admin</option>
-                <option value="advisor" <%=user.userRole==='advisor' ? 'selected' : '' %>>Advisor</option>
-                <option value="user" <%=user.userRole==='user' ? 'selected' : '' %>>Customer</option>
-              </select>
-              <% } else if (currentUser.role==='admin' ) { %>
-                <label>Role:</label>
-                <select name="userRole" required>
-                  <option value="advisor" <%=user.userRole==='advisor' ? 'selected' : '' %>>Advisor</option>
-                  <option value="user" <%=user.userRole==='user' ? 'selected' : '' %>>Customer</option>
-                </select>
-                <% } else { %>
-                  <input type="hidden" name="userRole" value="<%= user.userRole %>">
-                  <% } %>
-
-                    <button type="submit">Update User</button>
-          </form>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update User Profile</button>
+          <a href="<%= currentUser.role === 'user' 
+              ? '/user/dashboard' 
+              : currentUser.role === 'advisor' 
+                  ? '/advisor/dashboard' 
+                  : '/admin/dashboard' %>" class="btn btn-secondary">
+            Cancel Changes
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
 </body>
-
 </html>

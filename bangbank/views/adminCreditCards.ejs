@@ -2,89 +2,555 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Pending Credit Card Applications</title>
   <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header styles - matching template */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .welcome-message {
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .welcome-message strong {
+      color: #00ffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #ff4757, #ff3742);
+      color: white !important;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 71, 87, 0.5);
+    }
+
+    /* Main content */
+    .main-content {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Success and Error Messages */
+    .message {
+      padding: 1rem 2rem;
+      margin: 1rem 0;
+      border-radius: 10px;
+      font-weight: 500;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .message.success {
+      background: rgba(0, 255, 0, 0.1);
+      border-color: rgba(0, 255, 0, 0.3);
+      color: #00ff00;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+    }
+
+    .message.error {
+      background: rgba(255, 0, 0, 0.1);
+      border-color: rgba(255, 0, 0, 0.3);
+      color: #ff4757;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+    }
+
+    /* Page Title */
+    h1 {
+      font-size: 2.5rem;
+      color: #ffffff;
+      font-weight: 300;
+      margin-bottom: 2rem;
+      text-align: center;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* No applications message */
+    .no-applications {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      padding: 3rem;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      color: rgba(224, 224, 224, 0.8);
+      font-size: 1.1rem;
+    }
+
+    /* Table Container */
+    .table-container {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: transparent;
+    }
+
+    th {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+      color: #e0e0e0;
+      vertical-align: top;
+    }
+
+    tr:hover {
+      background: rgba(0, 255, 255, 0.05);
+    }
+
+    /* Links in table */
+    td a {
+      color: #00ffff;
+      text-decoration: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    td a:hover {
+      background: rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    /* Form Styles */
+    .action-forms {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .approve-form {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 10px;
+      padding: 0.8rem;
+    }
+
+    .reject-form {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 0.8rem;
+    }
+
+    .approve-form label {
+      display: block;
+      color: #00ff00;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+
+    .approve-form input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #e0e0e0;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .approve-form input:focus {
+      outline: none;
+      border-color: rgba(0, 255, 0, 0.6);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+    }
+
+    /* Button Styles */
+    button {
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .approve-form button {
+      background: linear-gradient(135deg, #00ff00, #00cc00);
+      color: #000000;
+      box-shadow: 0 2px 10px rgba(0, 255, 0, 0.3);
+      width: 100%;
+    }
+
+    .approve-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 0, 0.5);
+    }
+
+    .reject-form button {
+      background: linear-gradient(135deg, #ff4757, #ff3742);
+      color: white;
+      box-shadow: 0 2px 10px rgba(255, 71, 87, 0.3);
+      width: 100%;
+    }
+
+    .reject-form button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(255, 71, 87, 0.5);
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      text-decoration: none;
+      color: #00ffff;
+      font-weight: 500;
+      padding: 0.8rem 2rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      background: rgba(0, 255, 255, 0.2);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .table-container {
+        overflow-x: auto;
+      }
+      
+      table {
+        min-width: 1000px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .welcome-message {
+        text-align: center;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-links a, .logout-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .main-content {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      th, td {
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .nav-links a, .logout-btn {
+        width: 100%;
+        text-align: center;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .action-forms {
+        gap: 0.3rem;
+      }
+      
+      .approve-form, .reject-form {
+        padding: 0.5rem;
+      }
+      
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .main-content {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Focus states for accessibility */
+    button:focus, input:focus, a:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 <body>
-  <!-- ✅ Admin Navbar -->
-  <nav style="background: #f0f0f0; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
-    <div>
-      <a href="/admin/dashboard">Dashboard</a> |
-      <a href="/admin/products">Manage Products</a> |
-      <a href="/admin/accounts">Account Applications</a> |
-      <a href="/admin/creditcards">Credit Card Applications</a>
+  <!-- Updated Admin Header to match template -->
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="welcome-message">
+        <strong>Welcome, <%= user.username %> (<%= user.role %>)</strong>
+      </div>
+      <nav class="nav-links">
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/products">Manage Products</a>
+        <a href="/admin/accounts">Account Applications</a>
+        <a href="/profile">Profile Settings</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </nav>
     </div>
-    <div>
-      <strong>Welcome, <%= user.username %> (<%= user.role %>)</strong>
-    </div>
-    <form action="/logout" method="GET" style="margin: 0;">
-      <button type="submit">Logout</button>
-    </form>
-  </nav>
+  </header>
 
-  <% if (typeof success !== 'undefined' && success) { %>
-    <div style="color: green; margin: 10px 0;"><%= success %></div>
-  <% } %>
-  <% if (typeof error !== 'undefined' && error) { %>
-    <div style="color: red; margin: 10px 0;"><%= error %></div>
-  <% } %>
+  <div class="main-content">
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="message success"><%= success %></div>
+    <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="message error"><%= error %></div>
+    <% } %>
 
-  <h1>Pending Credit Card Applications</h1>
+    <h1>Pending Credit Card Applications</h1>
 
-  <% if (cards.length === 0) { %>
-    <p>No pending credit card applications found.</p>
-  <% } else { %>
-    <table border="1" cellpadding="8" cellspacing="0">
-      <tr>
-        <th>User</th>
-        <th>Email</th>
-        <th>Product</th>
-        <th>Card Number</th>
-        <th>Expiry Date</th>
-        <th>Desired Credit Limit</th>
-        <th>KYC Type</th>
-        <th>KYC ID Number</th>
-        <th>KYC Document</th>
-        <th>KYC Status</th>
-        <th>Actions</th>
-      </tr>
-      <% cards.forEach(card => { %>
-        <tr>
-          <td><%= card.username %></td>
-          <td><%= card.userEmail %></td>
-          <td><%= card.product_name %></td>
-          <td><%= card.card_number %></td>
-          <td><%= new Date(card.expiry_date).toISOString().split('T')[0] %></td>
-          <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-          <td><%= card.id_type || '—' %></td>
-          <td><%= card.id_number || '—' %></td>
-          <td>
-            <% if (card.document_path) { %>
-              <a href="<%= card.document_path %>" target="_blank">View</a>
-            <% } else { %>
-              —
-            <% } %>
-          </td>
-          <td><%= card.kyc_status || 'pending' %></td>
-          <td>
-            <!-- Approve Form -->
-            <form action="/admin/creditcards/approve/<%= card.card_id %>" method="POST" style="margin-bottom: 5px;">
-              <label>Approved Limit:</label>
-              <input type="number" name="approved_limit" step="0.01" min="0" value="<%= parseFloat(card.credit_limit).toFixed(2) %>" required>
-              <button type="submit">Approve</button>
-            </form>
-            
-            <!-- Reject Form -->
-            <form action="/admin/creditcards/reject/<%= card.card_id %>" method="POST" onsubmit="return confirm('Reject this credit card application?');">
-              <button type="submit" style="background-color: red; color: white;">Reject</button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
-    </table>
-  <% } %>
+    <% if (cards.length === 0) { %>
+      <div class="no-applications">
+        <p>No pending credit card applications found.</p>
+      </div>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Product</th>
+              <th>Card Number</th>
+              <th>Expiry Date</th>
+              <th>Desired Credit Limit</th>
+              <th>KYC Type</th>
+              <th>KYC ID Number</th>
+              <th>KYC Document</th>
+              <th>KYC Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% cards.forEach(card => { %>
+              <tr>
+                <td><%= card.username %></td>
+                <td><%= card.userEmail %></td>
+                <td><%= card.product_name %></td>
+                <td><%= card.card_number %></td>
+                <td><%= new Date(card.expiry_date).toISOString().split('T')[0] %></td>
+                <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+                <td><%= card.id_type || '—' %></td>
+                <td><%= card.id_number || '—' %></td>
+                <td>
+                  <% if (card.document_path) { %>
+                    <a href="<%= card.document_path %>" target="_blank">View</a>
+                  <% } else { %>
+                    —
+                  <% } %>
+                </td>
+                <td><%= card.kyc_status || 'pending' %></td>
+                <td>
+                  <div class="action-forms">
+                    <!-- Approve Form -->
+                    <form class="approve-form" action="/admin/creditcards/approve/<%= card.card_id %>" method="POST">
+                      <label>Approved Limit:</label>
+                      <input type="number" name="approved_limit" step="0.01" min="0" value="<%= parseFloat(card.credit_limit).toFixed(2) %>" required>
+                      <button type="submit">Approve</button>
+                    </form>
+                    
+                    <!-- Reject Form -->
+                    <form class="reject-form" action="/admin/creditcards/reject/<%= card.card_id %>" method="POST" onsubmit="return confirm('Reject this credit card application?');">
+                      <button type="submit">Reject</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
 
-  <br />
-  <a href="/admin/dashboard">← Back to Dashboard</a>
+    <a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+  </div>
 </body>
 </html>

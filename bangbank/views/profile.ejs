@@ -381,19 +381,28 @@
         <div class="header-content">
             <div class="logo">BangBank</div>
             <div class="welcome-message">My Profile Settings</div>
-            <nav class="nav-links">
-                <% if (user.userRole === 'admin' || user.userRole === 'super_admin') { %>
-                    <a href="/admin/dashboard">Dashboard</a>
-                <% } else if (user.userRole === 'advisor') { %>
-                    <a href="/advisor/dashboard">Dashboard</a>
-                <% } else { %>
-                    <a href="/user/dashboard">Dashboard</a>
-                <% } %>
-                <a href="/customer/transactions">Transactions</a>
-                <a href="/customer/consultations">Consultations</a>
-                <a href="/profile">Profile</a>
-                <a href="/logout">Logout</a>
-            </nav>
+<nav class="nav-links">
+  <% if (user.userRole === 'admin' || user.userRole === 'super_admin') { %>
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/admin/products">Manage Products</a>
+    <a href="/admin/accounts">Account Applications</a>
+    <a href="/admin/creditcards">Credit Card Applications</a>
+    <a href="/logout">Logout</a>
+
+  <% } else if (user.userRole === 'advisor') { %>
+    <a href="/advisor/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+
+  <% } else { %>
+    <!-- Customer -->
+    <a href="/user/dashboard">Dashboard</a>
+    <a href="/customer/transactions">Transactions</a>
+    <a href="/customer/consultations">Consultations</a>
+    <a href="/logout">Logout</a>
+  <% } %>
+</nav>
+
+
         </div>
     </header>
 
