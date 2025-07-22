@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const multer = require('multer');
 const path = require('path');
 const db = require('../db'); // Your database configuration
+const { validateOTP } = require('./otpController');
 
 // Configure multer for image uploads
 const storage = multer.diskStorage({
@@ -17,10 +18,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 exports.uploadImage = upload.single('userImage');
 
+// Render registration page
 exports.renderRegister = (req, res) => {
     res.render('register');
 };
 
+// Register a new user
 exports.register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -106,6 +109,7 @@ exports.register = async (req, res) => {
     }
 };
 
+// Login user
 exports.login = async (req, res) => {
     const { userEmail, userPassword } = req.body;
 
@@ -152,6 +156,7 @@ exports.login = async (req, res) => {
     }
 };
 
+// admin: Get admin dashboard
 exports.getAdminDashboard = async (req, res) => {
     try {
         const [users] = await db.query('SELECT * FROM users');
@@ -171,6 +176,7 @@ exports.getAdminDashboard = async (req, res) => {
     }
 };
 
+// Render user dashboard
 exports.renderUserDashboard = async (req, res) => {
     const userId = req.session.user.id;
 
@@ -214,6 +220,7 @@ exports.renderUserDashboard = async (req, res) => {
     }
 };
 
+// view user details
 exports.viewUserDetails = async (req, res) => {
     const userId = parseInt(req.params.id);
     const currentUserId = req.session.user.id;
@@ -319,6 +326,7 @@ exports.viewUserDetails = async (req, res) => {
     }
 };
 
+// create user
 exports.createUser = async (req, res) => {
     try {
         const {
@@ -398,6 +406,7 @@ exports.createUser = async (req, res) => {
     }
 };
 
+// Render form to edit user
 exports.editUserForm = async (req, res) => {
     const userId = parseInt(req.params.id);
     const currentUserId = req.session.user.id;
@@ -449,6 +458,7 @@ exports.editUserForm = async (req, res) => {
     }
 };
 
+// edit user
 exports.editUser = async (req, res) => {
     const userId = parseInt(req.params.id);
     const currentUserId = req.session.user.id;
@@ -588,6 +598,7 @@ exports.editUser = async (req, res) => {
     }
 };
 
+// delete user
 exports.deleteUser = async (req, res) => {
     const userId = parseInt(req.params.id);
     const currentUserId = req.session.user.id;
@@ -628,6 +639,7 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+// get user profile
 exports.getProfile = async (req, res) => {
     if (!req.session.user) {
         return res.redirect('/login');
@@ -652,6 +664,7 @@ exports.getProfile = async (req, res) => {
     }
 };
 
+// Render form to edit profile
 exports.renderEditProfile = async (req, res) => {
     const userId = req.session.user.id;
 
@@ -673,12 +686,106 @@ exports.renderEditProfile = async (req, res) => {
     }
 };
 
+// update profile with OTP confirmation
 exports.updateProfile = async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/login');
-    }
+    if (!req.session.user) return res.redirect('/login');
 
     const userId = req.session.user.id;
+    const { otp } = req.body;
+    const { type, id } = req.params;
+
+    // ✅ Only process if OTP is valid
+    if (req.originalUrl.includes('/verify/') && type === 'profile') {
+        const isValid = await validateOTP(userId, otp, 'profile_update');
+        if (!isValid) {
+            return res.redirect(`/otp/confirm-update/${type}/${id}?error=Invalid or expired OTP.`);
+        }
+
+        // ✅ Only clear OTP access here after successful validation
+        req.session.otpAccess = null;
+    }
+
+    // ✅ Load validated form data from session
+    const draft = req.session.profileUpdateDraft;
+    if (!draft) {
+        return res.redirect('/profile?error=No profile update data found.');
+    }
+
+    const {
+        username,
+        userEmail,
+        userPassword,
+        confirmPassword,
+        first_name,
+        last_name,
+        alias,
+        date_of_birth,
+        phone_number,
+        country,
+        address_line_1,
+        address_line_2,
+        postcode,
+        userImage
+    } = draft;
+
+    try {
+        let sql, values;
+
+        if (userPassword) {
+            const hashedPassword = await bcrypt.hash(userPassword, 10);
+            sql = `
+                UPDATE users SET username=?, userEmail=?, userPassword=?, userImage=?,
+                first_name=?, last_name=?, alias=?, date_of_birth=?, phone_number=?,
+                country=?, address_line_1=?, address_line_2=?, postcode=?
+                WHERE userId=?
+            `;
+            values = [
+                username, userEmail, hashedPassword, userImage,
+                first_name, last_name, alias || null, date_of_birth, phone_number,
+                country, address_line_1, address_line_2 || null, postcode,
+                userId
+            ];
+        } else {
+            sql = `
+                UPDATE users SET username=?, userEmail=?, userImage=?,
+                first_name=?, last_name=?, alias=?, date_of_birth=?, phone_number=?,
+                country=?, address_line_1=?, address_line_2=?, postcode=?
+                WHERE userId=?
+            `;
+            values = [
+                username, userEmail, userImage,
+                first_name, last_name, alias || null, date_of_birth, phone_number,
+                country, address_line_1, address_line_2 || null, postcode,
+                userId
+            ];
+        }
+
+        await db.query(sql, values);
+
+        // ✅ Update session user info
+        req.session.user.username = username;
+        req.session.user.userEmail = userEmail;
+        req.session.user.userImage = userImage;
+
+        // ✅ Clear draft (OTP already cleared above)
+        req.session.profileUpdateDraft = null;
+
+        return res.redirect('/profile?success=Profile updated successfully.');
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        return res.render('editProfile', {
+            user: draft,
+            currentUser: req.session.user,
+            error: 'An error occurred. Please try again.',
+            success: null
+        });
+    }
+};
+
+// initiate profile update
+exports.initiateProfileUpdate = async (req, res) => {
+    const userId = req.session.user.id;
+
     const {
         username,
         userEmail,
@@ -695,111 +802,118 @@ exports.updateProfile = async (req, res) => {
         postcode
     } = req.body;
 
-    let userImage = req.session.user.userImage;
-    if (req.file) {
-        userImage = req.file.filename;
-    }
+    const userImage = req.file ? req.file.filename : req.session.user.userImage;
 
-    if (!/^\d{8}$/.test(phone_number)) {
-        return res.render('editProfile', {
-            user: { ...req.body, userImage },
-            currentUser: req.session.user,
-            error: 'Phone number must be exactly 8 digits.',
-            success: null
-        });
-    }
+    const renderError = (msg) => res.render('editProfile', {
+        user: { ...req.body, userImage },
+        currentUser: req.session.user,
+        error: msg,
+        success: null
+    });
 
-    // ✅ Postal code validation (must be exactly 6 digits)
-    if (!/^\d{6}$/.test(postcode)) {
-        return res.render('editProfile', {
-            user: { ...req.body, userImage },
-            currentUser: req.session.user,
-            error: 'Postal code must be exactly 6 digits.',
-            success: null
-        });
-    }
-
-    // Password validation
-    if (userPassword) {
-        if (userPassword.length < 6) {
-            return res.render('editProfile', {
-                user: { ...req.body, userImage }, // Pre-fill form
-                currentUser: req.session.user,
-                error: 'Password must be at least 6 characters long.',
-                success: null
-            });
-        }
-        if (userPassword !== confirmPassword) {
-            return res.render('editProfile', {
-                user: { ...req.body, userImage },
-                currentUser: req.session.user,
-                error: 'Passwords do not match.',
-                success: null
-            });
-        }
-    }
+    // ✅ Validate
+    if (!/^\d{8}$/.test(phone_number)) return renderError('Phone number must be exactly 8 digits.');
+    if (!/^\d{6}$/.test(postcode)) return renderError('Postal code must be exactly 6 digits.');
+    if (userPassword && userPassword.length < 6) return renderError('Password must be at least 6 characters long.');
+    if (userPassword && userPassword !== confirmPassword) return renderError('Passwords do not match.');
 
     try {
-        // Check for duplicate username or email
-        const [existingUser] = await db.query(
+        const [conflict] = await db.query(
             'SELECT * FROM users WHERE (username = ? OR userEmail = ?) AND userId != ?',
             [username, userEmail, userId]
         );
-        if (existingUser.length > 0) {
-            return res.render('editProfile', {
-                user: { ...req.body, userImage },
-                currentUser: req.session.user,
-                error: 'Username or email is already taken.',
-                success: null
-            });
-        }
+        if (conflict.length > 0) return renderError('Username or email is already taken.');
 
-        let sql, values;
+        // ✅ Save form data to session
+        req.session.profileUpdateDraft = {
+            username, userEmail, userPassword, confirmPassword,
+            first_name, last_name, alias, date_of_birth, phone_number,
+            country, address_line_1, address_line_2, postcode, userImage
+        };
 
-        if (userPassword) {
-            const hashedPassword = await bcrypt.hash(userPassword, 10);
-            sql = `
-        UPDATE users SET username=?, userEmail=?, userPassword=?, userImage=?,
-        first_name=?, last_name=?, alias=?, date_of_birth=?, phone_number=?,
-        country=?, address_line_1=?, address_line_2=?, postcode=?
-        WHERE userId=?
-      `;
-            values = [
-                username, userEmail, hashedPassword, userImage,
-                first_name, last_name, alias || null, date_of_birth, phone_number,
-                country, address_line_1, address_line_2 || null, postcode,
-                userId
-            ];
-        } else {
-            sql = `
-        UPDATE users SET username=?, userEmail=?, userImage=?,
-        first_name=?, last_name=?, alias=?, date_of_birth=?, phone_number=?,
-        country=?, address_line_1=?, address_line_2=?, postcode=?
-        WHERE userId=?
-      `;
-            values = [
-                username, userEmail, userImage,
-                first_name, last_name, alias || null, date_of_birth, phone_number,
-                country, address_line_1, address_line_2 || null, postcode,
-                userId
-            ];
-        }
-
-        await db.query(sql, values);
-
-        // Update session
-        req.session.user.username = username;
-        req.session.user.userEmail = userEmail;
-        req.session.user.userImage = userImage;
-
-        res.redirect('/profile?success=Profile updated successfully.');
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        res.render('editProfile', {
-            user: { ...req.body, userImage },
-            currentUser: req.session.user,
-            error: 'An error occurred. Please try again.',
-            success: null
-        });
+        return res.redirect(`/otp/request-update/profile/${userId}`);
+    } catch (err) {
+        console.error('Validation error:', err);
+        return renderError('Server error. Please try again.');
     }
+};
+
+// Render forgot password form
+exports.renderForgotPasswordForm = (req, res) => {
+  res.render('forgotPassword', { error: null, success: null });
+};
+
+// Handle forgot password request
+exports.initiatePasswordReset = async (req, res) => {
+  const { userEmail, newPassword, confirmPassword } = req.body;
+
+  const renderError = (msg) => {
+    return res.render('forgotPassword', { error: msg, success: null });
+  };
+
+  if (!newPassword || newPassword.length < 6) {
+    return renderError('Password must be at least 6 characters.');
+  }
+
+  if (newPassword !== confirmPassword) {
+    return renderError('Passwords do not match.');
+  }
+
+  try {
+    const [[user]] = await db.query(
+      'SELECT * FROM users WHERE userEmail = ?',
+      [userEmail]
+    );
+
+    if (!user) return renderError('No account found with that email.');
+
+    // ✅ Save to session for later use after OTP
+    req.session.passwordReset = {
+      userId: user.userId,
+      email: user.userEmail,
+      newPassword,
+    };
+
+    return res.redirect(`/otp/request-password-reset/reset/${user.userId}`);
+  } catch (err) {
+    console.error('initiatePasswordReset error:', err);
+    return renderError('Something went wrong. Please try again.');
+  }
+};
+
+// Reset password with OTP confirmation
+exports.resetPasswordWithOTP = async (req, res) => {
+  const { otp } = req.body;
+  const { type, id: userId } = req.params;
+
+  if (req.originalUrl.includes('/verify/') && type === 'reset') {
+    const isValid = await validateOTP(userId, otp, 'password_reset');
+    req.session.otpError = 'Invalid or expired OTP.';
+    if (!isValid) {
+      return res.redirect(`/otp/confirm-update/${type}/${userId}?error=Invalid or expired OTP.`);
+    }
+
+    req.session.otpAccess = null;
+  }
+
+  const resetData = req.session.passwordReset;
+  if (!resetData || resetData.userId != userId) {
+    return res.redirect('/forgot-password?error=No password reset data found.');
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(resetData.newPassword, 10);
+
+    await db.query(
+      'UPDATE users SET userPassword = ? WHERE userId = ?',
+      [hashedPassword, userId]
+    );
+
+    req.session.passwordReset = null;
+
+    return res.redirect('/login?success=Password reset successful. You may now log in.');
+  } catch (err) {
+    console.error('resetPasswordWithOTP error:', err);
+    return res.redirect('/forgot-password?error=Failed to reset password.');
+  }
 };

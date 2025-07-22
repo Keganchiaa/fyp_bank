@@ -8,6 +8,7 @@ const productController = require('./controllers/productController');
 const accountController = require('./controllers/accountController');
 const creditCardController = require('./controllers/creditCardController');
 const consultationController = require('./controllers/consultationController');
+const otpController = require('./controllers/otpController');
 const path = require('path');
 
 const app = express();
@@ -76,18 +77,51 @@ app.get('/', (req, res) => {
 app.get('/register', userController.renderRegister);
 app.post('/register', userController.uploadImage, userController.register);
 
+// Login (GET and POST)
 app.get('/login', (req, res) => {
   const success = req.query.success || null;
   const error = req.query.error || null;
   res.render('login', { success, error });
 });
 
+// Login POST handler
 app.post('/login', userController.login);
 
+// Dashboard
 app.get('/user/dashboard', isAuthenticated, isUserOnly, userController.renderUserDashboard);
 
+// User Profile
 app.get('/profile', isAuthenticated, userController.getProfile);
-app.post('/profile', isAuthenticated, userController.uploadImage, userController.updateProfile);
+
+// otp and profile update
+app.post('/otp/request/:type/:id', isAuthenticated, userController.uploadImage, otpController.requestOtpForUpdate);
+app.post('/profile/initiate-update', isAuthenticated, userController.uploadImage, userController.initiateProfileUpdate);
+
+// OTP verification
+app.post('/otp/verify/:type/:id', userController.uploadImage, async (req, res) => {
+  const { type } = req.params;
+
+  // Require login for profile/account/card OTP flows
+  if (type === 'profile' || type === 'account' || type === 'card') {
+    if (!req.session.user) {
+      return res.redirect('/login?error=Please log in to confirm this action.');
+    }
+  }
+
+  if (type === 'profile') {
+    return require('./controllers/userController').updateProfile(req, res);
+  } else if (type === 'account') {
+    return require('./controllers/accountController').deleteAccount(req, res);
+  } else if (type === 'card') {
+    return require('./controllers/creditCardController').deleteCard(req, res);
+  } else if (type === 'reset') {
+    return require('./controllers/userController').resetPasswordWithOTP(req, res);
+  } else {
+    return res.status(400).send('Invalid OTP verification type.');
+  }
+});
+
+// User Profile Edit
 app.get('/profile/edit', isAuthenticated, userController.renderEditProfile);
 
 // Admin Dashboard + CRUD
@@ -130,17 +164,42 @@ app.get('/customer/apply', isAuthenticated, isUserOnly, productController.viewAv
 // CUSTOMER ACCOUNT ROUTES
 app.get('/customer/apply/:product_id', isAuthenticated, isUserOnly, accountController.renderApplyForm);
 app.post('/customer/apply/:product_id', isAuthenticated, isUserOnly, accountController.uploadKYC, accountController.submitApplication);
-app.post('/customer/account/delete/:account_id', isAuthenticated, isUserOnly, accountController.deleteAccount);
+app.post('/otp/verify-delete/account/:account_id', isAuthenticated, isUserOnly, accountController.deleteAccount);
+// Direct delete for pending bank account (no OTP)
+app.post('/customer/account/delete/:account_id', isAuthenticated, isUserOnly, accountController.deletePendingAccount);
 
 // CUSTOMER CREDIT CARD ROUTES
 app.get('/customer/creditcard/apply/:product_id', isAuthenticated, isUserOnly, creditCardController.renderApplyForm);
 app.post('/customer/creditcard/apply/:product_id', isAuthenticated, isUserOnly, creditCardController.uploadKYC, creditCardController.submitApplication);
-app.post('/customer/creditcard/delete/:card_id', isAuthenticated, isUserOnly, creditCardController.deleteCard);
+app.post('/otp/verify-delete/card/:card_id', isAuthenticated, isUserOnly, creditCardController.deleteCard);
+// Direct delete for pending credit card (no OTP)
+app.post('/customer/creditcard/delete/:card_id', isAuthenticated, isUserOnly, creditCardController.deletePendingCard);
 
 // CUSTOMER CONSULTATION ROUTES
 app.get('/customer/consultations', isAuthenticated, isUserOnly, consultationController.viewAvailableSessions);
 app.post('/customer/consultations/book/:session_id', isAuthenticated, isUserOnly, consultationController.bookSession);
 app.post('/customer/consultations/cancel/:consultation_id', isAuthenticated, isUserOnly, consultationController.cancelSession);
+
+// Forgot password process
+app.get('/forgot-password', userController.renderForgotPasswordForm);
+app.post('/forgot-password', userController.initiatePasswordReset);
+
+//OTP ROUTES
+app.post('/otp/send', otpController.sendOtpHandler);
+app.post('/otp/verify', otpController.verifyOtpHandler);
+
+// POST: Trigger OTP and redirect to confirmation page
+app.post('/otp/request-delete/:type/:id', otpController.requestOtpForDeletion);
+app.get('/otp/request-delete/:type/:id', otpController.requestOtpForDeletion);
+app.get('/otp/confirm-delete/:type/:id', otpController.renderOtpConfirmationForm);
+
+// update OTP request and confirmation
+app.get('/otp/request-update/:type/:id', otpController.requestOtpForUpdate);
+app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm);
+
+// Reset password with OTP
+app.get('/otp/request-password-reset/:type/:id', otpController.requestOtpForPasswordReset);
+app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm);
 
 // ✅ Logout Route
 app.get('/logout', (req, res) => {

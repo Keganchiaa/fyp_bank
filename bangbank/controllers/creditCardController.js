@@ -2,6 +2,7 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
+const { validateOTP } = require('./otpController');
 
 // Multer config for KYC upload
 const storage = multer.diskStorage({
@@ -324,41 +325,90 @@ exports.rejectCard = async (req, res) => {
   }
 };
 
+// DELETE: User deletes their credit card after OTP verification
 exports.deleteCard = async (req, res) => {
-  const { card_id } = req.params;
+  const card_id = parseInt(req.params.id, 10); // ✅ FIXED
+  const { otp } = req.body;
+
+  if (isNaN(card_id)) {
+    return res.status(400).send('Invalid card ID.');
+  }
 
   if (!req.session.user || !req.session.user.id) {
     return res.status(401).send('Session expired. Please log in again.');
   }
+
   const userId = req.session.user.id;
 
   try {
-    // ✅ Fetch the card to confirm ownership
+    const isValid = await validateOTP(userId, otp, 'card_cancel');
+
+    if (!isValid) {
+      // 🔁 Re-store OTP session access so user can retry
+      if (!req.session.otpAccess) {
+        req.session.otpAccess = {
+          type: 'card',
+          id: card_id,
+          timestamp: Date.now()
+        };
+      }
+
+      return res.redirect(`/otp/confirm-delete/card/${card_id}?error=Invalid or expired OTP.`);
+    }
+
+    // ✅ OTP was valid — clear access
+    req.session.otpAccess = null;
+
+    console.log('DEBUG - userId:', userId);
+    console.log('DEBUG - card_id:', card_id);
+
     const [[card]] = await db.query(`
       SELECT * FROM credit_cards
       WHERE card_id = ? AND userId = ?
     `, [card_id, userId]);
 
+    console.log('DEBUG - card lookup result:', card);
+
     if (!card) {
       return res.status(404).send('Credit card not found or you do not have permission to delete it.');
     }
 
-    // ✅ Delete KYC documents linked to this card
-    await db.query(`
-      DELETE FROM kyc_documents
-      WHERE card_id = ?
-    `, [card_id]);
+    await db.query(`DELETE FROM kyc_documents WHERE card_id = ?`, [card_id]);
+    await db.query(`DELETE FROM credit_cards WHERE card_id = ?`, [card_id]);
 
-    // ✅ Delete the credit card
-    await db.query(`
-      DELETE FROM credit_cards
-      WHERE card_id = ?
-    `, [card_id]);
-
-    res.redirect('/user/dashboard?success=Credit card deleted successfully.');
-
+    return res.redirect('/user/dashboard?success=Credit card deleted successfully.');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Failed to delete credit card.');
+    return res.status(500).send('Failed to delete credit card.');
+  }
+};
+
+// POST: Directly delete pending credit card application without OTP
+exports.deletePendingCard = async (req, res) => {
+  const card_id = parseInt(req.params.card_id, 10);
+  const userId = req.session.user?.id;
+
+  if (!userId || isNaN(card_id)) {
+    return res.status(400).send('Invalid request.');
+  }
+
+  try {
+    // Confirm card belongs to user and is pending
+    const [[card]] = await db.query(`
+      SELECT * FROM credit_cards
+      WHERE card_id = ? AND userId = ? AND status = 'pending'
+    `, [card_id, userId]);
+
+    if (!card) {
+      return res.status(404).send('Card not found or not pending.');
+    }
+
+    await db.query(`DELETE FROM kyc_documents WHERE card_id = ?`, [card_id]);
+    await db.query(`DELETE FROM credit_cards WHERE card_id = ?`, [card_id]);
+
+    res.redirect('/user/dashboard?success=Credit card application canceled.');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to cancel credit card application.');
   }
 };

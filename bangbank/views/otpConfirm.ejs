@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OTP Confirmation</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .otp-box {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem 3rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .otp-box h2 {
+            color: #00ffff;
+            margin-bottom: 1rem;
+        }
+
+        .otp-box p {
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #00ff00;
+            padding: 0.75rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff4d4d;
+            padding: 0.75rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .otp-box input {
+            padding: 0.75rem;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .otp-box button {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease;
+            width: 100%;
+        }
+
+        .otp-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.6);
+        }
+
+        #resendForm button {
+            background: transparent;
+            border: none;
+            color: #00ffff;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        #resendForm button:disabled {
+            color: rgba(0, 255, 255, 0.4);
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="otp-box">
+        <h2>OTP Verification</h2>
+        <p>
+            We’ve sent a one-time password to your email. Please enter it below to confirm your
+            <strong>
+                <%= type==='profile' ? 'profile update' : type==='card' ? 'credit card cancellation' : type==='account'
+                    ? 'account deletion' : type==='reset' ? 'password reset' : 'action' %>
+            </strong>.
+        </p>
+
+        <% if (resent) { %>
+            <div class="success-message">A new OTP has been sent to your email.</div>
+            <% } %>
+
+                <% if (error) { %>
+                    <div class="error-message">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <!-- OTP submission -->
+                        <form action="/otp/verify/<%= type %>/<%= id %>" method="POST">
+                            <input type="text" name="otp" maxlength="6" placeholder="Enter 6-digit OTP" required>
+                            <button type="submit">Confirm</button>
+                        </form>
+
+                        <!-- Resend OTP -->
+                        <form id="resendForm" action="/otp/<%= 
+                            type === 'reset' 
+                              ? 'request-password-reset' 
+                              : type === 'profile' 
+                                ? 'request-update' 
+                                : 'request-delete' 
+                          %>/<%= type %>/<%= id %>" method="GET">
+                            <button id="resendBtn" type="submit" disabled>
+                                Resend OTP (<span id="cooldown">30</span>s)
+                            </button>
+                        </form>
+
+                        <script>
+                            const btn = document.getElementById('resendBtn');
+                            const span = document.getElementById('cooldown');
+                            const cooldownKey = `otpCooldown_<%= type %>_<%= id %>`;
+                            const storedUntil = localStorage.getItem(cooldownKey);
+                            const now = Date.now();
+
+                            if (storedUntil && now < parseInt(storedUntil)) {
+                                const remaining = Math.floor((parseInt(storedUntil) - now) / 1000);
+                                startCooldown(remaining);
+                            } else {
+                                btn.disabled = false;
+                                btn.textContent = 'Resend OTP';
+                            }
+
+                            function startCooldown(seconds) {
+                                let cooldown = seconds;
+                                btn.disabled = true;
+
+                                const timer = setInterval(() => {
+                                    cooldown--;
+                                    span.textContent = cooldown;
+                                    if (cooldown <= 0) {
+                                        clearInterval(timer);
+                                        btn.textContent = 'Resend OTP';
+                                        btn.disabled = false;
+                                        localStorage.removeItem(cooldownKey);
+                                    }
+                                }, 1000);
+
+                                span.textContent = cooldown;
+                            }
+
+                            document.getElementById('resendForm').addEventListener('submit', function () {
+                                const until = Date.now() + 30000;
+                                localStorage.setItem(cooldownKey, until.toString());
+                            });
+                        </script>
+</body>
+
+</html>

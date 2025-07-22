@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -270,7 +271,8 @@
       padding: 2rem;
       margin-top: 2rem;
       text-align: center;
-      display: none; /* Hidden since nav is now in header */
+      display: none;
+      /* Hidden since nav is now in header */
     }
 
     .nav-section h3 {
@@ -348,7 +350,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
+      background:
         radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
       pointer-events: none;
@@ -361,13 +363,14 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
       }
-    } 
+    }
 
-    .container > * {
+    .container>* {
       animation: fadeIn 0.6s ease-out;
     }
 
@@ -396,170 +399,193 @@
 
   <div class="container">
     <% if (success) { %>
-      <div class="success-message"><%= success %></div>
-    <% } %>
-
-    <% 
-      const activeAccounts = accounts.filter(a => a.status === 'active');
-      const pendingAccounts = accounts.filter(a => a.status === 'pending');
-      const activeCards = cards.filter(c => c.status === 'active');
-      const pendingCards = cards.filter(c => c.status === 'pending');
-    %>
-
-    <% if (accounts.length === 0 && cards.length === 0) { %>
-      <div class="empty-state">
-        <h2>Get Started with BangBank</h2>
-        <p>You don't have any bank accounts or credit cards yet. Explore our available products and start your digital banking journey today.</p>
-        <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+      <div class="success-message">
+        <%= success %>
       </div>
-    <% } else { %>
+      <% } %>
 
-      <% if (pendingAccounts.length > 0 || pendingCards.length > 0) { %>
-        <h2 class="section-header">Pending Applications</h2>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Product Type</th>
-                <th>Product Name</th>
-                <th>Specific Type</th>
-                <th>Amount / Credit Limit</th>
-                <th>Status</th>
-                <th>Opened At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% pendingAccounts.forEach(account => { %>
-                <tr>
-                  <td>Bank Account</td>
-                  <td><%= account.account_type %></td>
-                  <td><%= account.product_type.replace('_',' ') %></td>
+        <% const activeAccounts=accounts.filter(a=> a.status === 'active');
+          const pendingAccounts = accounts.filter(a => a.status === 'pending');
+          const activeCards = cards.filter(c => c.status === 'active');
+          const pendingCards = cards.filter(c => c.status === 'pending');
+          %>
+
+          <% if (accounts.length===0 && cards.length===0) { %>
+            <div class="empty-state">
+              <h2>Get Started with BangBank</h2>
+              <p>You don't have any bank accounts or credit cards yet. Explore our available products and start your
+                digital banking journey today.</p>
+              <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+            </div>
+            <% } else { %>
+
+              <% if (pendingAccounts.length> 0 || pendingCards.length > 0) { %>
+                <h2 class="section-header">Pending Applications</h2>
+                <div class="table-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Product Type</th>
+                        <th>Product Name</th>
+                        <th>Specific Type</th>
+                        <th>Amount / Credit Limit</th>
+                        <th>Status</th>
+                        <th>Opened At</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% pendingAccounts.forEach(account=> { %>
+                        <tr>
+                          <td>Bank Account</td>
+                          <td>
+                            <%= account.account_type %>
+                          </td>
+                          <td>
+                            <%= account.product_type.replace('_',' ') %></td>
                   <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
                   <td><span class="status-pending"><%= account.status %></span></td>
                   <td><%= account.opened_at.toDateString() %></td>
                   <td>
                     <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this application?');">
-                        Cancel
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this application?');">Cancel</button>
+                  </form>
+                          </td>
+                        </tr>
+                        <% }) %>
 
-              <% pendingCards.forEach(card => { %>
-                <tr>
-                  <td>Credit Card</td>
-                  <td><%= card.product_name %></td>
-                  <td>Credit Card</td>
-                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-                  <td><span class="status-pending"><%= card.status %></span></td>
-                  <td><%= new Date(card.created_at).toDateString() %></td>
-                  <td>
-                    <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this credit card application?');">
-                        Cancel
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      <% } %>
+                          <% pendingCards.forEach(card=> { %>
+                            <tr>
+                              <td>Credit Card</td>
+                              <td>
+                                <%= card.product_name %>
+                              </td>
+                              <td>Credit Card</td>
+                              <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
+                              </td>
+                              <td><span class="status-pending">
+                                  <%= card.status %>
+                                </span></td>
+                              <td>
+                                <%= new Date(card.created_at).toDateString() %>
+                              </td>
+                              <td>
+                                <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this credit card application?');">Cancel</button>
+                  </form>
+                              </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+                <% } %>
 
-      <% if (activeAccounts.length > 0) { %>
-        <h2 class="section-header">Your Active Bank Accounts</h2>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Account Name</th>
-                <th>Product Type</th>
-                <th>Balance</th>
-                <th>Status</th>
-                <th>Opened At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% activeAccounts.forEach(account => { %>
-                <tr>
-                  <td><%= account.account_type %></td>
-                  <td><%= account.product_type.replace('_',' ') %></td>
+                  <% if (activeAccounts.length> 0) { %>
+                    <h2 class="section-header">Your Active Bank Accounts</h2>
+                    <div class="table-container">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Account Name</th>
+                            <th>Product Type</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                            <th>Opened At</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% activeAccounts.forEach(account=> { %>
+                            <tr>
+                              <td>
+                                <%= account.account_type %>
+                              </td>
+                              <td>
+                                <%= account.product_type.replace('_',' ') %></td>
                   <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
                   <td><span class="status-active"><%= account.status %></span></td>
                   <td><%= account.opened_at.toDateString() %></td>
                   <td>
-                    <form action="/customer/account/delete/<%= account.account_id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this account?');">
-                        Close
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      <% } %>
+                    <form action="/otp/request-delete/account/<%= account.account_id %>" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this account? You will be asked to enter a one-time password (OTP).');">Close</button>
+                  </form>
+                              </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                    <% } %>
 
-      <% if (activeCards.length > 0) { %>
-        <h2 class="section-header">Your Active Credit Cards</h2>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Card Type</th>
-                <th>Card Number</th>
-                <th>Credit Limit</th>
-                <th>Outstanding Balance</th>
-                <th>Status</th>
-                <th>Issued At</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% activeCards.forEach(card => { %>
-                <tr>
-                  <td><%= card.product_name %></td>
-                  <td><%= card.card_number %></td>
-                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
-                  <td><span class="status-active"><%= card.status %></span></td>
-                  <td><%= new Date(card.created_at).toDateString() %></td>
-                  <td>
-                    <form action="/customer/creditcard/delete/<%= card.card_id %>" method="POST" style="display:inline;">
-                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this credit card?');">
-                        Close
-                      </button>
-                    </form>
-                  </td>
-                </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      <% } %>
+                      <% if (activeCards.length> 0) { %>
+                        <h2 class="section-header">Your Active Credit Cards</h2>
+                        <div class="table-container">
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>Card Type</th>
+                                <th>Card Number</th>
+                                <th>Credit Limit</th>
+                                <th>Outstanding Balance</th>
+                                <th>Status</th>
+                                <th>Issued At</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% activeCards.forEach(card=> { %>
+                                <tr>
+                                  <td>
+                                    <%= card.product_name %>
+                                  </td>
+                                  <td>
+                                    <%= card.card_number %>
+                                  </td>
+                                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
+                                  </td>
+                                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %>
+                                  </td>
+                                  <td><span class="status-active">
+                                      <%= card.status %>
+                                    </span></td>
+                                  <td>
+                                    <%= new Date(card.created_at).toDateString() %>
+                                  </td>
+                                  <td>
+                      <form action="/otp/request-delete/card/<%= card.card_id %>" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-danger"
+                          onclick="return confirm('Are you sure you want to close this credit card? You will be asked to enter a one-time password (OTP).');">
+                          Close
+                        </button>
+                      </form>
 
-      <div style="text-align: center; margin: 2rem 0;">
-        <p style="color: #e0e0e0; font-size: 1.1rem; margin-bottom: 1rem;">Ready to expand your banking experience?</p>
-        <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
-      </div>
+                                  </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                          </table>
+                        </div>
+                        <% } %>
 
-    <% } %>
+                          <div style="text-align: center; margin: 2rem 0;">
+                            <p style="color: #e0e0e0; font-size: 1.1rem; margin-bottom: 1rem;">Ready to expand your
+                              banking experience?</p>
+                            <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+                          </div>
 
-    <div class="nav-section" style="display: none;">
-      <h3>Quick Actions</h3>
-      <div class="nav-links">
-        <a href="/customer/transactions">Transaction History</a>
-        <a href="/customer/consultations">Book Consultation</a>
-        <a href="/profile">Profile Settings</a>
-        <a href="/logout">Logout</a>
-      </div>
-    </div>
+                          <% } %>
+
+                            <div class="nav-section" style="display: none;">
+                              <h3>Quick Actions</h3>
+                              <div class="nav-links">
+                                <a href="/customer/transactions">Transaction History</a>
+                                <a href="/customer/consultations">Book Consultation</a>
+                                <a href="/profile">Profile Settings</a>
+                                <a href="/logout">Logout</a>
+                              </div>
+                            </div>
   </div>
 </body>
+
 </html>

@@ -2,6 +2,7 @@ const db = require('../db');
 const nodemailer = require('nodemailer');
 const { DateTime } = require('luxon');
 
+//advisor: View dashboard with all sessions and consultations
 exports.viewAdvisorDashboard = async (req, res) => {
     const advisorId = req.session.user.id;
 
@@ -59,6 +60,7 @@ exports.renderCreateSessionForm = (req, res) => {
     });
 };
 
+// Advisor: Create a new session
 exports.createSession = async (req, res) => {
     const { session_date, start_time, } = req.body;
     const advisorId = req.session.user.id;
@@ -127,16 +129,18 @@ exports.viewAvailableSessions = async (req, res) => {
         // Fetch all sessions, including booking counts
         const [sessions] = await db.query(
             `SELECT 
-          s.*, 
-          u.username AS advisor_name,
-          u.userEmail AS advisor_email,
-          COUNT(c.consultation_id) AS booking_count
-       FROM sessions s
-       JOIN users u ON s.advisorId = u.userId
-       LEFT JOIN consultations c ON c.session_id = s.session_id
-       WHERE TIMESTAMP(s.session_date, s.session_time) >= NOW()
-       GROUP BY s.session_id
-       ORDER BY s.session_date, s.session_time`
+      s.*, 
+      u.username AS advisor_name,
+      u.userEmail AS advisor_email,
+      COUNT(c.consultation_id) AS booking_count
+   FROM sessions s
+   JOIN users u ON s.advisorId = u.userId
+   LEFT JOIN consultations c ON c.session_id = s.session_id
+   WHERE 
+     s.is_booked = 0
+     AND TIMESTAMP(s.session_date, s.session_time) >= NOW()
+   GROUP BY s.session_id
+   ORDER BY s.session_date, s.session_time`
         );
 
         // Fetch this customer's own bookings
@@ -171,12 +175,12 @@ exports.viewAvailableSessions = async (req, res) => {
 // Customer books a session
 exports.bookSession = async (req, res) => {
     const sessionId = req.params.session_id;
-    const userId = req.session.user.id
+    const userId = req.session.user.id;
 
     try {
-        // Check if session exists
+        // Check if session exists and is not booked
         const [sessionCheck] = await db.query(
-            `SELECT * FROM sessions WHERE session_id = ?`,
+            `SELECT * FROM sessions WHERE session_id = ? AND is_booked = 0`,
             [sessionId]
         );
 
@@ -185,17 +189,17 @@ exports.bookSession = async (req, res) => {
         }
 
         const session = sessionCheck[0];
-        const advisorId = sessionCheck[0].advisorId;
+        const advisorId = session.advisorId;
 
-        // Check for existing booking by the same user at this date & time
+        // Check if user already booked any session at this date and time
         const [conflictingBookings] = await db.query(
             `SELECT COUNT(*) AS count
-       FROM consultations c
-       JOIN sessions s ON c.session_id = s.session_id
-       WHERE c.userId = ?
-         AND s.session_date = ?
-         AND s.session_time = ?
-         AND c.status = 'booked'`,
+             FROM consultations c
+             JOIN sessions s ON c.session_id = s.session_id
+             WHERE c.userId = ?
+               AND s.session_date = ?
+               AND s.session_time = ?
+               AND c.status = 'booked'`,
             [userId, session.session_date, session.session_time]
         );
 
@@ -203,20 +207,17 @@ exports.bookSession = async (req, res) => {
             return res.redirect('/customer/consultations?error=You already have a consultation booked at this time.');
         }
 
-        // Check if this user already booked this session
-        const [existingBooking] = await db.query(
-            `SELECT * FROM consultations
-       WHERE userId = ? AND session_id = ?`,
-            [userId, sessionId]
+        // Insert booking
+        await db.query(
+            `INSERT INTO consultations (userId, advisorId, session_id, status)
+             VALUES (?, ?, ?, 'booked')`,
+            [userId, advisorId, sessionId]
         );
 
-        if (existingBooking.length > 0) {
-            return res.redirect('/customer/consultations?error=You have already booked this session.');
-        }
-
+        // Mark session as booked
         await db.query(
-            'INSERT INTO consultations (userId, advisorId, session_id, status) VALUES (?, ?, ?, "booked")',
-            [userId, advisorId, sessionId]
+            `UPDATE sessions SET is_booked = 1 WHERE session_id = ?`,
+            [sessionId]
         );
 
         res.redirect('/customer/consultations?success=Consultation booked successfully!');
@@ -291,6 +292,7 @@ exports.updateNotes = async (req, res) => {
     }
 };
 
+// Advisor deletes a session
 exports.deleteSession = async (req, res) => {
     const sessionId = req.params.session_id;
 
@@ -307,6 +309,7 @@ exports.deleteSession = async (req, res) => {
     }
 };
 
+// Advisor renders form to edit a session
 exports.renderEditSessionForm = async (req, res) => {
     const sessionId = req.params.session_id;
 
@@ -334,6 +337,7 @@ exports.renderEditSessionForm = async (req, res) => {
     }
 };
 
+// Advisor updates session details
 exports.updateSession = async (req, res) => {
     const sessionId = req.params.session_id;
     const { session_date, start_time } = req.body;

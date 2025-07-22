@@ -2,6 +2,7 @@ const db = require('../db');
 const multer = require('multer');
 const path = require('path');
 const crypto = require('crypto');
+const { validateOTP } = require('./otpController'); // adjust path if needed
 
 // Multer config for KYC upload
 const storage = multer.diskStorage({
@@ -276,17 +277,79 @@ exports.rejectAccount = async (req, res) => {
   }
 };
 
-// POST: Delete an account (pending or active)
+// POST: Delete an account (pending or active) with OTP validation
 exports.deleteAccount = async (req, res) => {
-  const { account_id } = req.params;
+  const account_id = parseInt(req.params.id, 10); // ✅ FIXED
+  const { otp } = req.body;
+
+  if (isNaN(account_id)) {
+    return res.status(400).send('Invalid account ID.');
+  }
+
+  if (!req.session.user || !req.session.user.id) {
+    return res.status(401).send('Session expired. Please log in again.');
+  }
+
+  const userId = req.session.user.id;
 
   try {
+    const isValid = await validateOTP(userId, otp, 'account_cancel');
+
+    if (!isValid) {
+      // 🔁 Restore OTP session access so user can retry
+      if (!req.session.otpAccess) {
+        req.session.otpAccess = {
+          type: 'account',
+          id: account_id,
+          timestamp: Date.now()
+        };
+      }
+
+      return res.redirect(`/otp/confirm-delete/account/${account_id}?error=Invalid or expired OTP.`);
+    }
+
+    // ✅ OTP was valid — clear access
+    req.session.otpAccess = null;
+
+    console.log('DEBUG - userId:', userId);
+    console.log('DEBUG - account_id:', account_id);
+
     await db.query(`DELETE FROM kyc_documents WHERE account_id = ?`, [account_id]);
     await db.query(`DELETE FROM accounts WHERE account_id = ?`, [account_id]);
 
-    res.redirect('/user/dashboard?success=Account deleted.');
+    return res.redirect('/user/dashboard?success=Account deleted.');
   } catch (err) {
     console.error(err);
-    res.status(500).send('Failed to delete account.');
+    return res.status(500).send('Failed to delete account.');
+  }
+};
+
+// POST: Directly delete a pending account without OTP
+exports.deletePendingAccount = async (req, res) => {
+  const account_id = parseInt(req.params.account_id, 10);
+  const userId = req.session.user?.id;
+
+  if (!userId || isNaN(account_id)) {
+    return res.status(400).send('Invalid request.');
+  }
+
+  try {
+    // Confirm account belongs to user and is pending
+    const [[account]] = await db.query(`
+      SELECT * FROM accounts
+      WHERE account_id = ? AND userId = ? AND status = 'pending'
+    `, [account_id, userId]);
+
+    if (!account) {
+      return res.status(404).send('Account not found or not pending.');
+    }
+
+    await db.query(`DELETE FROM kyc_documents WHERE account_id = ?`, [account_id]);
+    await db.query(`DELETE FROM accounts WHERE account_id = ?`, [account_id]);
+
+    res.redirect('/user/dashboard?success=Bank account application canceled.');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to cancel bank account application.');
   }
 };
