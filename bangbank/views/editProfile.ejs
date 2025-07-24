@@ -3,82 +3,463 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edit Profile</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - BangBank</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header styles */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #e0e0e0;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+        }
+
+        /* Main content styles */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .profile-container {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .profile-container:hover::before {
+            left: 100%;
+        }
+
+        .profile-title {
+            font-size: 2.5rem;
+            color: #ffffff;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        /* Message styles */
+        .message {
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff4444;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        /* Form styles */
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #00ffff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .form-group input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: rgba(255, 0, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        /* File input special styling */
+        input[type="file"] {
+            background: rgba(0, 255, 255, 0.1) !important;
+            border: 2px dashed rgba(0, 255, 255, 0.3) !important;
+            padding: 1.5rem !important;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            background: rgba(0, 255, 255, 0.2) !important;
+            border-color: rgba(0, 255, 255, 0.5) !important;
+        }
+
+        /* Submit button */
+        .submit-btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000000;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            grid-column: 1 / -1;
+            justify-self: center;
+            width: fit-content;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.6);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .profile-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .profile-title {
+                font-size: 2rem;
+            }
+
+            .profile-form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-group.full-width {
+                grid-column: 1;
+            }
+
+            .submit-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 1.5rem;
+            }
+
+            .profile-title {
+                font-size: 1.8rem;
+            }
+
+            .form-group input {
+                padding: 0.8rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Focus states for accessibility */
+        .form-group input:focus,
+        .submit-btn:focus,
+        .back-link:focus {
+            outline: 2px solid rgba(0, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Edit Profile</h1>
+    <header>
+        <h1>BangBank</h1>
+        <a href="<%= currentUser.role === 'user' 
+            ? '/user/dashboard' 
+            : currentUser.role === 'advisor' 
+                ? '/advisor/dashboard' 
+                : '/admin/dashboard' %>" class="back-link">
+            ← Back to Dashboard
+        </a>
+    </header>
 
-    <% if (success) { %>
-        <div style="color: green;">
-            <%= success %>
-        </div>
-        <% } %>
+    <main>
+        <div class="profile-container">
+            <h2 class="profile-title">Edit Profile</h2>
+
+            <% if (success) { %>
+                <div class="message success-message">
+                    <%= success %>
+                </div>
+            <% } %>
+            
             <% if (error) { %>
-                <div style="color: red;">
+                <div class="message error-message">
                     <%= error %>
                 </div>
-                <% } %>
+            <% } %>
 
-                    <form action="/profile/initiate-update" method="POST">
+            <form action="/profile/initiate-update" method="POST" class="profile-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" value="<%= user.username %>" required>
+                </div>
 
-                        <label>Username:</label>
-                        <input type="text" name="username" value="<%= user.username %>" required>
+                <div class="form-group">
+                    <label for="userEmail">Email</label>
+                    <input type="email" id="userEmail" name="userEmail" value="<%= user.userEmail %>" required>
+                </div>
 
-                        <label>Email:</label>
-                        <input type="email" name="userEmail" value="<%= user.userEmail %>" required>
+                <div class="form-group">
+                    <label for="userPassword">New Password</label>
+                    <input type="password" id="userPassword" name="userPassword" placeholder="Leave blank to keep current">
+                </div>
 
-                        <label>New Password (leave blank to keep current):</label>
-                        <input type="password" name="userPassword">
-                        <label>Confirm Password:</label>
-                        <input type="password" name="confirmPassword">
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                </div>
 
-                        <label>First Name:</label>
-                        <input type="text" name="first_name" value="<%= user.first_name %>" required>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="<%= user.first_name %>" required>
+                </div>
 
-                        <label>Last Name:</label>
-                        <input type="text" name="last_name" value="<%= user.last_name %>" required>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="<%= user.last_name %>" required>
+                </div>
 
-                        <label>Alias:</label>
-                        <input type="text" name="alias" value="<%= user.alias || '' %>">
+                <div class="form-group">
+                    <label for="alias">Alias</label>
+                    <input type="text" id="alias" name="alias" value="<%= user.alias || '' %>" placeholder="Optional display name">
+                </div>
 
-                        <label>Date of Birth:</label>
-                        <input type="date" name="date_of_birth"
-                            value="<%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '' %>"
-                            required>
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth"
+                        value="<%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '' %>"
+                        required>
+                </div>
 
-                        <label>Phone Number:</label>
-                        <input type="text" name="phone_number" value="<%= user.phone_number %>" required>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="text" id="phone_number" name="phone_number" value="<%= user.phone_number %>" required>
+                </div>
 
-                        <label>Country:</label>
-                        <input type="text" name="country" value="<%= user.country %>" required>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" value="<%= user.country %>" required>
+                </div>
 
-                        <label>Address Line 1:</label>
-                        <input type="text" name="address_line_1" value="<%= user.address_line_1 %>" required>
+                <div class="form-group full-width">
+                    <label for="address_line_1">Address Line 1</label>
+                    <input type="text" id="address_line_1" name="address_line_1" value="<%= user.address_line_1 %>" required>
+                </div>
 
-                        <label>Address Line 2 (optional):</label>
-                        <input type="text" name="address_line_2" value="<%= user.address_line_2 || '' %>">
+                <div class="form-group full-width">
+                    <label for="address_line_2">Address Line 2</label>
+                    <input type="text" id="address_line_2" name="address_line_2" value="<%= user.address_line_2 || '' %>" placeholder="Optional">
+                </div>
 
-                        <label for="postcode">Postal Code:</label>
-                        <input type="text" name="postcode" id="postcode" value="<%= user.postcode %>" required
-                            pattern="\d{6}" title="Postal code must be exactly 6 digits">
+                <div class="form-group">
+                    <label for="postcode">Postal Code</label>
+                    <input type="text" id="postcode" name="postcode" value="<%= user.postcode %>" required
+                        pattern="\d{6}" title="Postal code must be exactly 6 digits">
+                </div>
 
-                        <label>Profile Image:</label>
-                        <input type="file" name="userImage" accept="image/*">
+                <div class="form-group full-width">
+                    <label for="userImage">Profile Image</label>
+                    <input type="file" id="userImage" name="userImage" accept="image/*">
+                </div>
 
-                        <button type="submit">Update Profile</button>
-                    </form>
-
-                    <br>
-                    <a href="<%= currentUser.role === 'user' 
-                        ? '/user/dashboard' 
-                        : currentUser.role === 'advisor' 
-                            ? '/advisor/dashboard' 
-                            : '/admin/dashboard' %>">
-                        Back to Dashboard
-                    </a>
-
+                <button type="submit" class="submit-btn">Update Profile</button>
+            </form>
+        </div>
+    </main>
 </body>
 
 </html>

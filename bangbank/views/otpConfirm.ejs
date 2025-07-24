@@ -3,179 +3,657 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>OTP Confirmation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - BangBank</title>
     <style>
-        body {
-            background: #0a0a0a;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        /* Reset and base styles */
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Brand header */
+        .brand-header {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Back link */
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            text-decoration: none;
+            color: #e0e0e0;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+            z-index: 1000;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+        }
+
+        /* Main OTP container */
         .otp-box {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 2rem 3rem;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 3rem;
+            border-radius: 20px;
             border: 1px solid rgba(0, 255, 255, 0.3);
             box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .otp-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .otp-box:hover::before {
+            left: 100%;
+        }
+
+        /* OTP header */
+        .otp-header {
+            margin-bottom: 2rem;
+        }
+
+        .otp-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
         }
 
         .otp-box h2 {
-            color: #00ffff;
+            color: #ffffff;
+            font-size: 2rem;
+            font-weight: 300;
             margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
 
-        .otp-box p {
+        .otp-description {
+            color: rgba(224, 224, 224, 0.9);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .action-type {
+            color: #00ffff;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Message styles */
+        .message {
+            padding: 1rem 1.5rem;
             margin-bottom: 1.5rem;
+            border-radius: 10px;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
         }
 
         .success-message {
             background: rgba(0, 255, 0, 0.1);
             border: 1px solid rgba(0, 255, 0, 0.3);
-            color: #00ff00;
-            padding: 0.75rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
+            color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
         }
 
         .error-message {
             background: rgba(255, 0, 0, 0.1);
             border: 1px solid rgba(255, 0, 0, 0.3);
-            color: #ff4d4d;
-            padding: 0.75rem;
+            color: #ff4444;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+        }
+
+        /* OTP Input styling */
+        .otp-form {
+            margin-bottom: 2rem;
+        }
+
+        .otp-input-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .otp-input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
             border-radius: 10px;
+            padding: 1.2rem;
+            width: 100%;
+            color: #e0e0e0;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: rgba(255, 0, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .otp-input::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+            letter-spacing: normal;
+            font-weight: normal;
+        }
+
+        /* Input validation states */
+        .otp-input.valid {
+            border-color: rgba(0, 255, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .otp-input.invalid {
+            border-color: rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Submit button */
+        .submit-btn {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000000;
+            border: none;
+            padding: 1.2rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
             margin-bottom: 1rem;
         }
 
-        .otp-box input {
-            padding: 0.75rem;
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
-            margin-bottom: 1.5rem;
-            border-radius: 10px;
-            border: none;
-            outline: none;
-            font-size: 1rem;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
         }
 
-        .otp-box button {
-            background: linear-gradient(135deg, #00ffff, #ff00ff);
-            color: #000;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s ease;
-            width: 100%;
+        .submit-btn:hover::before {
+            left: 100%;
         }
 
-        .otp-box button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.6);
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.6);
         }
 
-        #resendForm button {
-            background: transparent;
-            border: none;
-            color: #00ffff;
-            text-decoration: underline;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 10px;
+        .submit-btn:active {
+            transform: translateY(-1px);
         }
 
-        #resendForm button:disabled {
-            color: rgba(0, 255, 255, 0.4);
+        .submit-btn:disabled {
+            background: rgba(128, 128, 128, 0.3);
+            color: rgba(224, 224, 224, 0.5);
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Resend button */
+        .resend-container {
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .resend-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .resend-btn:hover:not(:disabled) {
+            background: rgba(0, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .resend-btn:disabled {
+            color: rgba(0, 255, 255, 0.4);
+            border-color: rgba(0, 255, 255, 0.2);
+            cursor: not-allowed;
+        }
+
+        .cooldown-text {
+            color: rgba(224, 224, 224, 0.6);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Security notice */
+        .security-notice {
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(224, 224, 224, 0.8);
+            line-height: 1.5;
+        }
+
+        .security-icon {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .brand-header,
+            .back-link {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .brand-header {
+                text-align: center;
+            }
+
+            .back-link {
+                display: block;
+                text-align: center;
+                max-width: 200px;
+                margin: 0 auto 2rem;
+            }
+
+            .otp-box {
+                padding: 2rem;
+                margin: 0;
+            }
+
+            .otp-box h2 {
+                font-size: 1.6rem;
+            }
+
+            .brand-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .otp-box {
+                padding: 1.5rem;
+            }
+
+            .otp-box h2 {
+                font-size: 1.4rem;
+            }
+
+            .otp-input {
+                padding: 1rem;
+                font-size: 1.1rem;
+            }
+
+            .submit-btn {
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Focus states for accessibility */
+        .otp-input:focus,
+        .submit-btn:focus,
+        .resend-btn:focus,
+        .back-link:focus {
+            outline: 2px solid rgba(0, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Auto-fill detection */
+        .otp-input:-webkit-autofill {
+            background: rgba(0, 0, 0, 0.7) !important;
+            -webkit-text-fill-color: #e0e0e0 !important;
+            border-color: rgba(0, 255, 255, 0.5) !important;
         }
     </style>
 </head>
 
 <body>
+    <div class="brand-header">
+        <h1 class="brand-title">BangBank</h1>
+    </div>
+
+    <a href="javascript:history.back()" class="back-link">← Go Back</a>
+
     <div class="otp-box">
-        <h2>OTP Verification</h2>
-        <p>
-            We’ve sent a one-time password to your email. Please enter it below to confirm your
-            <strong>
-                <%= type==='profile' ? 'profile update' : type==='card' ? 'credit card cancellation' : type==='account'
-                    ? 'account deletion' : type==='reset' ? 'password reset' : 'action' %>
-            </strong>.
-        </p>
+        <div class="otp-header">
+            <span class="otp-icon">🔐</span>
+            <h2>OTP Verification</h2>
+            <p class="otp-description">
+                We've sent a one-time password to your email. Please enter it below to confirm your
+                <span class="action-type">
+                    <%= type==='profile' ? 'profile update' : type==='card' ? 'credit card cancellation' : type==='account'
+                        ? 'account deletion' : type==='reset' ? 'password reset' : 'action' %>
+                </span>.
+            </p>
+        </div>
 
         <% if (resent) { %>
-            <div class="success-message">A new OTP has been sent to your email.</div>
-            <% } %>
+            <div class="message success-message">
+                ✅ A new OTP has been sent to your email address.
+            </div>
+        <% } %>
 
-                <% if (error) { %>
-                    <div class="error-message">
-                        <%= error %>
-                    </div>
-                    <% } %>
+        <% if (error) { %>
+            <div class="message error-message">
+                ❌ <%= error %>
+            </div>
+        <% } %>
 
-                        <!-- OTP submission -->
-                        <form action="/otp/verify/<%= type %>/<%= id %>" method="POST">
-                            <input type="text" name="otp" maxlength="6" placeholder="Enter 6-digit OTP" required>
-                            <button type="submit">Confirm</button>
-                        </form>
+        <!-- OTP submission form -->
+        <form class="otp-form" action="/otp/verify/<%= type %>/<%= id %>" method="POST" id="otpForm">
+            <div class="otp-input-container">
+                <input type="text" 
+                       class="otp-input" 
+                       name="otp" 
+                       id="otpInput"
+                       maxlength="6" 
+                       placeholder="Enter 6-digit OTP" 
+                       required
+                       autocomplete="one-time-code"
+                       inputmode="numeric"
+                       pattern="[0-9]{6}">
+            </div>
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Verify OTP
+            </button>
+        </form>
 
-                        <!-- Resend OTP -->
-                        <form id="resendForm" action="/otp/<%= 
-                            type === 'reset' 
-                              ? 'request-password-reset' 
-                              : type === 'profile' 
-                                ? 'request-update' 
-                                : 'request-delete' 
-                          %>/<%= type %>/<%= id %>" method="GET">
-                            <button id="resendBtn" type="submit" disabled>
-                                Resend OTP (<span id="cooldown">30</span>s)
-                            </button>
-                        </form>
+        <!-- Resend OTP section -->
+        <div class="resend-container">
+            <form id="resendForm" action="/otp/<%= 
+                type === 'reset' 
+                  ? 'request-password-reset' 
+                  : type === 'profile' 
+                    ? 'request-update' 
+                    : 'request-delete' 
+              %>/<%= type %>/<%= id %>" method="GET">
+                <button id="resendBtn" type="submit" class="resend-btn" disabled>
+                    Resend OTP (<span id="cooldown">30</span>s)
+                </button>
+            </form>
+            <div class="cooldown-text">
+                Didn't receive the code? You can request a new one after the cooldown.
+            </div>
+        </div>
 
-                        <script>
-                            const btn = document.getElementById('resendBtn');
-                            const span = document.getElementById('cooldown');
-                            const cooldownKey = `otpCooldown_<%= type %>_<%= id %>`;
-                            const storedUntil = localStorage.getItem(cooldownKey);
-                            const now = Date.now();
+        <div class="security-notice">
+            <span class="security-icon">🛡️</span>
+            For your security, this OTP will expire in 10 minutes. Please check your spam folder if you don't see the email.
+        </div>
+    </div>
 
-                            if (storedUntil && now < parseInt(storedUntil)) {
-                                const remaining = Math.floor((parseInt(storedUntil) - now) / 1000);
-                                startCooldown(remaining);
-                            } else {
-                                btn.disabled = false;
-                                btn.textContent = 'Resend OTP';
-                            }
+    <script>
+        // Enhanced OTP handling with better UX
+        const otpInput = document.getElementById('otpInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const otpForm = document.getElementById('otpForm');
+        const resendBtn = document.getElementById('resendBtn');
+        const cooldownSpan = document.getElementById('cooldown');
+        
+        // Cooldown management
+        const cooldownKey = `otpCooldown_<%= type %>_<%= id %>`;
+        const storedUntil = localStorage.getItem(cooldownKey);
+        const now = Date.now();
 
-                            function startCooldown(seconds) {
-                                let cooldown = seconds;
-                                btn.disabled = true;
+        if (storedUntil && now < parseInt(storedUntil)) {
+            const remaining = Math.floor((parseInt(storedUntil) - now) / 1000);
+            startCooldown(remaining);
+        } else {
+            resendBtn.disabled = false;
+            resendBtn.textContent = 'Resend OTP';
+        }
 
-                                const timer = setInterval(() => {
-                                    cooldown--;
-                                    span.textContent = cooldown;
-                                    if (cooldown <= 0) {
-                                        clearInterval(timer);
-                                        btn.textContent = 'Resend OTP';
-                                        btn.disabled = false;
-                                        localStorage.removeItem(cooldownKey);
-                                    }
-                                }, 1000);
+        function startCooldown(seconds) {
+            let cooldown = seconds;
+            resendBtn.disabled = true;
 
-                                span.textContent = cooldown;
-                            }
+            const timer = setInterval(() => {
+                cooldown--;
+                cooldownSpan.textContent = cooldown;
+                if (cooldown <= 0) {
+                    clearInterval(timer);
+                    resendBtn.textContent = 'Resend OTP';
+                    resendBtn.disabled = false;
+                    localStorage.removeItem(cooldownKey);
+                }
+            }, 1000);
 
-                            document.getElementById('resendForm').addEventListener('submit', function () {
-                                const until = Date.now() + 30000;
-                                localStorage.setItem(cooldownKey, until.toString());
-                            });
-                        </script>
+            cooldownSpan.textContent = cooldown;
+        }
+
+        // OTP input enhancements
+        otpInput.addEventListener('input', function(e) {
+            // Only allow numbers
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Add visual feedback
+            if (this.value.length === 6) {
+                this.classList.add('valid');
+                this.classList.remove('invalid');
+                submitBtn.disabled = false;
+            } else {
+                this.classList.remove('valid', 'invalid');
+                submitBtn.disabled = this.value.length === 0;
+            }
+        });
+
+        // Auto-submit when 6 digits are entered
+        otpInput.addEventListener('input', function() {
+            if (this.value.length === 6) {
+                setTimeout(() => {
+                    if (this.value.length === 6) {
+                        otpForm.submit();
+                    }
+                }, 500);
+            }
+        });
+
+        // Form submission handling
+        otpForm.addEventListener('submit', function(e) {
+            const otpValue = otpInput.value.trim();
+            
+            if (otpValue.length !== 6 || !/^\d{6}$/.test(otpValue)) {
+                e.preventDefault();
+                otpInput.classList.add('invalid');
+                otpInput.focus();
+                return;
+            }
+            
+            // Add loading state
+            submitBtn.textContent = 'Verifying...';
+            submitBtn.disabled = true;
+            document.querySelector('.otp-box').classList.add('loading');
+        });
+
+        // Resend form handling
+        document.getElementById('resendForm').addEventListener('submit', function() {
+            const until = Date.now() + 30000;
+            localStorage.setItem(cooldownKey, until.toString());
+            startCooldown(30);
+        });
+
+        // Auto-focus on input
+        window.addEventListener('load', function() {
+            otpInput.focus();
+        });
+
+        // Handle paste events
+        otpInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = (e.clipboardData || window.clipboardData).getData('text');
+            const cleanPaste = paste.replace(/[^0-9]/g, '').substring(0, 6);
+            this.value = cleanPaste;
+            this.dispatchEvent(new Event('input'));
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && otpInput.value.length === 6) {
+                otpForm.submit();
+            }
+        });
+    </script>
 </body>
 
 </html>

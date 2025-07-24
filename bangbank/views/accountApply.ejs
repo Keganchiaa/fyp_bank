@@ -2,68 +2,548 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Apply for <%= product.product_name %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply for <%= product.product_name %> - BangBank</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .back-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      flex-shrink: 0;
+    }
+
+    .back-link:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    /* Main container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Error message */
+    .error-message {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      color: #ff6666;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+    }
+
+    /* Section styles */
+    .section {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.1);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      color: #00ffff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding-bottom: 0.5rem;
+    }
+
+    /* Product info styles */
+    .product-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-item {
+      background: rgba(0, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    .info-label {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    .info-value {
+      color: #e0e0e0;
+      font-size: 1rem;
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      color: #00ffff;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #e0e0e0;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    input[type="number"]:focus,
+    input[type="text"]:focus,
+    input[type="file"]:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(0, 255, 255, 0.6);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    /* File input styling */
+    input[type="file"] {
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+
+    input[type="file"]::-webkit-file-upload-button {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+
+    /* Checkbox styling */
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: rgba(0, 255, 255, 0.05);
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: #00ffff;
+    }
+
+    .checkbox-label {
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      cursor: pointer;
+      margin: 0;
+    }
+
+    /* Button styles */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      color: #000000;
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+      width: 100%;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Help text */
+    .help-text {
+      font-size: 0.85rem;
+      color: rgba(224, 224, 224, 0.7);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* Product details grid */
+    .product-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .detail-card {
+      background: rgba(0, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    .detail-label {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    }
+
+    .detail-value {
+      color: #e0e0e0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .page-title {
+        text-align: center;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .product-info {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .product-details {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    } 
+
+    .container > * {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Focus states for accessibility */
+    .btn:focus,
+    .back-link:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
+
 <body>
-  
-  <h1>Apply for <%= product.product_name %></h1>
-
-  <% if (error) { %>
-    <div style="color: red; margin-bottom: 15px;"><%= error %></div>
-  <% } %>
-
-  <form action="/customer/apply/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
-    
-    <fieldset disabled>
-      <legend>Product Information</legend>
-      <p><strong>Type:</strong> <%= product.product_type.replace('_', ' ') %></p>
-      <p><strong>Description:</strong> <%= product.description || '-' %></p>
-      <p><strong>Interest Rate:</strong> <%= product.interest_rate %>%</p>
-      <% if (product.annual_fee) { %>
-        <p><strong>Annual Fee:</strong> $<%= parseFloat(product.annual_fee).toFixed(2) %></p>
-      <% } %>
-      <% if (product.min_balance) { %>
-        <p><strong>Minimum Balance:</strong> $<%= parseFloat(product.min_balance).toFixed(2) %></p>
-      <% } %>
-      <% if (product.tenure_months) { %>
-        <p><strong>Tenure:</strong> <%= product.tenure_months %> months</p>
-      <% } %>
-    </fieldset>
-
-    <hr>
-
-    <fieldset>
-      <legend>KYC Verification</legend>
-
-      <label for="id_type">ID Type:</label>
-      <select name="id_type" id="id_type" required>
-        <option value="nric">NRIC</option>
-        <option value="passport">Passport</option>
-      </select>
-
-      <label for="id_number">ID Number:</label>
-      <input type="text" name="id_number" id="id_number" required>
-
-      <label for="kyc_document">Upload Document (PDF/JPG/PNG):</label>
-      <input type="file" name="kyc_document" id="kyc_document" accept=".pdf,.jpg,.jpeg,.png" required>
-    </fieldset>
-
-    <hr>
-
-    <label for="initial_deposit">Initial Deposit Amount ($):</label>
-    <input type="number" name="initial_deposit" id="initial_deposit" step="0.01" required>
-
-    <div>
-      <input type="checkbox" id="declaration" name="declaration" required>
-      <label for="declaration">I declare that the above information is true and I agree to the bank’s terms.</label>
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="page-title">Apply for <%= product.product_name %></div>
+      <a href="/user/dashboard" class="back-link">← Back to Dashboard</a>
     </div>
+  </header>
 
-    <button type="submit">Submit Application</button>
-  </form>
+  <div class="container">
+    <% if (error) { %>
+      <div class="error-message">
+        <%= error %>
+      </div>
+    <% } %>
 
-  <nav style="margin-top: 20px;">
-    <a href="/user/dashboard">Cancel & Return to Dashboard</a>
-  </nav>
+    <form action="/customer/apply/<%= product.product_id %>" method="POST" enctype="multipart/form-data">
+      
+      <!-- Product Information Section -->
+      <div class="section">
+        <h2 class="section-header">Product Information</h2>
+        <div class="product-details">
+          <div class="detail-card">
+            <div class="detail-label">Account Type</div>
+            <div class="detail-value"><%= product.product_type.replace('_', ' ') %></div>
+          </div>
+          <div class="detail-card">
+            <div class="detail-label">Interest Rate</div>
+            <div class="detail-value"><%= product.interest_rate %>%</div>
+          </div>
+          <% if (product.annual_fee) { %>
+            <div class="detail-card">
+              <div class="detail-label">Annual Fee</div>
+              <div class="detail-value">$<%= parseFloat(product.annual_fee).toFixed(2) %></div>
+            </div>
+          <% } %>
+          <% if (product.min_balance) { %>
+            <div class="detail-card">
+              <div class="detail-label">Minimum Balance</div>
+              <div class="detail-value">$<%= parseFloat(product.min_balance).toFixed(2) %></div>
+            </div>
+          <% } %>
+          <% if (product.tenure_months) { %>
+            <div class="detail-card">
+              <div class="detail-label">Tenure</div>
+              <div class="detail-value"><%= product.tenure_months %> months</div>
+            </div>
+          <% } %>
+        </div>
+        <% if (product.description) { %>
+          <div class="info-item" style="margin-top: 1rem;">
+            <div class="info-label">Description</div>
+            <div class="info-value"><%= product.description %></div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- KYC Verification Section -->
+      <div class="section">
+        <h2 class="section-header">Identity Verification (KYC)</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="id_type">ID Type</label>
+            <select name="id_type" id="id_type" required>
+              <option value="nric">NRIC</option>
+              <option value="passport">Passport</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="id_number">ID Number</label>
+            <input type="text" name="id_number" id="id_number" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="kyc_document">Upload KYC Document</label>
+          <input type="file" name="kyc_document" id="kyc_document" accept=".pdf,.jpg,.jpeg,.png" required>
+          <div class="help-text">Accepted formats: PDF, JPG, PNG (Max size: 5MB)</div>
+        </div>
+      </div>
+
+      <!-- Account Setup Section -->
+      <div class="section">
+        <h2 class="section-header">Account Setup</h2>
+        
+        <div class="form-group">
+          <label for="initial_deposit">Initial Deposit Amount ($)</label>
+          <input type="number" name="initial_deposit" id="initial_deposit" step="0.01" required>
+          <div class="help-text">Enter your initial deposit amount in SGD</div>
+        </div>
+      </div>
+
+      <!-- Declaration Section -->
+      <div class="section">
+        <h2 class="section-header">Declaration</h2>
+        
+        <div class="checkbox-container">
+          <input type="checkbox" name="declaration" id="declaration" required>
+          <label for="declaration" class="checkbox-label">
+            I declare that the above information is true and correct. I agree to the bank's terms and conditions, and understand that any false information may result in the rejection of my application.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Add form validation and enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      const submitBtn = document.querySelector('.btn-primary');
+      
+      // Add loading state to form submission
+      form.addEventListener('submit', function() {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Processing Application...';
+        submitBtn.style.opacity = '0.7';
+      });
+
+      // File size validation
+      const fileInput = document.getElementById('kyc_document');
+      fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file && file.size > 5 * 1024 * 1024) { // 5MB limit
+          alert('File size must be less than 5MB');
+          this.value = '';
+        }
+      });
+
+      // Deposit amount validation
+      const depositInput = document.getElementById('initial_deposit');
+      depositInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (value < 0) {
+          this.value = 0;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
