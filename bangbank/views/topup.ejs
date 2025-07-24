@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Top Up - BangBank</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h2 class="section-header">Top Up Savings Account</h2>
+
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <% if (accounts.length===0) { %>
+                    <div class="empty-state">
+                        <h2>No Eligible Accounts</h2>
+                        <p>You don't have any active savings accounts to top up.</p>
+                    </div>
+                    <% } else { %>
+                        <form method="POST" onsubmit="this.action = '/account/topup/' + this.account_id.value;">
+                            <label for="account_id">Choose Account:</label>
+                            <select name="account_id" required>
+                                <% accounts.forEach(a=> { %>
+                                    <option value="<%= a.account_id %>">
+                                        <%= a.product_name %> ($<%= parseFloat(a.balance).toFixed(2) %>)
+                                    </option>
+                                    <% }) %>
+                            </select>
+
+                            <label for="amount">Amount:</label>
+                            <input type="number" name="amount" step="0.01" required>
+
+                            <button type="submit" class="btn btn-primary">Top Up</button>
+                        </form>
+                        <% } %>
+    </div>
+</body>
+
+</html>

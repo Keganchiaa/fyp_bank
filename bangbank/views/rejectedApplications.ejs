@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Rejected Applications - BangBank</title>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="welcome-message">Hi, <%= user.username %>! View your rejected applications below.</div>
+      <nav class="nav-links">
+        <a href="/user/dashboard">Back to Dashboard</a>
+        <a href="/profile">Profile Settings</a>
+        <a href="/logout">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2 class="section-header">Rejected Bank Accounts</h2>
+    <% if (rejectedAccounts.length === 0) { %>
+      <div class="empty-state">
+        <h2>No Rejected Bank Accounts</h2>
+        <p>You currently have no rejected account applications.</p>
+      </div>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Account Name</th>
+              <th>Product Type</th>
+              <th>Balance</th>
+              <th>Status</th>
+              <th>Opened At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% rejectedAccounts.forEach(account => { %>
+              <tr>
+                <td><%= account.account_type %></td>
+                <td><%= account.product_type.replace('_',' ') %></td>
+                <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+                <td class="status-pending"><%= account.status %></td>
+                <td><%= new Date(account.opened_at).toDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <h2 class="section-header">Rejected Credit Cards</h2>
+    <% if (rejectedCards.length === 0) { %>
+      <div class="empty-state">
+        <h2>No Rejected Credit Cards</h2>
+        <p>You currently have no rejected credit card applications.</p>
+      </div>
+    <% } else { %>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Card Name</th>
+              <th>Card Number</th>
+              <th>Credit Limit</th>
+              <th>Outstanding Balance</th>
+              <th>Status</th>
+              <th>Issued At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% rejectedCards.forEach(card => { %>
+              <tr>
+                <td><%= card.product_name %></td>
+                <td><%= card.card_number %></td>
+                <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+                <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
+                <td class="status-pending"><%= card.status %></td>
+                <td><%= new Date(card.created_at).toDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <div style="text-align: center; margin: 2rem 0;">
+      <a href="/customer/apply" class="btn btn-primary">View Available Products</a>
+    </div>
+  </div>
+</body>
+</html>

@@ -267,10 +267,11 @@ exports.rejectAccount = async (req, res) => {
       return res.status(404).send('Account not found.');
     }
 
-    await db.query(`DELETE FROM kyc_documents WHERE account_id = ?`, [account_id]);
-    await db.query(`DELETE FROM accounts WHERE account_id = ?`, [account_id]);
+    // ✅ Update status to 'rejected' instead of deleting
+    await db.query(`UPDATE accounts SET status = 'rejected' WHERE account_id = ?`, [account_id]);
+    await db.query(`UPDATE kyc_documents SET status = 'rejected' WHERE account_id = ?`, [account_id]);
 
-    res.redirect('/admin/accounts');
+    res.redirect('/admin/accounts?success=Account application rejected.');
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to reject and delete account.');
@@ -351,5 +352,199 @@ exports.deletePendingAccount = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to cancel bank account application.');
+  }
+};
+
+// GET: Render top-up page
+exports.renderTopUpPage = async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    const [accounts] = await db.query(`
+      SELECT 
+        a.account_id, 
+        a.balance, 
+        p.product_name
+      FROM accounts a
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.userId = ? 
+        AND a.status = 'active' 
+        AND p.product_type = 'savings'
+    `, [userId]);
+
+    res.render('topup', {
+      user: req.session.user,
+      accounts,
+      error: req.query.error || null
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to load top-up page.');
+  }
+};
+
+// POST: Top up account balance
+exports.topUpAccount = async (req, res) => {
+  const { account_id } = req.params;
+  const { amount } = req.body;
+  const userId = req.session.user.id;
+
+  try {
+    const depositAmount = parseFloat(amount);
+    if (isNaN(depositAmount) || depositAmount <= 0) {
+      return res.redirect('/account/topup?error=Invalid deposit amount.');
+    }
+
+    const [[account]] = await db.query(`SELECT * FROM accounts WHERE account_id = ? AND userId = ?`, [account_id, userId]);
+    if (!account) {
+      return res.redirect('/account/topup?error=Account not found.');
+    }
+
+    const newBalance = parseFloat(account.balance) + depositAmount;
+
+    // Update account balance and log transaction
+    await db.query(`UPDATE accounts SET balance = ? WHERE account_id = ?`, [newBalance, account_id]);
+    await db.query(
+      `INSERT INTO transactions (account_id, transaction_type, amount, description, balance_after)
+       VALUES (?, 'deposit', ?, 'Top-up via dashboard', ?)`,
+      [account_id, depositAmount, newBalance]
+    );
+
+    res.redirect('/user/dashboard?success=Top-up successful.');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to top up account.');
+  }
+};
+
+// GET: Render transfer page
+exports.renderTransferPage = async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    // Fetch user's own active savings accounts
+    const [userAccounts] = await db.query(`
+      SELECT 
+        a.account_id, 
+        a.balance, 
+        p.product_name
+      FROM accounts a
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.userId = ? 
+        AND a.status = 'active'
+        AND p.product_type = 'savings'
+    `, [userId]);
+
+    // Fetch all users' active savings accounts
+    const [allUsers] = await db.query(`
+      SELECT 
+        u.userId, 
+        u.username, 
+        a.account_id, 
+        a.balance, 
+        p.product_name
+      FROM users u
+      JOIN accounts a ON u.userId = a.userId
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.status = 'active'
+        AND p.product_type = 'savings'
+    `);
+
+    // Group accounts under each user
+    const groupedUsers = {};
+    allUsers.forEach(row => {
+      if (!groupedUsers[row.userId]) {
+        groupedUsers[row.userId] = {
+          username: row.username,
+          accounts: []
+        };
+      }
+      groupedUsers[row.userId].accounts.push({
+        account_id: row.account_id,
+        product_name: row.product_name,
+        balance: row.balance
+      });
+    });
+
+    res.render('transfer', {
+      user: req.session.user,
+      userAccounts,
+      allUsers: Object.values(groupedUsers),
+      error: req.query.error || null
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to load transfer page.');
+  }
+};
+
+// POST: Transfer funds between accounts
+exports.transferBetweenAccounts = async (req, res) => {
+  const { from_account_id } = req.params;
+  const { to_account_id, amount } = req.body;
+  const userId = req.session.user.id;
+
+  try {
+    const transferAmount = parseFloat(amount);
+    if (isNaN(transferAmount) || transferAmount <= 0) {
+      return res.redirect('/account/transfer?error=Invalid transfer amount.');
+    }
+
+    // ✅ Get fromAccount (must belong to logged-in user)
+    const [[fromAccount]] = await db.query(`
+      SELECT a.*, u.username AS from_username, p.product_name AS from_product_name
+      FROM accounts a
+      JOIN users u ON a.userId = u.userId
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.account_id = ? AND a.userId = ?
+    `, [from_account_id, userId]);
+
+    if (!fromAccount) return res.status(404).send('Your source account was not found.');
+
+    // ✅ Get toAccount (can belong to anyone)
+    const [[toAccount]] = await db.query(`
+      SELECT a.*, u.username AS to_username, p.product_name AS to_product_name
+      FROM accounts a
+      JOIN users u ON a.userId = u.userId
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.account_id = ?
+    `, [to_account_id]);
+
+    if (!toAccount) {
+      return res.redirect('/account/transfer?error=Recipient account not found.');
+    }
+
+    if (fromAccount.account_id === toAccount.account_id) {
+      return res.redirect('/account/transfer?error=Cannot transfer to the same account.');
+    }
+
+    if (fromAccount.balance < transferAmount) {
+      return res.redirect('/account/transfer?error=Insufficient funds.');
+    }
+
+    const newFromBalance = fromAccount.balance - transferAmount;
+    const newToBalance = toAccount.balance + transferAmount;
+
+    // ✅ Update balances
+    await db.query(`UPDATE accounts SET balance = ? WHERE account_id = ?`, [newFromBalance, fromAccount.account_id]);
+    await db.query(`UPDATE accounts SET balance = ? WHERE account_id = ?`, [newToBalance, toAccount.account_id]);
+
+    // ✅ Log transactions
+    await db.query(
+      `INSERT INTO transactions (account_id, transaction_type, amount, description, balance_after)
+       VALUES (?, 'transfer', ?, ?, ?)`,
+      [fromAccount.account_id, transferAmount, `Transfer to ${toAccount.to_username}'s ${toAccount.to_product_name}`, newFromBalance]
+    );
+
+    await db.query(
+      `INSERT INTO transactions (account_id, transaction_type, amount, description, balance_after)
+       VALUES (?, 'deposit', ?, ?, ?)`,
+      [toAccount.account_id, transferAmount, `Transfer from ${fromAccount.from_username}'s ${fromAccount.from_product_name}`, newToBalance]
+    );
+
+    res.redirect('/user/dashboard?success=Transfer successful.');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to transfer funds.');
   }
 };

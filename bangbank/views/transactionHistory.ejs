@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Transaction History - BangBank</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h2 class="section-header">Transaction History</h2>
+
+        <% if (transactions.length===0) { %>
+            <div class="empty-state">
+                <h2>No Transactions Found</h2>
+                <p>You have not performed any transactions yet.</p>
+            </div>
+            <% } else { %>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Description</th>
+                                <th>Account</th>
+                                <th>Balance After</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% transactions.forEach(tx=> { %>
+                                <tr>
+                                    <td>
+                                        <%= new Date(tx.transaction_date).toLocaleString() %>
+                                    </td>
+                                    <td>
+                                        <%= tx.transaction_type %>
+                                    </td>
+                                    <td>$<%= parseFloat(tx.amount).toFixed(2) %>
+                                    </td>
+                                    <td>
+                                        <% if (tx.transaction_type==='transfer' ) { %>
+                                            <%= tx.description %> <!-- already has: Transfer to XYZ or from XYZ -->
+                                                <% } else { %>
+                                                    <%= tx.description || '-' %>
+                                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <%= tx.account_name %> (ID: <%= tx.account_id %>)
+                                    </td>
+                                    <td>$<%= parseFloat(tx.balance_after).toFixed(2) %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
+
+                    <div style="text-align:center; margin-top: 2rem;">
+                        <a href="/user/dashboard" class="btn btn-primary">← Back to Dashboard</a>
+                    </div>
+    </div>
+</body>
+
+</html>

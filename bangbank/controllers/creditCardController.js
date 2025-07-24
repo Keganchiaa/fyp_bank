@@ -314,11 +314,11 @@ exports.rejectCard = async (req, res) => {
   const { card_id } = req.params;
 
   try {
-    await db.query(`DELETE FROM kyc_documents WHERE card_id = ?`, [card_id]);
-    await db.query(`DELETE FROM credit_cards WHERE card_id = ?`, [card_id]);
+    //update card and KYC status to rejected
+    await db.query(`UPDATE credit_cards SET status = 'rejected' WHERE card_id = ?`, [card_id]);
+    await db.query(`UPDATE kyc_documents SET status = 'rejected' WHERE card_id = ?`, [card_id]);
 
-    res.redirect('/admin/creditcards?success=Credit card application rejected and deleted.');
-
+    res.redirect('/admin/creditcards?success=Credit card application rejected.');
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to reject credit card application');

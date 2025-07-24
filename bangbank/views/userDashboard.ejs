@@ -390,7 +390,10 @@
       <div class="welcome-message">Hi, <%= user.username %>! Welcome to RP Digital Bank.</div>
       <nav class="nav-links">
         <a href="/customer/transactions">Transaction History</a>
+        <a href="/account/topup">Top Up</a>
+        <a href="/account/transfer">Transfer</a>
         <a href="/customer/consultations">Book Consultation</a>
+        <a href="/user/rejected-applications">Rejected Applications</a>
         <a href="/profile">Profile Settings</a>
         <a href="/logout">Logout</a>
       </nav>
@@ -510,6 +513,7 @@
                     <form action="/otp/request-delete/account/<%= account.account_id %>" method="POST" style="display:inline;">
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to close this account? You will be asked to enter a one-time password (OTP).');">Close</button>
                   </form>
+
                               </td>
                             </tr>
                             <% }) %>

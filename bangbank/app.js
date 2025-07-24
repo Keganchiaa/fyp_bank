@@ -9,6 +9,7 @@ const accountController = require('./controllers/accountController');
 const creditCardController = require('./controllers/creditCardController');
 const consultationController = require('./controllers/consultationController');
 const otpController = require('./controllers/otpController');
+const transactionController = require('./controllers/transactionController');
 const path = require('path');
 
 const app = express();
@@ -167,6 +168,11 @@ app.post('/customer/apply/:product_id', isAuthenticated, isUserOnly, accountCont
 app.post('/otp/verify-delete/account/:account_id', isAuthenticated, isUserOnly, accountController.deleteAccount);
 // Direct delete for pending bank account (no OTP)
 app.post('/customer/account/delete/:account_id', isAuthenticated, isUserOnly, accountController.deletePendingAccount);
+// top up and transfer routes
+app.get('/account/topup', isAuthenticated, isUserOnly, accountController.renderTopUpPage);
+app.get('/account/transfer', isAuthenticated, isUserOnly, accountController.renderTransferPage);
+app.post('/account/topup/:account_id', isAuthenticated, isUserOnly, accountController.topUpAccount);
+app.post('/account/transfer/:from_account_id', isAuthenticated, isUserOnly, accountController.transferBetweenAccounts);
 
 // CUSTOMER CREDIT CARD ROUTES
 app.get('/customer/creditcard/apply/:product_id', isAuthenticated, isUserOnly, creditCardController.renderApplyForm);
@@ -179,6 +185,12 @@ app.post('/customer/creditcard/delete/:card_id', isAuthenticated, isUserOnly, cr
 app.get('/customer/consultations', isAuthenticated, isUserOnly, consultationController.viewAvailableSessions);
 app.post('/customer/consultations/book/:session_id', isAuthenticated, isUserOnly, consultationController.bookSession);
 app.post('/customer/consultations/cancel/:consultation_id', isAuthenticated, isUserOnly, consultationController.cancelSession);
+
+// view all rejected applications
+app.get('/user/rejected-applications', isAuthenticated, isUserOnly, userController.viewRejectedApplications);
+
+// View transaction history
+app.get('/customer/transactions', isAuthenticated, isUserOnly, transactionController.viewUserTransactions);
 
 // Forgot password process
 app.get('/forgot-password', userController.renderForgotPasswordForm);

@@ -220,6 +220,51 @@ exports.renderUserDashboard = async (req, res) => {
     }
 };
 
+// view rejected applications
+exports.viewRejectedApplications = async (req, res) => {
+  const userId = req.session.user.id;
+
+  try {
+    // Fetch rejected bank accounts
+    const [rejectedAccounts] = await db.query(`
+      SELECT 
+        a.account_id,
+        a.balance,
+        a.status,
+        a.opened_at,
+        p.product_name AS account_type,
+        p.product_type
+      FROM accounts a
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.userId = ? AND a.status = 'rejected'
+    `, [userId]);
+
+    // Fetch rejected credit cards
+    const [rejectedCards] = await db.query(`
+      SELECT 
+        c.card_id,
+        c.card_number,
+        c.credit_limit,
+        c.outstanding_balance,
+        c.status,
+        c.created_at,
+        p.product_name
+      FROM credit_cards c
+      JOIN products p ON c.product_id = p.product_id
+      WHERE c.userId = ? AND c.status = 'rejected'
+    `, [userId]);
+
+    res.render('rejectedApplications', {
+      user: req.session.user,
+      rejectedAccounts,
+      rejectedCards
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to load rejected applications');
+  }
+};
+
 // view user details
 exports.viewUserDetails = async (req, res) => {
     const userId = parseInt(req.params.id);
