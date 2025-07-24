@@ -493,6 +493,33 @@
       outline: 2px solid rgba(0, 255, 255, 0.5);
       outline-offset: 2px;
     }
+
+    .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-link {
+  color: #e0e0e0;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.profile-link:hover {
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+  border-color: rgba(0, 255, 255, 0.5);
+}
+
   </style>
 </head>
 
@@ -501,12 +528,12 @@
     <div class="header-content">
       <div class="logo">BangBank</div>
       <div class="welcome-message">Welcome, <%= user.username %> (Advisor)</div>
-      <nav class="nav-links">
-        <a href="/profile">Profile Settings</a>
-        <form action="/logout" method="GET" style="display: inline;">
-          <button type="submit" class="logout-btn">Logout</button>
-        </form>
-      </nav>
+<div class="nav-actions">
+  <a href="/profile" class="profile-link">Profile Settings</a>
+  <form action="/logout" method="GET">
+    <button type="submit" class="logout-btn">Logout</button>
+  </form>
+</div>
     </div>
   </header>
 

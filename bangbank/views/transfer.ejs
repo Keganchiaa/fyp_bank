@@ -3,58 +3,676 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transfer - BangBank</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 3rem 4rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+            max-width: 700px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .container:hover::before {
+            left: 100%;
+        }
+
+        .section-header {
+            font-size: 2.5rem;
+            color: #ffffff;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-message {
+            background: rgba(255, 0, 100, 0.2);
+            border: 1px solid rgba(255, 0, 100, 0.5);
+            color: #ff6b9d;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(255, 0, 100, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .empty-state h2 {
+            color: #ffffff;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .empty-state p {
+            color: rgba(224, 224, 224, 0.8);
+            font-size: 1.1rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            color: #00ffff;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label::before {
+            content: '▶';
+            font-size: 0.8rem;
+            color: #ff00ff;
+            text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
+        }
+
+        select,
+        input[type="number"] {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.1);
+            position: relative;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: rgba(255, 0, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-2px);
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 0.8rem;
+        }
+
+        select optgroup {
+            background: #0a0a0a;
+            color: #00ffff;
+            font-weight: 600;
+            font-style: normal;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+
+        select optgroup option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font-weight: normal;
+            padding-left: 1.5rem;
+        }
+
+        input[type="number"]::placeholder {
+            color: rgba(224, 224, 224, 0.5);
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 1.2rem 3rem;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            color: #000000;
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 255, 255, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .back-button-container {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .back-button-container .btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: #e0e0e0;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.2);
+        }
+
+        .back-button-container .btn:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            border-color: rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Transfer direction indicator */
+        .transfer-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+            position: relative;
+            height: 80px;
+        }
+
+        .transfer-arrow {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.2) 0%, rgba(0, 255, 255, 0.1) 70%, transparent 100%);
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            border-radius: 50%;
+            animation: transferPulse 2s infinite;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(255, 0, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .transfer-arrow::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 16px solid #ff00ff;
+            filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.6));
+            animation: arrowFloat 3s ease-in-out infinite;
+        }
+
+        .transfer-arrow::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(255, 0, 255, 0.8), rgba(255, 0, 255, 0.2));
+            border-radius: 1px;
+            box-shadow: 0 0 4px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Additional cyberpunk elements around the arrow */
+        .transfer-indicator::before,
+        .transfer-indicator::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.6), transparent);
+            top: 50%;
+            animation: scanLine 2s linear infinite;
+        }
+
+        .transfer-indicator::before {
+            left: -60px;
+            animation-delay: 0s;
+        }
+
+        .transfer-indicator::after {
+            right: -60px;
+            animation-delay: 1s;
+        }
+
+        /* Account balance display */
+        .account-balance {
+            font-size: 0.9rem;
+            color: #00ff64;
+            text-shadow: 0 0 5px rgba(0, 255, 100, 0.3);
+            font-weight: 600;
+        }
+
+        /* Form validation styling */
+        .form-group.error select,
+        .form-group.error input {
+            border-color: rgba(255, 0, 100, 0.5);
+            box-shadow: 0 0 15px rgba(255, 0, 100, 0.3);
+        }
+
+        .form-group.success select,
+        .form-group.success input {
+            border-color: rgba(0, 255, 100, 0.5);
+            box-shadow: 0 0 15px rgba(0, 255, 100, 0.3);
+        }
+
+        .validation-message {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        .validation-message.error {
+            color: #ff6b9d;
+            background: rgba(255, 0, 100, 0.1);
+        }
+
+        .validation-message.success {
+            color: #00ff64;
+            background: rgba(0, 255, 100, 0.1);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 2rem;
+                max-width: 100%;
+            }
+
+            .section-header {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 1rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            select,
+            input[type="number"] {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .section-header {
+                font-size: 1.8rem;
+            }
+
+            form {
+                gap: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes transferPulse {
+            0%, 100% {
+                transform: scale(1);
+                border-color: rgba(255, 0, 255, 0.4);
+                box-shadow: 
+                    0 0 20px rgba(255, 0, 255, 0.3),
+                    inset 0 0 20px rgba(0, 255, 255, 0.1);
+            }
+            50% {
+                transform: scale(1.1);
+                border-color: rgba(0, 255, 255, 0.6);
+                box-shadow: 
+                    0 0 30px rgba(0, 255, 255, 0.4),
+                    inset 0 0 30px rgba(255, 0, 255, 0.2);
+            }
+        }
+
+        @keyframes arrowFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(4px);
+            }
+        }
+
+        @keyframes scanLine {
+            0% {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleX(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scaleX(0);
+            }
+        }
+
+        /* Focus states for accessibility */
+        .btn:focus,
+        select:focus,
+        input:focus {
+            outline: 2px solid rgba(0, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+
+        /* Loading state for form submission */
+        form.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        form.loading .btn {
+            background: rgba(100, 100, 100, 0.5);
+            color: #999;
+        }
+
+        /* Success confirmation styling */
+        .transfer-summary {
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            color: #00ff64;
+        }
+
+        .transfer-summary h3 {
+            margin-bottom: 1rem;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 255, 100, 0.3);
+        }
+    </style>
 </head>
 
 <body>
-
     <div class="container">
-
         <h2 class="section-header">Transfer Funds</h2>
 
         <% if (error) { %>
             <div class="error-message">
                 <%= error %>
             </div>
-            <% } %>
+        <% } %>
 
-                <% if (userAccounts.length===0) { %>
-                    <div class="empty-state">
-                        <h2>No Accounts Found</h2>
-                        <p>You need at least one active savings account to initiate a transfer.</p>
-                    </div>
-                    <% } else { %>
-                        <form method="POST" onsubmit="this.action = '/account/transfer/' + this.from_account_id.value;">
-                            <label for="from_account_id">From Account:</label>
-                            <select name="from_account_id" required>
-                                <% userAccounts.forEach(acc=> { %>
-                                    <option value="<%= acc.account_id %>">
-                                        <%= acc.product_name %> - $<%= parseFloat(acc.balance).toFixed(2) %>
+        <% if (userAccounts.length === 0) { %>
+            <div class="empty-state">
+                <h2>No Accounts Found</h2>
+                <p>You need at least one active savings account to initiate a transfer.</p>
+            </div>
+        <% } else { %>
+            <form method="POST" onsubmit="this.action = '/account/transfer/' + this.from_account_id.value;" id="transferForm">
+                <div class="form-group">
+                    <label for="from_account_id">From Account:</label>
+                    <select name="from_account_id" id="from_account_id" required>
+                        <% userAccounts.forEach(acc => { %>
+                            <option value="<%= acc.account_id %>" data-balance="<%= acc.balance %>">
+                                <%= acc.product_name %> - $<%= parseFloat(acc.balance).toFixed(2) %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="transfer-indicator">
+                    <div class="transfer-arrow"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="to_account_id">To Account (User - Type):</label>
+                    <select name="to_account_id" id="to_account_id" required>
+                        <% allUsers.forEach(user => { %>
+                            <optgroup label="<%= user.username %>">
+                                <% user.accounts.forEach(a => { %>
+                                    <option value="<%= a.account_id %>">
+                                        <%= a.product_name %> ($<%= parseFloat(a.balance).toFixed(2) %>)
                                     </option>
-                                    <% }) %>
-                            </select>
+                                <% }) %>
+                            </optgroup>
+                        <% }) %>
+                    </select>
+                </div>
 
-                            <label for="to_account_id">To Account (User - Type):</label>
-                            <select name="to_account_id" required>
-                                <% allUsers.forEach(user=> { %>
-                                    <optgroup label="<%= user.username %>">
-                                        <% user.accounts.forEach(a=> { %>
-                                            <option value="<%= a.account_id %>">
-                                                <%= a.product_name %> ($<%= parseFloat(a.balance).toFixed(2) %>)
-                                            </option>
-                                            <% }) %>
-                                    </optgroup>
-                                    <% }) %>
-                            </select>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" name="amount" id="amount" step="0.01" min="0.01" required placeholder="Enter transfer amount">
+                    <div id="balance-info" class="validation-message" style="display: none;"></div>
+                </div>
 
-                            <label for="amount">Amount:</label>
-                            <input type="number" name="amount" step="0.01" required>
+                <button type="submit" class="btn btn-primary" id="transferBtn">Transfer Funds</button>
+            </form>
+        <% } %>
 
-                            <button type="submit" class="btn btn-primary">Transfer</button>
-                        </form>
-                        <% } %>
+        <div class="back-button-container">
+            <a href="/user/dashboard" class="btn">← Back to Dashboard</a>
+        </div>
     </div>
+
+    <script>
+        // Form validation and enhancement
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('transferForm');
+            const fromAccountSelect = document.getElementById('from_account_id');
+            const toAccountSelect = document.getElementById('to_account_id');
+            const amountInput = document.getElementById('amount');
+            const balanceInfo = document.getElementById('balance-info');
+            const transferBtn = document.getElementById('transferBtn');
+
+            // Show available balance
+            function updateBalanceInfo() {
+                if (fromAccountSelect && amountInput) {
+                    const selectedOption = fromAccountSelect.options[fromAccountSelect.selectedIndex];
+                    const balance = parseFloat(selectedOption.dataset.balance || 0);
+                    const amount = parseFloat(amountInput.value || 0);
+                    
+                    if (balanceInfo) {
+                        balanceInfo.style.display = 'block';
+                        balanceInfo.innerHTML = `Available Balance: $${balance.toFixed(2)}`;
+                        
+                        if (amount > balance) {
+                            balanceInfo.className = 'validation-message error';
+                            balanceInfo.innerHTML += ' - Insufficient funds!';
+                            amountInput.parentElement.classList.add('error');
+                        } else if (amount > 0) {
+                            balanceInfo.className = 'validation-message success';
+                            balanceInfo.innerHTML += ` - Remaining: $${(balance - amount).toFixed(2)}`;
+                            amountInput.parentElement.classList.remove('error');
+                            amountInput.parentElement.classList.add('success');
+                        } else {
+                            balanceInfo.className = 'validation-message';
+                            amountInput.parentElement.classList.remove('error', 'success');
+                        }
+                    }
+                }
+            }
+
+            // Prevent self-transfer
+            function validateTransfer() {
+                const fromAccountId = fromAccountSelect?.value;
+                const toAccountId = toAccountSelect?.value;
+                
+                if (fromAccountId === toAccountId) {
+                    toAccountSelect.parentElement.classList.add('error');
+                    return false;
+                } else {
+                    toAccountSelect.parentElement.classList.remove('error');
+                    return true;
+                }
+            }
+
+            // Event listeners
+            if (fromAccountSelect) {
+                fromAccountSelect.addEventListener('change', updateBalanceInfo);
+            }
+
+            if (amountInput) {
+                amountInput.addEventListener('input', updateBalanceInfo);
+            }
+
+            if (toAccountSelect) {
+                toAccountSelect.addEventListener('change', validateTransfer);
+            }
+
+            // Form submission
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const selectedFromOption = fromAccountSelect.options[fromAccountSelect.selectedIndex];
+                    const balance = parseFloat(selectedFromOption.dataset.balance || 0);
+                    const amount = parseFloat(amountInput.value || 0);
+                    
+                    if (amount > balance) {
+                        e.preventDefault();
+                        alert('Insufficient funds for this transfer!');
+                        return false;
+                    }
+                    
+                    if (!validateTransfer()) {
+                        e.preventDefault();
+                        alert('Cannot transfer to the same account!');
+                        return false;
+                    }
+                    
+                    // Add loading state
+                    form.classList.add('loading');
+                    transferBtn.textContent = 'Processing Transfer...';
+                });
+            }
+
+            // Initialize
+            updateBalanceInfo();
+        });
+
+        // Back button loading state
+        document.querySelector('.back-button-container .btn')?.addEventListener('click', function() {
+            this.textContent = 'Loading...';
+            this.style.opacity = '0.7';
+        });
+    </script>
 </body>
 
 </html>
