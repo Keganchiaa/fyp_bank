@@ -522,8 +522,8 @@ exports.transferBetweenAccounts = async (req, res) => {
       return res.redirect('/account/transfer?error=Insufficient funds.');
     }
 
-    const newFromBalance = fromAccount.balance - transferAmount;
-    const newToBalance = toAccount.balance + transferAmount;
+    const newFromBalance = parseFloat(fromAccount.balance) - transferAmount;
+    const newToBalance = parseFloat(toAccount.balance) + transferAmount;
 
     // ✅ Update balances
     await db.query(`UPDATE accounts SET balance = ? WHERE account_id = ?`, [newFromBalance, fromAccount.account_id]);
