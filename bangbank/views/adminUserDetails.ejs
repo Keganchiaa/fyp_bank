@@ -3,160 +3,534 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>User Details</title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BangBank - User Details</title>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #e0e0e0;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+    }
+
+    /* Header styles */
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
+    }
+
+    .page-title {
+      font-size: 1.4rem;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .back-btn {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+
+    .back-btn:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    /* Container styles */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Section styles */
+    .section {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(15px);
+      padding: 2rem;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent);
+      transition: left 0.5s;
+    }
+
+    .section:hover::before {
+      left: 100%;
+    }
+
+    .section h2 {
+      color: #ffffff;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      background: linear-gradient(135deg, #00ffff, #ff00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Profile image styles */
+    .profile-image {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .profile-image img {
+      max-width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .profile-image img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Info grid styles */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-item {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+      background: rgba(0, 255, 255, 0.05);
+      border-color: rgba(0, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .info-item .label {
+      color: #00ffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .info-item .value {
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Table styles */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    th {
+      background: rgba(0, 255, 255, 0.1);
+      color: #00ffff;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+      color: #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    tr:hover td {
+      background: rgba(0, 255, 255, 0.05);
+      color: #ffffff;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: rgba(224, 224, 224, 0.6);
+      font-style: italic;
+      font-size: 1.1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      border: 1px dashed rgba(0, 255, 255, 0.2);
+    }
+
+    /* Status badges */
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge.active {
+      background: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+      border: 1px solid rgba(0, 255, 0, 0.3);
+    }
+
+    .status-badge.pending {
+      background: rgba(255, 255, 0, 0.2);
+      color: #ffff00;
+      border: 1px solid rgba(255, 255, 0, 0.3);
+    }
+
+    .status-badge.inactive {
+      background: rgba(255, 0, 0, 0.2);
+      color: #ff4444;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    .status-badge.approved {
+      background: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+      border: 1px solid rgba(0, 255, 0, 0.3);
+    }
+
+    .status-badge.rejected {
+      background: rgba(255, 0, 0, 0.2);
+      color: #ff4444;
+      border: 1px solid rgba(255, 0, 0, 0.3);
+    }
+
+    /* View link styles */
+    .view-link {
+      color: #00ffff;
+      text-decoration: none;
+      padding: 0.3rem 0.8rem;
+      border-radius: 12px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .view-link:hover {
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+    }
+
+    /* Divider */
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
+      margin: 3rem 0;
+      border: none;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+
+      .table-container {
+        font-size: 0.9rem;
+      }
+
+      th, td {
+        padding: 0.7rem;
+      }
+
+      .profile-image img {
+        max-width: 150px;
+        height: 150px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .section h2 {
+        font-size: 1.5rem;
+      }
+
+      .profile-image img {
+        max-width: 120px;
+        height: 120px;
+      }
+
+      th, td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Background decoration */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Focus states for accessibility */
+    .back-btn:focus,
+    .view-link:focus {
+      outline: 2px solid rgba(0, 255, 255, 0.5);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>User Details for <%= user.username %>
-  </h1>
+  <header>
+    <div class="header-content">
+      <div class="logo">BangBank</div>
+      <div class="page-title">User Details for <%= user.username %></div>
+      <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
+    </div>
+  </header>
 
-  <img src="/uploads/<%= user.userImage %>" alt="Profile Image" style="max-width: 150px; border-radius: 8px;" />
-
-  <table border="1" style="margin-top: 20px;">
-    <tr>
-      <th>Username</th>
-      <td>
-        <%= user.username %>
-      </td>
-    </tr>
-    <tr>
-      <th>Email</th>
-      <td>
-        <%= user.userEmail %>
-      </td>
-    </tr>
-    <tr>
-      <th>Role</th>
-      <td>
-        <%= user.userRole %>
-      </td>
-    </tr>
-    <tr>
-      <th>First Name</th>
-      <td>
-        <%= user.first_name %>
-      </td>
-    </tr>
-    <tr>
-      <th>Last Name</th>
-      <td>
-        <%= user.last_name %>
-      </td>
-    </tr>
-    <tr>
-      <th>Alias</th>
-      <td>
-        <%= user.alias || '—' %>
-      </td>
-    </tr>
-    <tr>
-      <th>Date of Birth</th>
-      <td>
-        <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %>
-      </td>
-    </tr>
-    <tr>
-      <th>Phone Number</th>
-      <td>
-        <%= user.phone_number %>
-      </td>
-    </tr>
-    <tr>
-      <th>Country</th>
-      <td>
-        <%= user.country %>
-      </td>
-    </tr>
-    <tr>
-      <th>Address Line 1</th>
-      <td>
-        <%= user.address_line_1 %>
-      </td>
-    </tr>
-    <tr>
-      <th>Address Line 2</th>
-      <td>
-        <%= user.address_line_2 || '—' %>
-      </td>
-    </tr>
-    <tr>
-      <th>Postal Code</th>
-      <td>
-        <%= user.postcode %>
-      </td>
-    </tr>
-  </table>
-
-  <hr />
-
-  <!-- ✅ Bank Accounts -->
-  <h2>User Bank Accounts</h2>
-  <% if (accounts.length===0) { %>
-    <p>No accounts found.</p>
-    <% } else { %>
-      <table border="1">
-        <tr>
-          <th>Product Name</th>
-          <th>Product Type</th>
-          <th>Account Number</th>
-          <th>Balance</th>
-          <th>Status</th>
-          <th>Opened At</th>
-          <th>KYC ID Type</th>
-          <th>KYC ID Number</th>
-          <th>KYC Document</th>
-          <th>KYC Status</th>
-        </tr>
-        <% accounts.forEach(account=> { %>
-          <tr>
-            <td>
-              <%= account.product_name %>
-            </td>
-            <td>
-              <%= account.product_type %>
-            </td>
-            <td>
-              <%= account.account_number %>
-            </td>
-            <td>$<%= parseFloat(account.balance).toFixed(2) %>
-            </td>
-            <td>
-              <%= account.status %>
-            </td>
-            <td>
-              <%= new Date(account.opened_at).toISOString().split('T')[0] %>
-            </td>
-
-            <% if (account.kycDoc) { %>
-              <td>
-                <%= account.kycDoc.id_type %>
-              </td>
-              <td>
-                <%= account.kycDoc.id_number %>
-              </td>
-              <td>
-                <a href="<%= account.kycDoc.document_path %>" target="_blank">View</a>
-              </td>
-              <td>
-                <%= account.kycDoc.status %>
-              </td>
-              <% } else { %>
-                <td colspan="4" style="text-align: center;">— No KYC Document —</td>
-                <% } %>
-          </tr>
-          <% }) %>
-      </table>
-      <% } %>
+  <div class="container">
+    <!-- User Profile Section -->
+    <div class="section">
+      <h2>User Profile</h2>
       
-        <hr />
+      <div class="profile-image">
+        <img src="/uploads/<%= user.userImage %>" alt="Profile Image" />
+      </div>
 
-        <!-- ✅ Credit Cards -->
-        <h2>User Credit Cards</h2>
-        <% if (cards.length===0) { %>
-          <p>No credit cards found.</p>
-          <% } else { %>
-            <table border="1">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="label">Username</div>
+          <div class="value"><%= user.username %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Email</div>
+          <div class="value"><%= user.userEmail %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Role</div>
+          <div class="value"><%= user.userRole %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">First Name</div>
+          <div class="value"><%= user.first_name %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Last Name</div>
+          <div class="value"><%= user.last_name %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Alias</div>
+          <div class="value"><%= user.alias || '—' %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Date of Birth</div>
+          <div class="value"><%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Phone Number</div>
+          <div class="value"><%= user.phone_number %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Country</div>
+          <div class="value"><%= user.country %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Address Line 1</div>
+          <div class="value"><%= user.address_line_1 %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Address Line 2</div>
+          <div class="value"><%= user.address_line_2 || '—' %></div>
+        </div>
+        <div class="info-item">
+          <div class="label">Postal Code</div>
+          <div class="value"><%= user.postcode %></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Bank Accounts Section -->
+    <div class="section">
+      <h2>Bank Accounts</h2>
+      
+      <% if (accounts.length === 0) { %>
+        <div class="empty-state">
+          <p>No bank accounts found for this user.</p>
+        </div>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Product Type</th>
+                <th>Account Number</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Opened At</th>
+                <th>KYC ID Type</th>
+                <th>KYC ID Number</th>
+                <th>KYC Document</th>
+                <th>KYC Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% accounts.forEach(account => { %>
+                <tr>
+                  <td><%= account.product_name %></td>
+                  <td><%= account.product_type %></td>
+                  <td><%= account.account_number %></td>
+                  <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
+                  <td><span class="status-badge <%= account.status.toLowerCase() %>"><%= account.status %></span></td>
+                  <td><%= new Date(account.opened_at).toISOString().split('T')[0] %></td>
+
+                  <% if (account.kycDoc) { %>
+                    <td><%= account.kycDoc.id_type %></td>
+                    <td><%= account.kycDoc.id_number %></td>
+                    <td><a href="<%= account.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                    <td><span class="status-badge <%= account.kycDoc.status.toLowerCase() %>"><%= account.kycDoc.status %></span></td>
+                  <% } else { %>
+                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
+                  <% } %>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Credit Cards Section -->
+    <div class="section">
+      <h2>Credit Cards</h2>
+      
+      <% if (cards.length === 0) { %>
+        <div class="empty-state">
+          <p>No credit cards found for this user.</p>
+        </div>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
               <tr>
                 <th>Product Name</th>
                 <th>Card Number</th>
@@ -170,51 +544,34 @@
                 <th>KYC Document</th>
                 <th>KYC Status</th>
               </tr>
-              <% cards.forEach(card=> { %>
+            </thead>
+            <tbody>
+              <% cards.forEach(card => { %>
                 <tr>
-                  <td>
-                    <%= card.product_name %>
-                  </td>
-                  <td>
-                    <%= card.card_number %>
-                  </td>
-                  <td>
-                    <%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %>
-                  </td>
-                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
-                  </td>
-                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %>
-                  </td>
-                  <td>
-                    <%= card.status %>
-                  </td>
-                  <td>
-                    <%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %>
-                  </td>
+                  <td><%= card.product_name %></td>
+                  <td><%= card.card_number %></td>
+                  <td><%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %></td>
+                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
+                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
+                  <td><span class="status-badge <%= card.status.toLowerCase() %>"><%= card.status %></span></td>
+                  <td><%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %></td>
 
                   <% if (card.kycDoc) { %>
-                    <td>
-                      <%= card.kycDoc.id_type %>
-                    </td>
-                    <td>
-                      <%= card.kycDoc.id_number %>
-                    </td>
-                    <td>
-                      <a href="<%= card.kycDoc.document_path %>" target="_blank">View</a>
-                    </td>
-                    <td>
-                      <%= card.kycDoc.status %>
-                    </td>
-                    <% } else { %>
-                      <td colspan="4" style="text-align: center;">— No KYC Document —</td>
-                      <% } %>
+                    <td><%= card.kycDoc.id_type %></td>
+                    <td><%= card.kycDoc.id_number %></td>
+                    <td><a href="<%= card.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                    <td><span class="status-badge <%= card.kycDoc.status.toLowerCase() %>"><%= card.kycDoc.status %></span></td>
+                  <% } else { %>
+                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
+                  <% } %>
                 </tr>
-                <% }) %>
-            </table>
-            <% } %>
-
-              <br />
-              <a href="/admin/dashboard">← Back to Dashboard</a>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
 </body>
 
 </html>
