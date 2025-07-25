@@ -504,6 +504,31 @@
   transform: translateX(4px);
 }
 
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.logout-btn {
+      background: linear-gradient(135deg, rgb(229, 10, 10), #ff4444) !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+      background: linear-gradient(135deg, #ff3300, #ff6666) !important;
+    }
+
   </style>
 </head>
 
@@ -527,7 +552,7 @@
 </div>
 
 
-  <a href="/logout">Logout</a>
+<a href="/logout" class="logout-btn">Logout</a>
 </nav>
     </div>
   </header>
@@ -722,6 +747,35 @@
                               </div>
                             </div>
   </div>
+
+  <script>
+  const dropdown = document.querySelector('.dropdown');
+  const dropdownContent = dropdown.querySelector('.dropdown-content');
+
+  let timeout;
+
+  dropdown.addEventListener('mouseenter', () => {
+    clearTimeout(timeout);
+    dropdownContent.style.display = 'block';
+  });
+
+  dropdown.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdownContent.style.display = 'none';
+    }, 300); // delay in ms before hiding
+  });
+
+  dropdownContent.addEventListener('mouseenter', () => {
+    clearTimeout(timeout); // prevent closing when hovering inside menu
+  });
+
+  dropdownContent.addEventListener('mouseleave', () => {
+    timeout = setTimeout(() => {
+      dropdownContent.style.display = 'none';
+    }, 300);
+  });
+</script>
+
 </body>
 
 </html>

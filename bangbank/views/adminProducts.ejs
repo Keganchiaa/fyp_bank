@@ -86,22 +86,26 @@
             border-color: rgba(0, 255, 255, 0.5);
         }
 
-        .logout-btn {
-            background: linear-gradient(135deg, #ff4757, #ff3838);
-            color: #ffffff;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
-        }
+.logout-btn {
+      background: linear-gradient(135deg, rgb(229, 10, 10), #ff4444) !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
 
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
-        }
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+      background: linear-gradient(135deg, #ff3300, #ff6666) !important;
+    }
 
         /* Container styles */
         .container {
@@ -508,13 +512,11 @@
             <div class="logo">BangBank</div>
             <div class="welcome-message">Welcome, <%= user.username %> (<%= user.role %>)</div>
             <nav class="nav-links">
-                <a href="/admin/dashboard">Dashboard</a>
+                <a href="/admin/dashboard">Back to Dashboard</a>
                 <a href="/admin/accounts">Account Applications</a>
                 <a href="/admin/creditcards">Credit Card Applications</a>
                 <a href="/profile">Profile Settings</a>
-                <form action="/logout" method="GET" style="margin: 0;">
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
+                <a href="/logout" class="logout-btn nav-logout-link">Logout</a>
             </nav>
         </div>
     </header>
