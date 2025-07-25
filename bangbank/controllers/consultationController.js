@@ -206,7 +206,11 @@ exports.bookSession = async (req, res) => {
     const userId = req.session.user.id;
 
     try {
-        // Check if session exists and is not booked
+        // ✅ Check for Google OAuth tokens
+        const tokens = req.session.tokens;
+        if (!tokens) return res.redirect('/google/login');
+
+        // ✅ Check if session is available
         const [sessionCheck] = await db.query(
             `SELECT * FROM sessions WHERE session_id = ? AND is_booked = 0`,
             [sessionId]
@@ -219,15 +223,15 @@ exports.bookSession = async (req, res) => {
         const session = sessionCheck[0];
         const advisorId = session.advisorId;
 
-        // Check for time conflict
+        // ✅ Check for existing booking conflict
         const [conflict] = await db.query(
             `SELECT COUNT(*) AS count
-             FROM consultations c
-             JOIN sessions s ON c.session_id = s.session_id
-             WHERE c.userId = ?
-               AND s.session_date = ?
-               AND s.session_time = ?
-               AND c.status = 'booked'`,
+       FROM consultations c
+       JOIN sessions s ON c.session_id = s.session_id
+       WHERE c.userId = ?
+         AND s.session_date = ?
+         AND s.session_time = ?
+         AND c.status = 'booked'`,
             [userId, session.session_date, session.session_time]
         );
 
@@ -235,21 +239,22 @@ exports.bookSession = async (req, res) => {
             return res.redirect('/customer/consultations?error=You already have a consultation booked at this time.');
         }
 
-        // ✅ Fetch user and advisor info
+        // ✅ Get user and advisor emails
         const [[customer]] = await db.query('SELECT username, userEmail FROM users WHERE userId = ?', [userId]);
         const [[advisor]] = await db.query('SELECT username, userEmail FROM users WHERE userId = ?', [advisorId]);
 
         // ✅ Build ISO timestamps
         console.log('🕓 RAW values:', session.session_date, session.session_time, session.end_time);
 
-        const sessionDate = new Date(session.session_date).toISOString().split('T')[0]; // 'YYYY-MM-DD'
-        const sessionStart = session.session_time.slice(0, 5); // 'HH:MM'
-        const sessionEnd = session.end_time.slice(0, 5);       // 'HH:MM'
+        // ✅ Construct ISO datetime strings
+        const sessionDate = new Date(session.session_date).toISOString().split('T')[0];
+        const sessionStart = session.session_time.slice(0, 5);
+        const sessionEnd = session.end_time.slice(0, 5);
 
         const startTimeISO = new Date(`${sessionDate}T${sessionStart}:00+08:00`).toISOString();
         const endTimeISO = new Date(`${sessionDate}T${sessionEnd}:00+08:00`).toISOString();
 
-        // ✅ Create Google Meet
+        // ✅ Create Google Meet using OAuth tokens
         let meetLink = null;
         try {
             const event = await createMeetEvent({
@@ -257,23 +262,24 @@ exports.bookSession = async (req, res) => {
                 description: `Consultation between ${customer.username} and ${advisor.username}`,
                 startTime: startTimeISO,
                 endTime: endTimeISO,
-                attendees: []
+                attendees: [customer.userEmail, advisor.userEmail],
+                tokens
             });
             meetLink = event.hangoutLink;
         } catch (err) {
-            console.error('❌ Failed to create Google Meet:', err.message);
+            console.error('❌ Failed to create Google Meet:', err.response?.data || err.message);
         }
 
-        // ✅ Save booking and Meet link
+        // ✅ Save consultation to database
         await db.query(
             `INSERT INTO consultations (userId, advisorId, session_id, status, meet_link)
-             VALUES (?, ?, ?, 'booked', ?)`,
+       VALUES (?, ?, ?, 'booked', ?)`,
             [userId, advisorId, sessionId, meetLink]
         );
 
         await db.query(`UPDATE sessions SET is_booked = 1 WHERE session_id = ?`, [sessionId]);
 
-        // ✅ Send Meet link via email
+        // ✅ Send emails via Nodemailer
         if (meetLink) {
             const subject = 'Your BangBank Consultation Booking';
             await sendMeetEmail({

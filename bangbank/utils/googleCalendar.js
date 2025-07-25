@@ -1,19 +1,13 @@
 const { google } = require('googleapis');
-const path = require('path');
+const { getClient, setAccessToken } = require('./oauth'); // adjust path if needed
 
-const SCOPES = ['https://www.googleapis.com/auth/calendar'];
-const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, 'credentials.json'),
-  scopes: SCOPES
-});
+// Function to create a Google Meet event
+async function createMeetEvent({ summary, description, startTime, endTime, attendees, tokens }) {
+  // Apply user's access token
+  setAccessToken(tokens);
+  const calendar = google.calendar({ version: 'v3', auth: getClient() });
 
-const calendar = google.calendar({ version: 'v3', auth });
-
-async function createMeetEvent({ summary, description, startTime, endTime, attendees }) {
-  // Generate a placeholder Meet link
-  const randomId = Math.random().toString(36).substring(2, 10);
-  const meetLink = `https://meet.google.com/osv-ozqx-iwk`;
-
+  // Real Google Meet link using conferenceData
   const event = {
     summary,
     description,
@@ -26,23 +20,27 @@ async function createMeetEvent({ summary, description, startTime, endTime, atten
       timeZone: 'Asia/Singapore'
     },
     attendees: attendees.map(email => ({ email })),
-    location: meetLink // Use this instead of conferenceData
+    conferenceData: {
+      createRequest: {
+        requestId: `meet-${Date.now()}`,
+        conferenceSolutionKey: {
+          type: 'hangoutsMeet'
+        }
+      }
+    }
   };
 
   try {
     console.log('📤 Creating event with:', JSON.stringify(event, null, 2));
 
     const res = await calendar.events.insert({
-      calendarId: 'keganchia@gmail.com',
+      calendarId: 'primary',
       resource: event,
+      conferenceDataVersion: 1,
       sendUpdates: 'all'
     });
 
-    // Return the placeholder link
-    return {
-      ...res.data,
-      hangoutLink: meetLink
-    };
+    return res.data; // contains .hangoutLink
   } catch (err) {
     console.error('🔴 Google Calendar event creation failed:', err.response?.data || err.message);
     throw err;

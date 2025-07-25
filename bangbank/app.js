@@ -1,8 +1,12 @@
 require('dotenv').config(); // Load environment variables
 
+// Import necessary modules
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const path = require('path');
+
+// ✅ Custom controllers
 const userController = require('./controllers/userController');
 const productController = require('./controllers/productController');
 const accountController = require('./controllers/accountController');
@@ -10,7 +14,9 @@ const creditCardController = require('./controllers/creditCardController');
 const consultationController = require('./controllers/consultationController');
 const otpController = require('./controllers/otpController');
 const transactionController = require('./controllers/transactionController');
-const path = require('path');
+
+// ✅ OAuth utility
+const oauth = require('./utils/oauth');
 
 const app = express();
 
@@ -212,6 +218,26 @@ app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm
 // Reset password with OTP
 app.get('/otp/request-password-reset/:type/:id', otpController.requestOtpForPasswordReset);
 app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm);
+
+// Google Calendar OAuth
+app.get('/google/login', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  const url = oauth.getAuthUrl();
+  res.redirect(url);
+});
+
+// OAuth callback
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+  try {
+    const tokens = await oauth.getAccessToken(code);
+    req.session.tokens = tokens;
+    res.redirect('/customer/consultations?success=Google OAuth connected!');
+  } catch (err) {
+    console.error('OAuth callback error:', err);
+    res.redirect('/customer/consultations?error=OAuth failed');
+  }
+});
 
 // ✅ Logout Route
 app.get('/logout', (req, res) => {
