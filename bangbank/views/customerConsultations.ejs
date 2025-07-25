@@ -86,6 +86,129 @@
             border-color: rgba(0, 255, 255, 0.5);
         }
 
+        /* Dropdown styles */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.1);
+            z-index: 999;
+            min-width: 200px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 0;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+            display: inline-block;
+        }
+
+        .dropdown-toggle:hover {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+            border-color: rgba(0, 255, 255, 0.5);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 120%; /* ensures space between button and menu */
+            right: 0;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.1);
+            min-width: 220px;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-item:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: block;
+            color: #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+            text-decoration: none;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 0.75rem 1rem; /* increased vertical padding */
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 8px; /* adds pill feel */
+            margin-bottom: 0.5rem; /* space between items */
+            background: rgba(0, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-content a:last-child {
+            margin-bottom: 0;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(0, 255, 255, 0.15);
+            color: #00ffff;
+            transform: translateX(4px);
+        }
+
         /* Main container */
         .container {
             max-width: 1200px;
@@ -383,10 +506,19 @@
             <div class="logo">BangBank</div>
             <div class="welcome-message">Welcome, <%= user.username %>!</div>
             <nav class="nav-links">
-                <a href="/user/dashboard">Dashboard</a>
-                <a href="/customer/apply">Products</a>
-                <a href="/customer/transactions">Transactions</a>
-                <a href="/profile">Profile</a>
+                <a href="/customer/transactions">Transaction History</a>
+                <a href="/account/topup">Top Up</a>
+                <a href="/account/transfer">Transfer</a>
+
+                <div class="nav-item dropdown">
+                    <a href="#" class="dropdown-toggle">More ▾</a>
+                    <div class="dropdown-content">
+                        <a href="/user/dashboard">Back to Dashboard</a>
+                        <a href="/user/rejected-applications">Rejected Applications</a>
+                        <a href="/profile">Profile Settings</a>
+                    </div>
+                </div>
+
                 <a href="/logout">Logout</a>
             </nav>
         </div>
