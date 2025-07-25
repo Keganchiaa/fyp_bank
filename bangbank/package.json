@@ -17,6 +17,8 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
+    "google-auth-library": "^10.1.0",
+    "googleapis": "^154.0.0",
     "multer": "^2.0.0",
     "mysql2": "^3.14.1",
     "nodemailer": "^7.0.3"

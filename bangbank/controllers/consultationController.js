@@ -1,6 +1,34 @@
 const db = require('../db');
 const nodemailer = require('nodemailer');
 const { DateTime } = require('luxon');
+const { createMeetEvent } = require('../utils/googleCalendar');
+
+// Helper: Send email with Google Meet link
+function sendMeetEmail({ to, subject, meetLink, sessionDate, startTime }) {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,        // ✅ match .env
+            pass: process.env.EMAIL_PASS    // ✅ match .env
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to,
+        subject,
+        html: `
+      <p>You have a new consultation scheduled.</p>
+      <p><strong>Date:</strong> ${sessionDate}</p>
+      <p><strong>Time:</strong> ${startTime} (SGT)</p>
+      <p><strong>Join Link:</strong> <a href="${meetLink}" target="_blank">${meetLink}</a></p>
+      <br>
+      <p>See you on Google Meet!</p>
+    `
+    };
+
+    return transporter.sendMail(mailOptions);
+}
 
 //advisor: View dashboard with all sessions and consultations
 exports.viewAdvisorDashboard = async (req, res) => {
@@ -191,8 +219,8 @@ exports.bookSession = async (req, res) => {
         const session = sessionCheck[0];
         const advisorId = session.advisorId;
 
-        // Check if user already booked any session at this date and time
-        const [conflictingBookings] = await db.query(
+        // Check for time conflict
+        const [conflict] = await db.query(
             `SELECT COUNT(*) AS count
              FROM consultations c
              JOIN sessions s ON c.session_id = s.session_id
@@ -203,27 +231,71 @@ exports.bookSession = async (req, res) => {
             [userId, session.session_date, session.session_time]
         );
 
-        if (conflictingBookings[0].count > 0) {
+        if (conflict[0].count > 0) {
             return res.redirect('/customer/consultations?error=You already have a consultation booked at this time.');
         }
 
-        // Insert booking
+        // ✅ Fetch user and advisor info
+        const [[customer]] = await db.query('SELECT username, userEmail FROM users WHERE userId = ?', [userId]);
+        const [[advisor]] = await db.query('SELECT username, userEmail FROM users WHERE userId = ?', [advisorId]);
+
+        // ✅ Build ISO timestamps
+        console.log('🕓 RAW values:', session.session_date, session.session_time, session.end_time);
+
+        const sessionDate = new Date(session.session_date).toISOString().split('T')[0]; // 'YYYY-MM-DD'
+        const sessionStart = session.session_time.slice(0, 5); // 'HH:MM'
+        const sessionEnd = session.end_time.slice(0, 5);       // 'HH:MM'
+
+        const startTimeISO = new Date(`${sessionDate}T${sessionStart}:00+08:00`).toISOString();
+        const endTimeISO = new Date(`${sessionDate}T${sessionEnd}:00+08:00`).toISOString();
+
+        // ✅ Create Google Meet
+        let meetLink = null;
+        try {
+            const event = await createMeetEvent({
+                summary: `Consultation with ${advisor.username}`,
+                description: `Consultation between ${customer.username} and ${advisor.username}`,
+                startTime: startTimeISO,
+                endTime: endTimeISO,
+                attendees: []
+            });
+            meetLink = event.hangoutLink;
+        } catch (err) {
+            console.error('❌ Failed to create Google Meet:', err.message);
+        }
+
+        // ✅ Save booking and Meet link
         await db.query(
-            `INSERT INTO consultations (userId, advisorId, session_id, status)
-             VALUES (?, ?, ?, 'booked')`,
-            [userId, advisorId, sessionId]
+            `INSERT INTO consultations (userId, advisorId, session_id, status, meet_link)
+             VALUES (?, ?, ?, 'booked', ?)`,
+            [userId, advisorId, sessionId, meetLink]
         );
 
-        // Mark session as booked
-        await db.query(
-            `UPDATE sessions SET is_booked = 1 WHERE session_id = ?`,
-            [sessionId]
-        );
+        await db.query(`UPDATE sessions SET is_booked = 1 WHERE session_id = ?`, [sessionId]);
 
-        res.redirect('/customer/consultations?success=Consultation booked successfully!');
+        // ✅ Send Meet link via email
+        if (meetLink) {
+            const subject = 'Your BangBank Consultation Booking';
+            await sendMeetEmail({
+                to: customer.userEmail,
+                subject,
+                meetLink,
+                sessionDate,
+                startTime: sessionStart
+            });
+            await sendMeetEmail({
+                to: advisor.userEmail,
+                subject: 'New Customer Consultation Booking',
+                meetLink,
+                sessionDate,
+                startTime: sessionStart
+            });
+        }
+
+        return res.redirect('/customer/consultations?success=Consultation booked successfully!');
     } catch (error) {
-        console.error(error);
-        res.redirect('/customer/consultations?error=An error occurred while booking your consultation.');
+        console.error('❌ Booking error:', error);
+        return res.redirect('/customer/consultations?error=An error occurred while booking your consultation.');
     }
 };
 
