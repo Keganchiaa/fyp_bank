@@ -1,13 +1,11 @@
-const { google } = require('googleapis');
-const { getClient, setAccessToken } = require('./oauth'); // adjust path if needed
+const { google } = require('googleapis'); // ✅ Required to build event structure
+const { getCalendarClient } = require('./oauth'); // ✅ Your new token-aware client
 
 // Function to create a Google Meet event
 async function createMeetEvent({ summary, description, startTime, endTime, attendees, tokens }) {
-  // Apply user's access token
-  setAccessToken(tokens);
-  const calendar = google.calendar({ version: 'v3', auth: getClient() });
+  // Use advisor's OAuth tokens to get authorized calendar client
+  const calendar = getCalendarClient(tokens);
 
-  // Real Google Meet link using conferenceData
   const event = {
     summary,
     description,
@@ -40,7 +38,7 @@ async function createMeetEvent({ summary, description, startTime, endTime, atten
       sendUpdates: 'all'
     });
 
-    return res.data; // contains .hangoutLink
+    return res.data; // Contains hangoutLink
   } catch (err) {
     console.error('🔴 Google Calendar event creation failed:', err.response?.data || err.message);
     throw err;

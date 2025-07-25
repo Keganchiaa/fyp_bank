@@ -527,6 +527,14 @@
     <div class="header-content">
       <div class="logo">BangBank</div>
       <div class="welcome-message">Welcome, <%= user.username %> (Advisor)</div>
+      <% if (!user.google_tokens) { %>
+        <div class="connect-calendar">
+          <a href="/google/login" class="btn btn-warning">🔗 Connect Google Calendar</a>
+        </div>
+        <% } else { %>
+          <div class="calendar-status connected">✅ Google Calendar Connected</div>
+          <% } %>
+
 <div class="nav-actions">
   <a href="/profile" class="profile-link">Profile Settings</a>
   <form action="/logout" method="GET">

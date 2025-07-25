@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const path = require('path');
 
+// Import database connection
+const db = require('./db');
+
 // ✅ Custom controllers
 const userController = require('./controllers/userController');
 const productController = require('./controllers/productController');
@@ -221,21 +224,33 @@ app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm
 
 // Google Calendar OAuth
 app.get('/google/login', (req, res) => {
-  if (!req.session.user) return res.redirect('/login');
   const url = oauth.getAuthUrl();
   res.redirect(url);
 });
 
-// OAuth callback
+// OAuth2 Callback
 app.get('/oauth2callback', async (req, res) => {
   const code = req.query.code;
+
   try {
     const tokens = await oauth.getAccessToken(code);
-    req.session.tokens = tokens;
-    res.redirect('/customer/consultations?success=Google OAuth connected!');
+    const user = req.session.user;
+
+    if (!user) return res.redirect('/login?error=Login required first');
+    if (user.role !== 'advisor') {
+      return res.redirect('/?error=Only advisors can connect Google Calendar.');
+    }
+
+    // Save advisor tokens
+    await db.query(
+      `UPDATE users SET google_tokens = ? WHERE userId = ?`,
+      [JSON.stringify(tokens), user.id]
+    );
+
+    res.redirect('/advisor/dashboard?success=Google Calendar connected!');
   } catch (err) {
-    console.error('OAuth callback error:', err);
-    res.redirect('/customer/consultations?error=OAuth failed');
+    console.error('❌ OAuth2 callback failed:', err.message);
+    res.redirect('/advisor/dashboard?error=Failed to connect Google Calendar.');
   }
 });
 
