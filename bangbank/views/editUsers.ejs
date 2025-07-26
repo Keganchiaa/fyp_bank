@@ -20,7 +20,7 @@
       min-height: 100vh;
     }
 
-    /* Header styles */
+    /* Header styles - updated to match adminAccount template */
     header {
       background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(10px);
@@ -32,11 +32,12 @@
     }
 
     .header-content {
-      max-width: 1200px;
+      max-width: 1500px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 2rem;
     }
 
     .logo {
@@ -47,30 +48,64 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
     }
 
     .page-title {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: #ffffff;
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
     }
 
-    .back-link {
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
       color: #e0e0e0;
       text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
       background: rgba(0, 255, 255, 0.1);
       border: 1px solid rgba(0, 255, 255, 0.3);
       transition: all 0.3s ease;
       font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      font-size: 0.9rem;
     }
 
-    .back-link:hover {
+    .nav-links a:hover {
       color: #00ffff;
       background: rgba(0, 255, 255, 0.2);
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, rgb(229, 10, 10), #ff4444) !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+      background: linear-gradient(135deg, #ff3300, #ff6666) !important;
     }
 
     /* Main container */
@@ -261,41 +296,14 @@
       box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
     }
 
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(0, 255, 255, 0.2);
-  flex-wrap: wrap;
-}
-
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-      }
-
-      .container {
-        padding: 1rem;
-      }
-
-      .form-container {
-        padding: 1.5rem;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .btn {
-        width: 100%;
-        margin: 0.5rem 0;
-      }
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
+      flex-wrap: wrap;
     }
 
     /* Background decoration */
@@ -329,11 +337,64 @@
       animation: fadeIn 0.6s ease-out;
     }
 
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .page-title {
+        text-align: center;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-links a {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
     /* Focus states for accessibility */
     .btn:focus,
-    .back-link:focus,
     input:focus,
-    select:focus {
+    select:focus,
+    .nav-links a:focus,
+    .logout-btn:focus {
       outline: 2px solid rgba(0, 255, 255, 0.5);
       outline-offset: 2px;
     }
@@ -345,13 +406,14 @@
     <div class="header-content">
       <div class="logo">BangBank</div>
       <div class="page-title">Edit User: <%= user.username %> (<%= user.userRole %>)</div>
-      <a href="<%= currentUser.role === 'user' 
-          ? '/user/dashboard' 
-          : currentUser.role === 'advisor' 
-              ? '/advisor/dashboard' 
-              : '/admin/dashboard' %>" class="back-link">
-        ← Back to Dashboard
-      </a>
+      <nav class="nav-links">
+        <a href="<%= currentUser.role === 'user' 
+            ? '/user/dashboard' 
+            : currentUser.role === 'advisor' 
+                ? '/advisor/dashboard' 
+                : '/admin/dashboard' %>">Back to Dashboard</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </nav>
     </div>
   </header>
 
@@ -359,14 +421,13 @@
     <div class="form-container">
       <h2 class="form-title">User Profile Settings</h2>
 
-<% if (error && error.trim()) { %>
-  <div class="alert alert-error"><%= error %></div>
-<% } %>
+      <% if (error && error.trim()) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
 
-<% if (success && success.trim()) { %>
-  <div class="alert alert-success"><%= success %></div>
-<% } %>
-
+      <% if (success && success.trim()) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
 
       <form action="/admin/edit/<%= user.userId %>" method="POST" enctype="multipart/form-data">
         
