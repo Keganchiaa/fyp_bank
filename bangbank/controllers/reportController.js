@@ -1,6 +1,5 @@
 const db = require('../db'); // Adjust if your DB config is in a different path
 
-
 exports.showReports = async (req, res) => {
   try {
     if (!req.session.user || !['admin', 'super_admin'].includes(req.session.user.role)) {
@@ -65,4 +64,3 @@ exports.showReports = async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 };
-
