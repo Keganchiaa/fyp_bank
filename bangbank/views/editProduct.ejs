@@ -20,7 +20,7 @@
       min-height: 100vh;
     }
 
-    /* Header styles */
+    /* Header styles - updated to match adminAccount template */
     header {
       background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(10px);
@@ -32,11 +32,12 @@
     }
 
     .header-content {
-      max-width: 1200px;
+      max-width: 1500px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 2rem;
     }
 
     .logo {
@@ -47,12 +48,64 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      flex-shrink: 0;
     }
 
     .page-title {
       font-size: 1.2rem;
       color: #ffffff;
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #e0e0e0;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-weight: 500;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      font-size: 0.9rem;
+    }
+
+    .nav-links a:hover {
+      color: #00ffff;
+      background: rgba(0, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+      border-color: rgba(0, 255, 255, 0.5);
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, rgb(229, 10, 10), #ff4444) !important;
+      color: #ffffff !important;
+      border: none !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 0, 255, 0.3);
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+      background: linear-gradient(135deg, #ff3300, #ff6666) !important;
     }
 
     /* Main container */
@@ -260,6 +313,20 @@
         text-align: center;
       }
 
+      .page-title {
+        text-align: center;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .nav-links a {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
       .container {
         padding: 1rem;
       }
@@ -273,11 +340,25 @@
       }
     }
 
+    @media (max-width: 480px) {
+      .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .nav-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
     /* Focus states for accessibility */
     .btn:focus,
     input:focus,
     select:focus,
-    textarea:focus {
+    textarea:focus,
+    .nav-links a:focus,
+    .logout-btn:focus {
       outline: 2px solid rgba(0, 255, 255, 0.5);
       outline-offset: 2px;
     }
@@ -289,6 +370,10 @@
     <div class="header-content">
       <div class="logo">BangBank</div>
       <div class="page-title">Admin Panel - Edit Product</div>
+      <nav class="nav-links">
+        <a href="/admin/dashboard">Back to Dashboard</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </nav>
     </div>
   </header>
 
