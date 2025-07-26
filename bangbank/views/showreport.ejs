@@ -161,12 +161,39 @@
       border: 1px solid rgba(0, 255, 255, 0.3);
       box-shadow: 0 4px 16px rgba(0, 255, 255, 0.1);
       margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .chart-section h4 {
       color: #00ffff;
       margin-bottom: 1rem;
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    /* Fixed chart sizes */
+    .chart-container {
+      position: relative;
+      width: 300px;
+      height: 250px;
+      margin: 0 auto;
+    }
+
+    .chart-container.line-chart {
+      width: 100%;
+      height: 300px;
+    }
+
+    #accountChart, #consultChart, #cardChart {
+      width: 300px !important;
+      height: 250px !important;
+    }
+
+    #txnChart {
+      width: 100% !important;
+      height: 300px !important;
     }
 
     .btn-outline-cyan {
@@ -253,6 +280,16 @@
       .chart-grid {
         grid-template-columns: 1fr;
       }
+
+      .chart-container {
+        width: 280px;
+        height: 220px;
+      }
+
+      #accountChart, #consultChart, #cardChart {
+        width: 280px !important;
+        height: 220px !important;
+      }
     }
 
     @media (max-width: 480px) {
@@ -271,6 +308,16 @@
         width: 100%;
         text-align: center;
       }
+
+      .chart-container {
+        width: 250px;
+        height: 200px;
+      }
+
+      #accountChart, #consultChart, #cardChart {
+        width: 250px !important;
+        height: 200px !important;
+      }
     }
   </style>
 </head>
@@ -280,12 +327,8 @@
       <div class="logo">BangBank</div>
       <div class="welcome-message">Welcome, <%= user.username %> (<%= user.role %>)</div>
       <nav class="nav-links">
-        <a href="/admin/products">Manage Products</a>
-        <a href="/admin/accounts">Account Applications</a>
-        <a href="/admin/creditcards">Credit Card Applications</a>
-        <a href="/admin/reports">View Reports</a>
-        <a href="/profile">Profile Settings</a>
-        <a href="/logout" class="logout-btn nav-logout-link">Logout</a>
+                <a href="/admin/dashboard">Back to Dashboard</a>
+                <a href="/logout" class="logout-btn nav-logout-link">Logout</a>
       </nav>
     </div>
   </header>
@@ -320,45 +363,107 @@
       </div>
 
       <div class="chart-grid">
-        <div class="chart-section"><h4>User & Account Distribution</h4><canvas id="accountChart"></canvas></div>
-        <div class="chart-section"><h4>Consultation Summary</h4><canvas id="consultChart"></canvas></div>
-        <div class="chart-section"><h4>Card Status Breakdown</h4><canvas id="cardChart"></canvas></div>
-        <div class="chart-section"><h4>Transaction Activity</h4><canvas id="txnChart"></canvas></div>
+        <div class="chart-section">
+          <h4>User & Account Distribution</h4>
+          <div class="chart-container">
+            <canvas id="accountChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-section">
+          <h4>Consultation Summary</h4>
+          <div class="chart-container">
+            <canvas id="consultChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-section">
+          <h4>Card Status Breakdown</h4>
+          <div class="chart-container">
+            <canvas id="cardChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-section">
+          <h4>Transaction Activity</h4>
+          <div class="chart-container line-chart">
+            <canvas id="txnChart"></canvas>
+          </div>
+        </div>
       </div>
     <% } else { %>
       <p class="text-center">No data available at the moment.</p>
     <% } %>
 
-    <div class="text-center mt-4">
-      <a href="/admin/dashboard" class="btn-outline-cyan">← Back to Dashboard</a>
-    </div>
   </div>
 
   <!-- Chart.js Scripts -->
   <script>
     const report = <%- JSON.stringify(reports[0]) %>;
 
+    // Common options for smaller pie charts
+    const pieChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { 
+            color: '#00ffff',
+            font: { size: 12 }
+          }
+        }
+      }
+    };
+
     new Chart(document.getElementById('accountChart'), {
       type: 'pie',
       data: {
         labels: ['Total Users', 'Active Accounts', 'Pending Accounts'],
-        datasets: [{ data: [report.total_users, report.active_accounts, report.pending_accounts], backgroundColor: ['#00ffff', '#00cccc', '#008b8b'] }]
-      }
+        datasets: [{ 
+          data: [report.total_users, report.active_accounts, report.pending_accounts], 
+          backgroundColor: ['#00ffff', '#00cccc', '#008b8b'] 
+        }]
+      },
+      options: pieChartOptions
     });
 
     new Chart(document.getElementById('consultChart'), {
       type: 'pie',
       data: {
         labels: ['Completed', 'Uncompleted'],
-        datasets: [{ data: [report.completed_consultations, report.total_consultations - report.completed_consultations], backgroundColor: ['#00ff99', '#ff4d4d'] }]
-      }
+        datasets: [{ 
+          data: [report.completed_consultations, report.total_consultations - report.completed_consultations], 
+          backgroundColor: ['#00ff99', '#ff4d4d'] 
+        }]
+      },
+      options: pieChartOptions
     });
 
     new Chart(document.getElementById('cardChart'), {
       type: 'bar',
       data: {
         labels: ['Active Cards', 'Pending Cards'],
-        datasets: [{ label: 'Cards', data: [report.active_cards, report.pending_cards], backgroundColor: ['#00ffff', '#0099cc'] }]
+        datasets: [{ 
+          label: 'Cards', 
+          data: [report.active_cards, report.pending_cards], 
+          backgroundColor: ['#00ffff', '#0099cc'] 
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#00ffff' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#00ffff' },
+            grid: { color: 'rgba(0, 255, 255, 0.1)' }
+          },
+          y: {
+            ticks: { color: '#00ffff' },
+            grid: { color: 'rgba(0, 255, 255, 0.1)' }
+          }
+        }
       }
     });
 
@@ -380,6 +485,7 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             ticks: {
