@@ -1,7 +1,10 @@
-const db = require('../db'); // Adjust if your DB config is in a different path
+const db = require('../db');
+const ExcelJS = require('exceljs');
 
+// ADMIN: Show live system analytics report
 exports.showReports = async (req, res) => {
   try {
+    // ✅ Simple role-based access
     if (!req.session.user || !['admin', 'super_admin'].includes(req.session.user.role)) {
       return res.status(403).send('Unauthorized');
     }
@@ -29,16 +32,14 @@ exports.showReports = async (req, res) => {
     ]);
 
     const [txnByDate] = await db.query(`
-  SELECT 
-    DATE(transaction_date) AS date,
-    COUNT(*) AS count
-  FROM transactions
-  WHERE transaction_date >= CURDATE() - INTERVAL 7 DAY
-  GROUP BY DATE(transaction_date)
-  ORDER BY DATE(transaction_date)
-`);
-
-
+      SELECT 
+        DATE(transaction_date) AS date,
+        COUNT(*) AS count
+      FROM transactions
+      WHERE transaction_date >= CURDATE() - INTERVAL 7 DAY
+      GROUP BY DATE(transaction_date)
+      ORDER BY DATE(transaction_date)
+    `);
 
     const report = {
       title: 'Live System Analytics',
@@ -56,11 +57,34 @@ exports.showReports = async (req, res) => {
 
     res.render('showReport', {
       user: req.session.user,
-      reports: [report], txnByDate
+      reports: [report],
+      txnByDate
     });
-
   } catch (err) {
     console.error('Error generating live report:', err);
     res.status(500).send('Internal Server Error');
+  }
+};
+
+// Download Excel (basic fallback version)
+exports.downloadExcelWithCharts = async (req, res) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Report');
+
+    // Example structure — you can dynamically fill this in the future
+    sheet.addRow(['Title', 'Total Users', 'Active Accounts', 'Pending Accounts']);
+    sheet.addRow(['Live System Analytics', 10, 6, 4]);
+
+    const chartSheet = workbook.addWorksheet('Chart Base64s');
+    chartSheet.addRow(['Note: Chart screenshots not included (Puppeteer removed)']);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    res.setHeader('Content-Disposition', 'attachment; filename=bangbank_report.xlsx');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.send(buffer);
+  } catch (err) {
+    console.error('Error generating fallback Excel:', err);
+    res.status(500).send('Failed to generate Excel');
   }
 };

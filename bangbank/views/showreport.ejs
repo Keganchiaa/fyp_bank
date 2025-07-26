@@ -327,8 +327,8 @@
       <div class="logo">BangBank</div>
       <div class="welcome-message">Welcome, <%= user.username %> (<%= user.role %>)</div>
       <nav class="nav-links">
-                <a href="/admin/dashboard">Back to Dashboard</a>
-                <a href="/logout" class="logout-btn nav-logout-link">Logout</a>
+        <a href="/admin/dashboard">Back to Dashboard</a>
+        <a href="/logout" class="logout-btn nav-logout-link">Logout</a>
       </nav>
     </div>
   </header>
@@ -338,12 +338,14 @@
     <% if (reports && reports.length > 0) { const report = reports[0]; %>
       <div class="table-container">
         <div class="text-end mb-3">
-  <button class="btn btn-outline-cyan" onclick="downloadExcel()">Download Excel</button>
-</div>
+          <button class="btn btn-outline-cyan" onclick="downloadExcel()">Download Excel</button>
+        </div>
+
         <table class="table table-bordered table-hover text-center align-middle">
           <thead>
             <tr>
-              <th>Title</th><th>Total Users</th><th>Active Accounts</th><th>Pending Accounts</th><th>Active Cards</th><th>Pending Cards</th><th>Consults Completed</th><th>Txns</th><th>Generated</th>
+              <th>Title</th><th>Total Users</th><th>Active Accounts</th><th>Pending Accounts</th>
+              <th>Active Cards</th><th>Pending Cards</th><th>Consults Completed</th><th>Txns</th><th>Generated</th>
             </tr>
           </thead>
           <tbody>
@@ -391,148 +393,164 @@
     <% } else { %>
       <p class="text-center">No data available at the moment.</p>
     <% } %>
-
   </div>
 
-  <!-- Chart.js Scripts -->
+  <!-- Chart.js Script (make sure it's in your <head> or here if not already included) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Chart Rendering -->
   <script>
-    const report = <%- JSON.stringify(reports[0]) %>;
+    window.addEventListener('load', () => {
+      const report = <%- JSON.stringify(reports[0]) %>;
+      const txnDates = <%- JSON.stringify(txnByDate.map(row => row.date)) %>;
+      const txnCounts = <%- JSON.stringify(txnByDate.map(row => row.count)) %>;
 
-    // Common options for smaller pie charts
-    const pieChartOptions = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: { 
-            color: '#00ffff',
-            font: { size: 12 }
-          }
-        }
-      }
-    };
-
-    new Chart(document.getElementById('accountChart'), {
-      type: 'pie',
-      data: {
-        labels: ['Total Users', 'Active Accounts', 'Pending Accounts'],
-        datasets: [{ 
-          data: [report.total_users, report.active_accounts, report.pending_accounts], 
-          backgroundColor: ['#00ffff', '#00cccc', '#008b8b'] 
-        }]
-      },
-      options: pieChartOptions
-    });
-
-    new Chart(document.getElementById('consultChart'), {
-      type: 'pie',
-      data: {
-        labels: ['Completed', 'Uncompleted'],
-        datasets: [{ 
-          data: [report.completed_consultations, report.total_consultations - report.completed_consultations], 
-          backgroundColor: ['#00ff99', '#ff4d4d'] 
-        }]
-      },
-      options: pieChartOptions
-    });
-
-    new Chart(document.getElementById('cardChart'), {
-      type: 'bar',
-      data: {
-        labels: ['Active Cards', 'Pending Cards'],
-        datasets: [{ 
-          label: 'Cards', 
-          data: [report.active_cards, report.pending_cards], 
-          backgroundColor: ['#00ffff', '#0099cc'] 
-        }]
-      },
-      options: {
+      const pieChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            labels: { color: '#00ffff' }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#00ffff' },
-            grid: { color: 'rgba(0, 255, 255, 0.1)' }
-          },
-          y: {
-            ticks: { color: '#00ffff' },
-            grid: { color: 'rgba(0, 255, 255, 0.1)' }
-          }
-        }
-      }
-    });
-
-    const txnDates = <%- JSON.stringify(txnByDate.map(row => row.date)) %>;
-    const txnCounts = <%- JSON.stringify(txnByDate.map(row => row.count)) %>;
-
-    new Chart(document.getElementById('txnChart'), {
-      type: 'line',
-      data: {
-        labels: txnDates,
-        datasets: [{
-          label: 'Transactions Per Day',
-          data: txnCounts,
-          borderColor: '#00ffff',
-          backgroundColor: 'rgba(0, 255, 255, 0.1)',
-          tension: 0.3,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            ticks: {
-              callback: function(value, index) {
-                const date = new Date(txnDates[index]);
-                return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-              },
-              color: '#00ffff'
-            },
-            grid: { color: 'rgba(0, 255, 255, 0.1)' }
-          },
-          y: {
-            ticks: {
+            labels: {
               color: '#00ffff',
-              precision: 0,
-              stepSize: 1,
-              callback: v => Number.isInteger(v) ? v : ''
-            },
-            grid: { color: 'rgba(0, 255, 255, 0.1)' }
-          }
-        },
-        plugins: {
-          legend: {
-            labels: { color: '#00ffff' }
+              font: { size: 12 }
+            }
           }
         }
-      }
+      };
+
+      new Chart(document.getElementById('accountChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Total Users', 'Active Accounts', 'Pending Accounts'],
+          datasets: [{
+            data: [report.total_users, report.active_accounts, report.pending_accounts],
+            backgroundColor: ['#00ffff', '#00cccc', '#008b8b']
+          }]
+        },
+        options: pieChartOptions
+      });
+
+      new Chart(document.getElementById('consultChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Completed', 'Uncompleted'],
+          datasets: [{
+            data: [report.completed_consultations, report.total_consultations - report.completed_consultations],
+            backgroundColor: ['#00ff99', '#ff4d4d']
+          }]
+        },
+        options: pieChartOptions
+      });
+
+      new Chart(document.getElementById('cardChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Active Cards', 'Pending Cards'],
+          datasets: [{
+            label: 'Cards',
+            data: [report.active_cards, report.pending_cards],
+            backgroundColor: ['#00ffff', '#0099cc']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#00ffff' } }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#00ffff' },
+              grid: { color: 'rgba(0, 255, 255, 0.1)' }
+            },
+            y: {
+              ticks: { color: '#00ffff' },
+              grid: { color: 'rgba(0, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('txnChart'), {
+        type: 'line',
+        data: {
+          labels: txnDates,
+          datasets: [{
+            label: 'Transactions Per Day',
+            data: txnCounts,
+            borderColor: '#00ffff',
+            backgroundColor: 'rgba(0, 255, 255, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#00ffff' } }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: '#00ffff',
+                callback: function(value, index) {
+                  const date = new Date(txnDates[index]);
+                  return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                }
+              },
+              grid: { color: 'rgba(0, 255, 255, 0.1)' }
+            },
+            y: {
+              ticks: {
+                color: '#00ffff',
+                precision: 0,
+                stepSize: 1,
+                callback: v => Number.isInteger(v) ? v : ''
+              },
+              grid: { color: 'rgba(0, 255, 255, 0.1)' }
+            }
+          }
+        }
+      });
     });
   </script>
-<script>
-  function downloadExcel() {
-  const table = document.querySelector(".table");
 
-  const worksheet = XLSX.utils.table_to_sheet(table);
+  <!-- Excel Export with Base64 Charts -->
+  <script>
+    async function downloadExcel() {
+      const table = document.querySelector(".table");
+      const worksheet = XLSX.utils.table_to_sheet(table);
 
-  // Force G2 to be a string: "1 / 3"
-  if (worksheet["G2"]) {
-    worksheet["G2"].v = "1 / 3";  // or use actual values
-    worksheet["G2"].t = "s";      // string type
-    worksheet["G2"].z = "@";      // text format
-  }
+      if (worksheet["G2"]) {
+        worksheet["G2"].v = "1 / 3";
+        worksheet["G2"].t = "s";
+        worksheet["G2"].z = "@";
+      }
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
-  XLSX.writeFile(workbook, "bangbank_report.xlsx");
-}
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
 
-</script>
+      const charts = ["accountChart", "consultChart", "cardChart", "txnChart"];
+      const imageSheetData = [["Chart Name", "Base64 Image"]];
+
+      for (const id of charts) {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+          const base64 = canvas.toDataURL("image/png");
+          imageSheetData.push([id, base64]);
+        }
+      }
+
+      const imageSheet = XLSX.utils.aoa_to_sheet(imageSheetData);
+      XLSX.utils.book_append_sheet(workbook, imageSheet, "Chart Images");
+
+      XLSX.writeFile(workbook, "bangbank_report_with_charts.xlsx");
+    }
+  </script>
+
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
+
 </html>

@@ -225,6 +225,7 @@ app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm
 
 // Report generation
 app.get('/admin/reports', isAuthenticated, isAdminOrSuperadmin, reportController.showReports);
+app.get('/admin/report/excel', isAuthenticated, isAdminOrSuperadmin, reportController.downloadExcelWithCharts);
 
 // Google Calendar OAuth
 app.get('/google/login', (req, res) => {
