@@ -311,7 +311,7 @@ exports.bookSession = async (req, res) => {
             });
         }
 
-        return res.redirect('/customer/consultations?success=Consultation booked successfully!');
+        return res.redirect('/customer/consultations?success=Consultation booked successfully! Check your email for details.');
     } catch (error) {
         console.error('❌ Booking error:', error);
         return res.redirect('/customer/consultations?error=An error occurred while booking your consultation.');

@@ -232,7 +232,9 @@ exports.viewPendingApplications = async (req, res) => {
 
     res.render('adminAccount', {
       user: req.session.user,
-      accounts
+      accounts,
+      success: req.query.success || null,
+      error: req.query.error || null
     });
   } catch (err) {
     console.error(err);
@@ -247,7 +249,7 @@ exports.approveAccount = async (req, res) => {
     await db.query(`UPDATE accounts SET status = 'active' WHERE account_id = ?`, [account_id]);
     await db.query(`UPDATE kyc_documents SET status = 'verified'
                     WHERE account_id = ?`, [account_id]);
-    res.redirect('/admin/accounts');
+    res.redirect('/admin/accounts?success=Account approved successfully.');
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to approve account');
