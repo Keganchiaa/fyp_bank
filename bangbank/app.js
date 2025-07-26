@@ -17,6 +17,7 @@ const creditCardController = require('./controllers/creditCardController');
 const consultationController = require('./controllers/consultationController');
 const otpController = require('./controllers/otpController');
 const transactionController = require('./controllers/transactionController');
+const reportController = require('./controllers/reportController');
 
 // ✅ OAuth utility
 const oauth = require('./utils/oauth');
@@ -221,6 +222,10 @@ app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm
 // Reset password with OTP
 app.get('/otp/request-password-reset/:type/:id', otpController.requestOtpForPasswordReset);
 app.get('/otp/confirm-update/:type/:id', otpController.renderOtpConfirmationForm);
+
+// Report generation
+app.get('/admin/reports', isAuthenticated, isAdminOrSuperadmin, reportController.showReports);
+// app.post('/admin/reports/generate', isAuthenticated, isAdminOrSuperadmin, reportController.generateReport);
 
 // Google Calendar OAuth
 app.get('/google/login', (req, res) => {
