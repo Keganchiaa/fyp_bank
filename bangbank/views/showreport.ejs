@@ -311,7 +311,7 @@
               <td><%= report.pending_accounts %></td>
               <td><%= report.active_cards %></td>
               <td><%= report.pending_cards %></td>
-              <td><%= report.completed_consultations %> / <%= report.total_consultations %></td>
+              <td><%= `${report.completed_consultations} / ${report.total_consultations}` %></td>
               <td><%= report.total_transactions %></td>
               <td><%= new Date(report.generated_at).toLocaleString() %></td>
             </tr>
@@ -409,12 +409,24 @@
       }
     });
   </script>
-  <script>
+<script>
   function downloadExcel() {
-    const table = document.querySelector(".table");
-    const workbook = XLSX.utils.table_to_book(table, { sheet: "Report" });
-    XLSX.writeFile(workbook, "bangbank_report.xlsx");
+  const table = document.querySelector(".table");
+
+  const worksheet = XLSX.utils.table_to_sheet(table);
+
+  // Force G2 to be a string: "1 / 3"
+  if (worksheet["G2"]) {
+    worksheet["G2"].v = "1 / 3";  // or use actual values
+    worksheet["G2"].t = "s";      // string type
+    worksheet["G2"].z = "@";      // text format
   }
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+  XLSX.writeFile(workbook, "bangbank_report.xlsx");
+}
+
 </script>
 </body>
 </html>
