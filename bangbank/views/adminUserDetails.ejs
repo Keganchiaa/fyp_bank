@@ -254,7 +254,7 @@
       font-weight: 300;
     }
 
-    /* Standardized Status badges */
+    /* STANDARDIZED Status badges - Complete Color System */
     .status-badge {
       display: inline-block;
       padding: 0.4rem 1rem;
@@ -272,64 +272,113 @@
 
     .status-badge:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      filter: brightness(1.2);
     }
 
-    /* Active/Success states */
+    /* SUCCESS/ACTIVE - Bright Green */
     .status-badge.active,
-    .status-badge.approved {
-      background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 200, 0, 0.3));
-      color: #00ff00;
-      border: 1px solid rgba(0, 255, 0, 0.4);
+    .status-badge.approved,
+    .status-badge.completed,
+    .status-badge.confirmed {
+      background: linear-gradient(135deg, rgba(0, 255, 127, 0.3), rgba(50, 205, 50, 0.4));
+      color: #00ff7f;
+      border: 1px solid rgba(0, 255, 127, 0.7);
+      box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
     }
 
-    /* Pending/Warning states */
+    /* WARNING/PENDING - Bright Orange */
     .status-badge.pending,
-    .status-badge.scheduled {
-      background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 165, 0, 0.3));
-      color: #ffc107;
-      border: 1px solid rgba(255, 193, 7, 0.4);
+    .status-badge.scheduled,
+    .status-badge.processing,
+    .status-badge.in-progress {
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.4));
+      color: #ffa500;
+      border: 1px solid rgba(255, 165, 0, 0.7);
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.3);
     }
 
-    /* Inactive/Error states */
+    /* ERROR/DANGER - Bright Red */
     .status-badge.inactive,
     .status-badge.rejected,
     .status-badge.cancelled,
-    .status-badge.expired {
-      background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(220, 53, 69, 0.3));
+    .status-badge.expired,
+    .status-badge.failed {
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.3), rgba(255, 45, 85, 0.4));
       color: #ff4757;
-      border: 1px solid rgba(255, 0, 0, 0.4);
+      border: 1px solid rgba(255, 69, 58, 0.7);
+      box-shadow: 0 0 15px rgba(255, 69, 58, 0.3);
     }
 
-    /* Completed states */
-    .status-badge.completed,
-    .status-badge.confirmed {
-      background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(0, 123, 255, 0.3));
-      color: #28a745;
-      border: 1px solid rgba(40, 167, 69, 0.4);
+    /* INFO/NEUTRAL - Bright Blue */
+    .status-badge.available,
+    .status-badge.draft,
+    .status-badge.review {
+      background: linear-gradient(135deg, rgba(0, 191, 255, 0.3), rgba(30, 144, 255, 0.4));
+      color: #00bfff;
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
     }
 
-    /* Processing states */
-    .status-badge.processing,
-    .status-badge.in-progress {
-      background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(106, 90, 205, 0.3));
-      color: #007bff;
-      border: 1px solid rgba(0, 123, 255, 0.4);
+    /* NEUTRAL/SECONDARY - Bright Gray */
+    .status-badge.booked,
+    .status-badge.reserved,
+    .status-badge.on-hold,
+    .status-badge.paused,
+    .status-badge.default {
+      background: linear-gradient(135deg, rgba(169, 169, 169, 0.3), rgba(192, 192, 192, 0.4));
+      color: #c0c0c0;
+      border: 1px solid rgba(169, 169, 169, 0.7);
+      box-shadow: 0 0 15px rgba(169, 169, 169, 0.2);
     }
 
-    /* Available states */
-    .status-badge.available {
-      background: linear-gradient(135deg, rgba(32, 201, 151, 0.2), rgba(0, 255, 255, 0.3));
-      color: #20c997;
-      border: 1px solid rgba(32, 201, 151, 0.4);
+    /* TRANSACTION TYPES - Specialized Colors */
+    .status-badge.deposit,
+    .status-badge.credit {
+      background: linear-gradient(135deg, rgba(0, 255, 127, 0.3), rgba(50, 205, 50, 0.4));
+      color: #00ff7f;
+      border: 1px solid rgba(0, 255, 127, 0.7);
+      box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
     }
 
-    /* Default/Unknown states */
-    .status-badge.default,
-    .status-badge:not([class*="active"]):not([class*="pending"]):not([class*="inactive"]):not([class*="approved"]):not([class*="rejected"]):not([class*="completed"]):not([class*="processing"]):not([class*="available"]):not([class*="scheduled"]):not([class*="cancelled"]):not([class*="expired"]):not([class*="confirmed"]) {
-      background: linear-gradient(135deg, rgba(108, 117, 125, 0.2), rgba(134, 142, 150, 0.3));
-      color: #6c757d;
-      border: 1px solid rgba(108, 117, 125, 0.4);
+    .status-badge.withdrawal,
+    .status-badge.debit {
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.3), rgba(255, 45, 85, 0.4));
+      color: #ff4757;
+      border: 1px solid rgba(255, 69, 58, 0.7);
+      box-shadow: 0 0 15px rgba(255, 69, 58, 0.3);
+    }
+
+    .status-badge.transfer {
+      background: linear-gradient(135deg, rgba(0, 191, 255, 0.3), rgba(30, 144, 255, 0.4));
+      color: #00bfff;
+      border: 1px solid rgba(0, 191, 255, 0.7);
+      box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+    }
+
+    .status-badge.fee,
+    .status-badge.charge {
+      background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 140, 0, 0.4));
+      color: #ffa500;
+      border: 1px solid rgba(255, 165, 0, 0.7);
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.3);
+    }
+
+    /* SPECIAL STATUSES */
+    .status-badge.verified,
+    .status-badge.valid {
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(64, 224, 208, 0.4));
+      color: #00ffff;
+      border: 1px solid rgba(0, 255, 255, 0.7);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .status-badge.unverified,
+    .status-badge.invalid {
+      background: linear-gradient(135deg, rgba(255, 69, 58, 0.3), rgba(255, 45, 85, 0.4));
+      color: #ff4757;
+      border: 1px solid rgba(255, 69, 58, 0.7);
+      box-shadow: 0 0 15px rgba(255, 69, 58, 0.3);
     }
 
     /* View link styles */
@@ -373,11 +422,13 @@
     }
 
     .amount.positive {
-      color: #00ff88;
+      color: #00ff7f;
+      text-shadow: 0 0 10px rgba(0, 255, 127, 0.4);
     }
 
     .amount.negative {
       color: #ff4757;
+      text-shadow: 0 0 10px rgba(255, 69, 58, 0.4);
     }
 
     /* Responsive design */
