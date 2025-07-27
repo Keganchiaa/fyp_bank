@@ -14,7 +14,7 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       line-height: 1.6;
       color: #e0e0e0;
       background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
@@ -23,11 +23,11 @@
 
     /* Header styles */
     header {
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 20px rgba(0, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 30px rgba(0, 255, 255, 0.08);
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -43,60 +43,63 @@
     }
 
     .logo {
-      font-size: 1.8rem;
-      font-weight: 700;
+      font-size: 2rem;
+      font-weight: 600;
       background: linear-gradient(135deg, #00ffff, #ff00ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      text-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
       flex-shrink: 0;
+      letter-spacing: -1px;
     }
 
     .page-title {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: #ffffff;
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
       flex-grow: 1;
       text-align: center;
+      font-weight: 300;
     }
 
     .back-btn {
       color: #e0e0e0;
       text-decoration: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 25px;
-      background: rgba(0, 255, 255, 0.1);
-      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 0.8rem 2rem;
+      border-radius: 30px;
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid rgba(0, 255, 255, 0.2);
       transition: all 0.3s ease;
       font-weight: 500;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      font-size: 0.95rem;
+      letter-spacing: 0.3px;
     }
 
     .back-btn:hover {
-      color: #00ffff;
-      background: rgba(0, 255, 255, 0.2);
+      color: #ffffff;
+      background: rgba(0, 255, 255, 0.15);
       transform: translateY(-2px);
-      box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
-      border-color: rgba(0, 255, 255, 0.5);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.25);
+      border-color: rgba(0, 255, 255, 0.4);
     }
 
     /* Container styles */
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 3rem 2rem;
     }
 
     /* Section styles */
     .section {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(15px);
-      padding: 2rem;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(20px);
+      padding: 2.5rem;
       border-radius: 20px;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
-      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 12px 50px rgba(0, 255, 255, 0.15);
+      margin-bottom: 3rem;
       position: relative;
       overflow: hidden;
       animation: fadeIn 0.6s ease-out;
@@ -110,7 +113,7 @@
       width: 100%;
       height: 100%;
       background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent);
-      transition: left 0.5s;
+      transition: left 0.8s ease;
     }
 
     .section:hover::before {
@@ -119,20 +122,21 @@
 
     .section h2 {
       color: #ffffff;
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      font-size: 2rem;
+      font-weight: 300;
+      margin-bottom: 2rem;
+      text-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
       background: linear-gradient(135deg, #00ffff, #ff00ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      letter-spacing: -1px;
     }
 
     /* Profile image styles */
     .profile-image {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .profile-image img {
@@ -140,14 +144,15 @@
       height: 200px;
       object-fit: cover;
       border-radius: 50%;
-      border: 3px solid rgba(0, 255, 255, 0.5);
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      border: 3px solid rgba(0, 255, 255, 0.4);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
       transition: all 0.3s ease;
     }
 
     .profile-image img:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 40px rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 60px rgba(0, 255, 255, 0.5);
+      border-color: rgba(0, 255, 255, 0.6);
     }
 
     /* Info grid styles */
@@ -159,17 +164,20 @@
     }
 
     .info-item {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 1rem;
-      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(15px);
+      padding: 1.5rem;
+      border-radius: 15px;
       border: 1px solid rgba(0, 255, 255, 0.2);
       transition: all 0.3s ease;
+      box-shadow: 0 6px 25px rgba(0, 255, 255, 0.1);
     }
 
     .info-item:hover {
       background: rgba(0, 255, 255, 0.05);
-      border-color: rgba(0, 255, 255, 0.4);
-      transform: translateY(-2px);
+      border-color: rgba(255, 0, 255, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(255, 0, 255, 0.15);
     }
 
     .info-item .label {
@@ -177,8 +185,8 @@
       font-weight: 600;
       font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+      margin-bottom: 0.8rem;
       text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
     }
 
@@ -186,16 +194,17 @@
       color: #ffffff;
       font-size: 1.1rem;
       font-weight: 500;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
     }
 
     /* Table styles */
     .table-container {
       overflow-x: auto;
-      border-radius: 15px;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 8px 32px rgba(0, 255, 255, 0.2);
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 12px 50px rgba(0, 255, 255, 0.15);
       margin-bottom: 2rem;
     }
 
@@ -208,19 +217,23 @@
     th {
       background: rgba(0, 255, 255, 0.1);
       color: #00ffff;
-      padding: 1rem;
+      padding: 1.2rem;
       text-align: left;
       font-weight: 600;
-      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
       border-bottom: 2px solid rgba(0, 255, 255, 0.3);
       white-space: nowrap;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
     td {
-      padding: 1rem;
+      padding: 1.2rem;
       border-bottom: 1px solid rgba(0, 255, 255, 0.1);
       color: #e0e0e0;
       transition: all 0.3s ease;
+      font-weight: 300;
     }
 
     tr:hover td {
@@ -231,93 +244,156 @@
     /* Empty state */
     .empty-state {
       text-align: center;
-      padding: 3rem;
+      padding: 4rem;
       color: rgba(224, 224, 224, 0.6);
       font-style: italic;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      border: 1px dashed rgba(0, 255, 255, 0.2);
+      border-radius: 15px;
+      border: 1px dashed rgba(0, 255, 255, 0.3);
+      font-weight: 300;
     }
 
-    /* Status badges */
+    /* Standardized Status badges */
     .status-badge {
       display: inline-block;
-      padding: 0.3rem 0.8rem;
-      border-radius: 15px;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      text-align: center;
+      min-width: 80px;
+      text-shadow: 0 0 8px currentColor;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
     }
 
-    .status-badge.active {
-      background: rgba(0, 255, 0, 0.2);
-      color: #00ff00;
-      border: 1px solid rgba(0, 255, 0, 0.3);
+    .status-badge:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     }
 
-    .status-badge.pending {
-      background: rgba(255, 255, 0, 0.2);
-      color: #ffff00;
-      border: 1px solid rgba(255, 255, 0, 0.3);
-    }
-
-    .status-badge.inactive {
-      background: rgba(255, 0, 0, 0.2);
-      color: #ff4444;
-      border: 1px solid rgba(255, 0, 0, 0.3);
-    }
-
+    /* Active/Success states */
+    .status-badge.active,
     .status-badge.approved {
-      background: rgba(0, 255, 0, 0.2);
+      background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 200, 0, 0.3));
       color: #00ff00;
-      border: 1px solid rgba(0, 255, 0, 0.3);
+      border: 1px solid rgba(0, 255, 0, 0.4);
     }
 
-    .status-badge.rejected {
-      background: rgba(255, 0, 0, 0.2);
-      color: #ff4444;
-      border: 1px solid rgba(255, 0, 0, 0.3);
+    /* Pending/Warning states */
+    .status-badge.pending,
+    .status-badge.scheduled {
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 165, 0, 0.3));
+      color: #ffc107;
+      border: 1px solid rgba(255, 193, 7, 0.4);
+    }
+
+    /* Inactive/Error states */
+    .status-badge.inactive,
+    .status-badge.rejected,
+    .status-badge.cancelled,
+    .status-badge.expired {
+      background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(220, 53, 69, 0.3));
+      color: #ff4757;
+      border: 1px solid rgba(255, 0, 0, 0.4);
+    }
+
+    /* Completed states */
+    .status-badge.completed,
+    .status-badge.confirmed {
+      background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(0, 123, 255, 0.3));
+      color: #28a745;
+      border: 1px solid rgba(40, 167, 69, 0.4);
+    }
+
+    /* Processing states */
+    .status-badge.processing,
+    .status-badge.in-progress {
+      background: linear-gradient(135deg, rgba(0, 123, 255, 0.2), rgba(106, 90, 205, 0.3));
+      color: #007bff;
+      border: 1px solid rgba(0, 123, 255, 0.4);
+    }
+
+    /* Available states */
+    .status-badge.available {
+      background: linear-gradient(135deg, rgba(32, 201, 151, 0.2), rgba(0, 255, 255, 0.3));
+      color: #20c997;
+      border: 1px solid rgba(32, 201, 151, 0.4);
+    }
+
+    /* Default/Unknown states */
+    .status-badge.default,
+    .status-badge:not([class*="active"]):not([class*="pending"]):not([class*="inactive"]):not([class*="approved"]):not([class*="rejected"]):not([class*="completed"]):not([class*="processing"]):not([class*="available"]):not([class*="scheduled"]):not([class*="cancelled"]):not([class*="expired"]):not([class*="confirmed"]) {
+      background: linear-gradient(135deg, rgba(108, 117, 125, 0.2), rgba(134, 142, 150, 0.3));
+      color: #6c757d;
+      border: 1px solid rgba(108, 117, 125, 0.4);
     }
 
     /* View link styles */
     .view-link {
       color: #00ffff;
       text-decoration: none;
-      padding: 0.3rem 0.8rem;
-      border-radius: 12px;
+      padding: 0.4rem 1rem;
+      border-radius: 15px;
       background: rgba(0, 255, 255, 0.1);
       border: 1px solid rgba(0, 255, 255, 0.3);
       transition: all 0.3s ease;
       font-size: 0.9rem;
       font-weight: 500;
+      display: inline-block;
+      text-align: center;
+      min-width: 60px;
+      letter-spacing: 0.3px;
     }
 
     .view-link:hover {
       background: rgba(0, 255, 255, 0.2);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 255, 0.3);
+      color: #ffffff;
     }
 
     /* Divider */
     .divider {
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
-      margin: 3rem 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), rgba(255, 0, 255, 0.5), transparent);
+      margin: 4rem 0;
       border: none;
+      border-radius: 2px;
+    }
+
+    /* Amount styling */
+    .amount {
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    }
+
+    .amount.positive {
+      color: #00ff88;
+    }
+
+    .amount.negative {
+      color: #ff4757;
     }
 
     /* Responsive design */
     @media (max-width: 768px) {
       .header-content {
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.5rem;
         text-align: center;
       }
 
+      .page-title {
+        font-size: 1.3rem;
+      }
+
       .container {
-        padding: 1rem;
+        padding: 2rem 1rem;
       }
 
       .info-grid {
@@ -325,7 +401,11 @@
       }
 
       .section {
-        padding: 1.5rem;
+        padding: 2rem;
+      }
+
+      .section h2 {
+        font-size: 1.7rem;
       }
 
       .table-container {
@@ -334,12 +414,24 @@
 
       th,
       td {
-        padding: 0.7rem;
+        padding: 0.8rem;
       }
 
       .profile-image img {
         max-width: 150px;
         height: 150px;
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.8rem;
+        min-width: 70px;
+      }
+
+      .view-link {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.8rem;
+        min-width: 50px;
       }
     }
 
@@ -355,8 +447,23 @@
 
       th,
       td {
-        padding: 0.5rem;
+        padding: 0.6rem;
         font-size: 0.8rem;
+      }
+
+      .status-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.6rem;
+        min-width: 60px;
+      }
+
+      .info-item {
+        padding: 1.2rem;
+      }
+
+      .empty-state {
+        padding: 3rem;
+        font-size: 1.1rem;
       }
     }
 
@@ -369,8 +476,9 @@
       width: 100%;
       height: 100%;
       background:
-        radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 40% 60%, rgba(0, 255, 255, 0.06) 0%, transparent 40%);
       pointer-events: none;
       z-index: -1;
     }
@@ -379,9 +487,8 @@
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -392,7 +499,21 @@
     .back-btn:focus,
     .view-link:focus {
       outline: 2px solid rgba(0, 255, 255, 0.5);
-      outline-offset: 2px;
+      outline-offset: 3px;
+    }
+
+    /* Loading animation for images */
+    img {
+      transition: opacity 0.3s ease;
+    }
+
+    img:not([src]), img[src=""] {
+      opacity: 0.3;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
@@ -401,8 +522,7 @@
   <header>
     <div class="header-content">
       <div class="logo">BangBank</div>
-      <div class="page-title">User Details for <%= user.username %>
-      </div>
+      <div class="page-title">User Details for <%= user.username %></div>
       <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
     </div>
   </header>
@@ -419,75 +539,51 @@
       <div class="info-grid">
         <div class="info-item">
           <div class="label">Username</div>
-          <div class="value">
-            <%= user.username %>
-          </div>
+          <div class="value"><%= user.username %></div>
         </div>
         <div class="info-item">
           <div class="label">Email</div>
-          <div class="value">
-            <%= user.userEmail %>
-          </div>
+          <div class="value"><%= user.userEmail %></div>
         </div>
         <div class="info-item">
           <div class="label">Role</div>
-          <div class="value">
-            <%= user.userRole %>
-          </div>
+          <div class="value"><%= user.userRole %></div>
         </div>
         <div class="info-item">
           <div class="label">First Name</div>
-          <div class="value">
-            <%= user.first_name %>
-          </div>
+          <div class="value"><%= user.first_name %></div>
         </div>
         <div class="info-item">
           <div class="label">Last Name</div>
-          <div class="value">
-            <%= user.last_name %>
-          </div>
+          <div class="value"><%= user.last_name %></div>
         </div>
         <div class="info-item">
           <div class="label">Alias</div>
-          <div class="value">
-            <%= user.alias || '—' %>
-          </div>
+          <div class="value"><%= user.alias || '—' %></div>
         </div>
         <div class="info-item">
           <div class="label">Date of Birth</div>
-          <div class="value">
-            <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %>
-          </div>
+          <div class="value"><%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %></div>
         </div>
         <div class="info-item">
           <div class="label">Phone Number</div>
-          <div class="value">
-            <%= user.phone_number %>
-          </div>
+          <div class="value"><%= user.phone_number %></div>
         </div>
         <div class="info-item">
           <div class="label">Country</div>
-          <div class="value">
-            <%= user.country %>
-          </div>
+          <div class="value"><%= user.country %></div>
         </div>
         <div class="info-item">
           <div class="label">Address Line 1</div>
-          <div class="value">
-            <%= user.address_line_1 %>
-          </div>
+          <div class="value"><%= user.address_line_1 %></div>
         </div>
         <div class="info-item">
           <div class="label">Address Line 2</div>
-          <div class="value">
-            <%= user.address_line_2 || '—' %>
-          </div>
+          <div class="value"><%= user.address_line_2 || '—' %></div>
         </div>
         <div class="info-item">
           <div class="label">Postal Code</div>
-          <div class="value">
-            <%= user.postcode %>
-          </div>
+          <div class="value"><%= user.postcode %></div>
         </div>
       </div>
     </div>
@@ -498,69 +594,50 @@
     <div class="section">
       <h2>Bank Accounts</h2>
 
-      <% if (accounts.length===0) { %>
+      <% if (accounts.length === 0) { %>
         <div class="empty-state">
           <p>No bank accounts found for this user.</p>
         </div>
-        <% } else { %>
-          <div class="table-container">
-            <table>
-              <thead>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Product Type</th>
+                <th>Account Number</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th>Opened At</th>
+                <th>KYC ID Type</th>
+                <th>KYC ID Number</th>
+                <th>KYC Document</th>
+                <th>KYC Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% accounts.forEach(account => { %>
                 <tr>
-                  <th>Product Name</th>
-                  <th>Product Type</th>
-                  <th>Account Number</th>
-                  <th>Balance</th>
-                  <th>Status</th>
-                  <th>Opened At</th>
-                  <th>KYC ID Type</th>
-                  <th>KYC ID Number</th>
-                  <th>KYC Document</th>
-                  <th>KYC Status</th>
+                  <td><%= account.product_name %></td>
+                  <td><%= account.product_type %></td>
+                  <td><%= account.account_number %></td>
+                  <td><span class="amount">$<%= parseFloat(account.balance).toFixed(2) %></span></td>
+                  <td><span class="status-badge <%= account.status.toLowerCase() %>"><%= account.status %></span></td>
+                  <td><%= new Date(account.opened_at).toISOString().split('T')[0] %></td>
+                  <% if (account.kycDoc) { %>
+                    <td><%= account.kycDoc.id_type %></td>
+                    <td><%= account.kycDoc.id_number %></td>
+                    <td><a href="<%= account.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                    <td><span class="status-badge <%= account.kycDoc.status.toLowerCase() %>"><%= account.kycDoc.status %></span></td>
+                  <% } else { %>
+                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
+                  <% } %>
                 </tr>
-              </thead>
-              <tbody>
-                <% accounts.forEach(account=> { %>
-                  <tr>
-                    <td>
-                      <%= account.product_name %>
-                    </td>
-                    <td>
-                      <%= account.product_type %>
-                    </td>
-                    <td>
-                      <%= account.account_number %>
-                    </td>
-                    <td>$<%= parseFloat(account.balance).toFixed(2) %>
-                    </td>
-                    <td><span class="status-badge <%= account.status.toLowerCase() %>">
-                        <%= account.status %>
-                      </span></td>
-                    <td>
-                      <%= new Date(account.opened_at).toISOString().split('T')[0] %>
-                    </td>
-
-                    <% if (account.kycDoc) { %>
-                      <td>
-                        <%= account.kycDoc.id_type %>
-                      </td>
-                      <td>
-                        <%= account.kycDoc.id_number %>
-                      </td>
-                      <td><a href="<%= account.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
-                      <td><span class="status-badge <%= account.kycDoc.status.toLowerCase() %>">
-                          <%= account.kycDoc.status %>
-                        </span></td>
-                      <% } else { %>
-                        <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —
-                        </td>
-                        <% } %>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
 
     <hr class="divider">
@@ -569,203 +646,160 @@
     <div class="section">
       <h2>Credit Cards</h2>
 
-      <% if (cards.length===0) { %>
+      <% if (cards.length === 0) { %>
         <div class="empty-state">
           <p>No credit cards found for this user.</p>
         </div>
-        <% } else { %>
-          <div class="table-container">
-            <table>
-              <thead>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Card Number</th>
+                <th>Expiry Date</th>
+                <th>Credit Limit</th>
+                <th>Outstanding Balance</th>
+                <th>Status</th>
+                <th>Issued At</th>
+                <th>KYC ID Type</th>
+                <th>KYC ID Number</th>
+                <th>KYC Document</th>
+                <th>KYC Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% cards.forEach(card => { %>
                 <tr>
-                  <th>Product Name</th>
-                  <th>Card Number</th>
-                  <th>Expiry Date</th>
-                  <th>Credit Limit</th>
-                  <th>Outstanding Balance</th>
-                  <th>Status</th>
-                  <th>Issued At</th>
-                  <th>KYC ID Type</th>
-                  <th>KYC ID Number</th>
-                  <th>KYC Document</th>
-                  <th>KYC Status</th>
+                  <td><%= card.product_name %></td>
+                  <td><%= card.card_number %></td>
+                  <td><%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %></td>
+                  <td><span class="amount">$<%= parseFloat(card.credit_limit).toFixed(2) %></span></td>
+                  <td><span class="amount">$<%= parseFloat(card.outstanding_balance).toFixed(2) %></span></td>
+                  <td><span class="status-badge <%= card.status.toLowerCase() %>"><%= card.status %></span></td>
+                  <td><%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %></td>
+                  <% if (card.kycDoc) { %>
+                    <td><%= card.kycDoc.id_type %></td>
+                    <td><%= card.kycDoc.id_number %></td>
+                    <td><a href="<%= card.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                    <td><span class="status-badge <%= card.kycDoc.status.toLowerCase() %>"><%= card.kycDoc.status %></span></td>
+                  <% } else { %>
+                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
+                  <% } %>
                 </tr>
-              </thead>
-              <tbody>
-                <% cards.forEach(card=> { %>
-                  <tr>
-                    <td>
-                      <%= card.product_name %>
-                    </td>
-                    <td>
-                      <%= card.card_number %>
-                    </td>
-                    <td>
-                      <%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %>
-                    </td>
-                    <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
-                    </td>
-                    <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %>
-                    </td>
-                    <td><span class="status-badge <%= card.status.toLowerCase() %>">
-                        <%= card.status %>
-                      </span></td>
-                    <td>
-                      <%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %>
-                    </td>
-
-                    <% if (card.kycDoc) { %>
-                      <td>
-                        <%= card.kycDoc.id_type %>
-                      </td>
-                      <td>
-                        <%= card.kycDoc.id_number %>
-                      </td>
-                      <td><a href="<%= card.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
-                      <td><span class="status-badge <%= card.kycDoc.status.toLowerCase() %>">
-                          <%= card.kycDoc.status %>
-                        </span></td>
-                      <% } else { %>
-                        <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —
-                        </td>
-                        <% } %>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
+
     <hr class="divider">
 
     <div class="section">
       <h2>Transactions</h2>
-      <% if (transactions.length===0) { %>
+      <% if (transactions.length === 0) { %>
         <div class="empty-state">No transactions found.</div>
-        <% } else { %>
-          <div class="table-container">
-            <table>
-              <thead>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Balance After</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% transactions.forEach(tx => { %>
                 <tr>
-                  <th>Account</th>
-                  <th>Type</th>
-                  <th>Amount</th>
-                  <th>Description</th>
-                  <th>Balance After</th>
-                  <th>Date</th>
+                  <td><%= tx.account_name %> (<%= tx.account_number %>)</td>
+                  <td><span class="status-badge <%= tx.transaction_type.toLowerCase().replace(' ', '-') %>"><%= tx.transaction_type %></span></td>
+                  <td><span class="amount <%= parseFloat(tx.amount) >= 0 ? 'positive' : 'negative' %>">$<%= parseFloat(tx.amount).toFixed(2) %></span></td>
+                  <td><%= tx.description || '—' %></td>
+                  <td><span class="amount">$<%= parseFloat(tx.balance_after).toFixed(2) %></span></td>
+                  <td><%= new Date(tx.transaction_date).toLocaleString() %></td>
                 </tr>
-              </thead>
-              <tbody>
-                <% transactions.forEach(tx=> { %>
-                  <tr>
-                    <td>
-                      <%= tx.account_name %> (<%= tx.account_number %>)
-                    </td>
-                    <td>
-                      <%= tx.transaction_type %>
-                    </td>
-                    <td>$<%= parseFloat(tx.amount).toFixed(2) %>
-                    </td>
-                    <td>
-                      <%= tx.description || '—' %>
-                    </td>
-                    <td>$<%= parseFloat(tx.balance_after).toFixed(2) %>
-                    </td>
-                    <td>
-                      <%= new Date(tx.transaction_date).toLocaleString() %>
-                    </td>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
+
     <hr class="divider">
 
     <div class="section">
       <h2>Consultations</h2>
-      <% if (consultations.length===0) { %>
+      <% if (consultations.length === 0) { %>
         <div class="empty-state">No consultations found.</div>
-        <% } else { %>
-          <div class="table-container">
-            <table>
-              <thead>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Advisor</th>
+                <th>Status</th>
+                <th>Meet Link</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% consultations.forEach(c => { %>
                 <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Advisor</th>
-                  <th>Status</th>
-                  <th>Meet Link</th>
-                  <th>Notes</th>
+                  <td><%= c.session_date %></td>
+                  <td><%= c.session_time %> – <%= c.end_time %></td>
+                  <td><%= c.advisor_name %></td>
+                  <td><span class="status-badge <%= c.status.toLowerCase() %>"><%= c.status %></span></td>
+                  <td>
+                    <% if (c.meet_link) { %>
+                      <a href="<%= c.meet_link %>" class="view-link" target="_blank">Join</a>
+                    <% } else { %>
+                      —
+                    <% } %>
+                  </td>
+                  <td><%= c.notes || '—' %></td>
                 </tr>
-              </thead>
-              <tbody>
-                <% consultations.forEach(c=> { %>
-                  <tr>
-                    <td>
-                      <%= c.session_date %>
-                    </td>
-                    <td>
-                      <%= c.session_time %> – <%= c.end_time %>
-                    </td>
-                    <td>
-                      <%= c.advisor_name %>
-                    </td>
-                    <td><span class="status-badge <%= c.status.toLowerCase() %>">
-                        <%= c.status %>
-                      </span></td>
-                    <td>
-                      <% if (c.meet_link) { %>
-                        <a href="<%= c.meet_link %>" class="view-link" target="_blank">Join</a>
-                        <% } else { %>
-                          —
-                          <% } %>
-                    </td>
-                    <td>
-                      <%= c.notes || '—' %>
-                    </td>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
+
     <hr class="divider">
 
     <div class="section">
       <h2>Available Sessions</h2>
-      <% if (availableSessions.length===0) { %>
+      <% if (availableSessions.length === 0) { %>
         <div class="empty-state">No available sessions found.</div>
-        <% } else { %>
-          <div class="table-container">
-            <table>
-              <thead>
+      <% } else { %>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Advisor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% availableSessions.forEach(s => { %>
                 <tr>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Advisor</th>
+                  <td><%= s.session_date %></td>
+                  <td><%= s.session_time %> – <%= s.end_time %></td>
+                  <td><%= s.advisor_name %></td>
                 </tr>
-              </thead>
-              <tbody>
-                <% availableSessions.forEach(s=> { %>
-                  <tr>
-                    <td>
-                      <%= s.session_date %>
-                    </td>
-                    <td>
-                      <%= s.session_time %> – <%= s.end_time %>
-                    </td>
-                    <td>
-                      <%= s.advisor_name %>
-                    </td>
-                  </tr>
-                  <% }) %>
-              </tbody>
-            </table>
-          </div>
-          <% } %>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
   </div>
 </body>

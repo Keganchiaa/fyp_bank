@@ -207,7 +207,11 @@
     }
 
     .product-category {
-      margin-bottom: 5rem;
+      margin-bottom: 6rem;
+    }
+
+    .product-category:last-of-type {
+      margin-bottom: 4rem;
     }
 
     .category-title {
@@ -229,18 +233,18 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-      gap: 2.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
       margin-bottom: 3rem;
     }
 
     .product-card {
       background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(20px);
-      border-radius: 25px;
+      border-radius: 20px;
       border: 1px solid rgba(0, 255, 255, 0.2);
-      box-shadow: 0 12px 40px rgba(0, 255, 255, 0.15);
-      padding: 2.5rem;
+      box-shadow: 0 8px 30px rgba(0, 255, 255, 0.12);
+      padding: 2rem;
       transition: all 0.4s ease;
       position: relative;
       overflow: hidden;
@@ -360,9 +364,9 @@
 
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 3rem;
-      max-width: 1300px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 2rem;
     }
@@ -370,39 +374,39 @@
     .feature-card {
       background: rgba(0, 0, 0, 0.8);
       backdrop-filter: blur(15px);
-      padding: 3rem 2.5rem;
-      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      border-radius: 18px;
       border: 1px solid rgba(0, 255, 255, 0.2);
       text-align: center;
       transition: all 0.4s ease;
-      box-shadow: 0 8px 30px rgba(0, 255, 255, 0.1);
+      box-shadow: 0 6px 25px rgba(0, 255, 255, 0.1);
     }
 
     .feature-card:hover {
-      transform: translateY(-8px);
+      transform: translateY(-5px);
       border-color: rgba(255, 0, 255, 0.4);
-      box-shadow: 0 15px 50px rgba(255, 0, 255, 0.15);
+      box-shadow: 0 12px 40px rgba(255, 0, 255, 0.15);
     }
 
     .feature-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.4));
+      font-size: 3rem;
+      margin-bottom: 1.2rem;
+      filter: drop-shadow(0 0 12px rgba(0, 255, 255, 0.4));
     }
 
     .feature-title {
       color: #ffffff;
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      margin-bottom: 1.5rem;
-      text-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-      letter-spacing: -0.3px;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+      letter-spacing: -0.2px;
     }
 
     .feature-description {
       color: rgba(224, 224, 224, 0.8);
-      font-size: 1rem;
-      line-height: 1.7;
+      font-size: 0.95rem;
+      line-height: 1.6;
       font-weight: 300;
     }
 
@@ -600,7 +604,32 @@
       z-index: -1;
     }
 
-    /* Animations */
+    /* Scroll animations */
+    .product-card,
+    .feature-card,
+    .product-category {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.5s ease-out;
+    }
+
+    .product-card.animate,
+    .feature-card.animate,
+    .product-category.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered animation delays */
+    .product-card:nth-child(1) { transition-delay: 0.05s; }
+    .product-card:nth-child(2) { transition-delay: 0.1s; }
+    .product-card:nth-child(3) { transition-delay: 0.15s; }
+    
+    .feature-card:nth-child(1) { transition-delay: 0.05s; }
+    .feature-card:nth-child(2) { transition-delay: 0.1s; }
+    .feature-card:nth-child(3) { transition-delay: 0.15s; }
+
+    /* Initial page animations */
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -612,11 +641,11 @@
       }
     }
 
-    header, main {
+    header, .hero-section {
       animation: fadeIn 0.8s ease-out;
     }
 
-    main {
+    .hero-section {
       animation-delay: 0.3s;
     }
 
@@ -635,6 +664,59 @@
   <!-- Botpress Webchat Scripts  -->
   <script src="https://cdn.botpress.cloud/webchat/v3.2/inject.js" defer></script>
   <script src="https://files.bpcontent.cloud/2025/07/24/08/20250724084834-TTYEUB8Q.js" defer></script>
+  
+  <!-- Scroll Animation Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to check if element is in viewport
+      function isInViewport(element, offset = 80) {
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.top < (window.innerHeight || document.documentElement.clientHeight) - offset &&
+          rect.bottom > offset
+        );
+      }
+
+      // Function to animate elements
+      function animateOnScroll() {
+        const elementsToAnimate = document.querySelectorAll('.product-card, .feature-card, .product-category');
+        
+        elementsToAnimate.forEach((element) => {
+          if (isInViewport(element, 100)) {
+            // Element is in viewport - show it
+            if (!element.classList.contains('animate')) {
+              element.classList.add('animate');
+            }
+          } else {
+            // Element is out of viewport - hide it
+            if (element.classList.contains('animate')) {
+              element.classList.remove('animate');
+            }
+          }
+        });
+      }
+
+      // Initial check
+      animateOnScroll();
+
+      // Listen for scroll events with throttling for better performance
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            animateOnScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('scroll', onScroll);
+      
+      // Also check on resize
+      window.addEventListener('resize', animateOnScroll);
+    });
+  </script>
 </head>
 <body>
   <header>
