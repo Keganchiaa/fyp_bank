@@ -332,7 +332,8 @@
         font-size: 0.9rem;
       }
 
-      th, td {
+      th,
+      td {
         padding: 0.7rem;
       }
 
@@ -352,7 +353,8 @@
         height: 120px;
       }
 
-      th, td {
+      th,
+      td {
         padding: 0.5rem;
         font-size: 0.8rem;
       }
@@ -366,7 +368,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: 
+      background:
         radial-gradient(circle at 25% 25%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
       pointer-events: none;
@@ -379,6 +381,7 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -398,7 +401,8 @@
   <header>
     <div class="header-content">
       <div class="logo">BangBank</div>
-      <div class="page-title">User Details for <%= user.username %></div>
+      <div class="page-title">User Details for <%= user.username %>
+      </div>
       <a href="/admin/dashboard" class="back-btn">← Back to Dashboard</a>
     </div>
   </header>
@@ -407,7 +411,7 @@
     <!-- User Profile Section -->
     <div class="section">
       <h2>User Profile</h2>
-      
+
       <div class="profile-image">
         <img src="/uploads/<%= user.userImage %>" alt="Profile Image" />
       </div>
@@ -415,51 +419,75 @@
       <div class="info-grid">
         <div class="info-item">
           <div class="label">Username</div>
-          <div class="value"><%= user.username %></div>
+          <div class="value">
+            <%= user.username %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Email</div>
-          <div class="value"><%= user.userEmail %></div>
+          <div class="value">
+            <%= user.userEmail %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Role</div>
-          <div class="value"><%= user.userRole %></div>
+          <div class="value">
+            <%= user.userRole %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">First Name</div>
-          <div class="value"><%= user.first_name %></div>
+          <div class="value">
+            <%= user.first_name %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Last Name</div>
-          <div class="value"><%= user.last_name %></div>
+          <div class="value">
+            <%= user.last_name %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Alias</div>
-          <div class="value"><%= user.alias || '—' %></div>
+          <div class="value">
+            <%= user.alias || '—' %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Date of Birth</div>
-          <div class="value"><%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %></div>
+          <div class="value">
+            <%= user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '—' %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Phone Number</div>
-          <div class="value"><%= user.phone_number %></div>
+          <div class="value">
+            <%= user.phone_number %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Country</div>
-          <div class="value"><%= user.country %></div>
+          <div class="value">
+            <%= user.country %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Address Line 1</div>
-          <div class="value"><%= user.address_line_1 %></div>
+          <div class="value">
+            <%= user.address_line_1 %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Address Line 2</div>
-          <div class="value"><%= user.address_line_2 || '—' %></div>
+          <div class="value">
+            <%= user.address_line_2 || '—' %>
+          </div>
         </div>
         <div class="info-item">
           <div class="label">Postal Code</div>
-          <div class="value"><%= user.postcode %></div>
+          <div class="value">
+            <%= user.postcode %>
+          </div>
         </div>
       </div>
     </div>
@@ -469,52 +497,70 @@
     <!-- Bank Accounts Section -->
     <div class="section">
       <h2>Bank Accounts</h2>
-      
-      <% if (accounts.length === 0) { %>
+
+      <% if (accounts.length===0) { %>
         <div class="empty-state">
           <p>No bank accounts found for this user.</p>
         </div>
-      <% } else { %>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Product Type</th>
-                <th>Account Number</th>
-                <th>Balance</th>
-                <th>Status</th>
-                <th>Opened At</th>
-                <th>KYC ID Type</th>
-                <th>KYC ID Number</th>
-                <th>KYC Document</th>
-                <th>KYC Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% accounts.forEach(account => { %>
+        <% } else { %>
+          <div class="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <td><%= account.product_name %></td>
-                  <td><%= account.product_type %></td>
-                  <td><%= account.account_number %></td>
-                  <td>$<%= parseFloat(account.balance).toFixed(2) %></td>
-                  <td><span class="status-badge <%= account.status.toLowerCase() %>"><%= account.status %></span></td>
-                  <td><%= new Date(account.opened_at).toISOString().split('T')[0] %></td>
-
-                  <% if (account.kycDoc) { %>
-                    <td><%= account.kycDoc.id_type %></td>
-                    <td><%= account.kycDoc.id_number %></td>
-                    <td><a href="<%= account.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
-                    <td><span class="status-badge <%= account.kycDoc.status.toLowerCase() %>"><%= account.kycDoc.status %></span></td>
-                  <% } else { %>
-                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
-                  <% } %>
+                  <th>Product Name</th>
+                  <th>Product Type</th>
+                  <th>Account Number</th>
+                  <th>Balance</th>
+                  <th>Status</th>
+                  <th>Opened At</th>
+                  <th>KYC ID Type</th>
+                  <th>KYC ID Number</th>
+                  <th>KYC Document</th>
+                  <th>KYC Status</th>
                 </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      <% } %>
+              </thead>
+              <tbody>
+                <% accounts.forEach(account=> { %>
+                  <tr>
+                    <td>
+                      <%= account.product_name %>
+                    </td>
+                    <td>
+                      <%= account.product_type %>
+                    </td>
+                    <td>
+                      <%= account.account_number %>
+                    </td>
+                    <td>$<%= parseFloat(account.balance).toFixed(2) %>
+                    </td>
+                    <td><span class="status-badge <%= account.status.toLowerCase() %>">
+                        <%= account.status %>
+                      </span></td>
+                    <td>
+                      <%= new Date(account.opened_at).toISOString().split('T')[0] %>
+                    </td>
+
+                    <% if (account.kycDoc) { %>
+                      <td>
+                        <%= account.kycDoc.id_type %>
+                      </td>
+                      <td>
+                        <%= account.kycDoc.id_number %>
+                      </td>
+                      <td><a href="<%= account.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                      <td><span class="status-badge <%= account.kycDoc.status.toLowerCase() %>">
+                          <%= account.kycDoc.status %>
+                        </span></td>
+                      <% } else { %>
+                        <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —
+                        </td>
+                        <% } %>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
     </div>
 
     <hr class="divider">
@@ -522,56 +568,205 @@
     <!-- Credit Cards Section -->
     <div class="section">
       <h2>Credit Cards</h2>
-      
-      <% if (cards.length === 0) { %>
+
+      <% if (cards.length===0) { %>
         <div class="empty-state">
           <p>No credit cards found for this user.</p>
         </div>
-      <% } else { %>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Card Number</th>
-                <th>Expiry Date</th>
-                <th>Credit Limit</th>
-                <th>Outstanding Balance</th>
-                <th>Status</th>
-                <th>Issued At</th>
-                <th>KYC ID Type</th>
-                <th>KYC ID Number</th>
-                <th>KYC Document</th>
-                <th>KYC Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% cards.forEach(card => { %>
+        <% } else { %>
+          <div class="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <td><%= card.product_name %></td>
-                  <td><%= card.card_number %></td>
-                  <td><%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %></td>
-                  <td>$<%= parseFloat(card.credit_limit).toFixed(2) %></td>
-                  <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %></td>
-                  <td><span class="status-badge <%= card.status.toLowerCase() %>"><%= card.status %></span></td>
-                  <td><%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %></td>
-
-                  <% if (card.kycDoc) { %>
-                    <td><%= card.kycDoc.id_type %></td>
-                    <td><%= card.kycDoc.id_number %></td>
-                    <td><a href="<%= card.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
-                    <td><span class="status-badge <%= card.kycDoc.status.toLowerCase() %>"><%= card.kycDoc.status %></span></td>
-                  <% } else { %>
-                    <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —</td>
-                  <% } %>
+                  <th>Product Name</th>
+                  <th>Card Number</th>
+                  <th>Expiry Date</th>
+                  <th>Credit Limit</th>
+                  <th>Outstanding Balance</th>
+                  <th>Status</th>
+                  <th>Issued At</th>
+                  <th>KYC ID Type</th>
+                  <th>KYC ID Number</th>
+                  <th>KYC Document</th>
+                  <th>KYC Status</th>
                 </tr>
-              <% }) %>
-            </tbody>
-          </table>
-        </div>
-      <% } %>
+              </thead>
+              <tbody>
+                <% cards.forEach(card=> { %>
+                  <tr>
+                    <td>
+                      <%= card.product_name %>
+                    </td>
+                    <td>
+                      <%= card.card_number %>
+                    </td>
+                    <td>
+                      <%= card.expiry_date ? new Date(card.expiry_date).toISOString().split('T')[0] : '—' %>
+                    </td>
+                    <td>$<%= parseFloat(card.credit_limit).toFixed(2) %>
+                    </td>
+                    <td>$<%= parseFloat(card.outstanding_balance).toFixed(2) %>
+                    </td>
+                    <td><span class="status-badge <%= card.status.toLowerCase() %>">
+                        <%= card.status %>
+                      </span></td>
+                    <td>
+                      <%= card.created_at ? new Date(card.created_at).toISOString().split('T')[0] : '—' %>
+                    </td>
+
+                    <% if (card.kycDoc) { %>
+                      <td>
+                        <%= card.kycDoc.id_type %>
+                      </td>
+                      <td>
+                        <%= card.kycDoc.id_number %>
+                      </td>
+                      <td><a href="<%= card.kycDoc.document_path %>" target="_blank" class="view-link">View</a></td>
+                      <td><span class="status-badge <%= card.kycDoc.status.toLowerCase() %>">
+                          <%= card.kycDoc.status %>
+                        </span></td>
+                      <% } else { %>
+                        <td colspan="4" style="text-align: center; color: rgba(224, 224, 224, 0.6);">— No KYC Document —
+                        </td>
+                        <% } %>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+    <hr class="divider">
+
+    <div class="section">
+      <h2>Transactions</h2>
+      <% if (transactions.length===0) { %>
+        <div class="empty-state">No transactions found.</div>
+        <% } else { %>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Description</th>
+                  <th>Balance After</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% transactions.forEach(tx=> { %>
+                  <tr>
+                    <td>
+                      <%= tx.account_name %> (<%= tx.account_number %>)
+                    </td>
+                    <td>
+                      <%= tx.transaction_type %>
+                    </td>
+                    <td>$<%= parseFloat(tx.amount).toFixed(2) %>
+                    </td>
+                    <td>
+                      <%= tx.description || '—' %>
+                    </td>
+                    <td>$<%= parseFloat(tx.balance_after).toFixed(2) %>
+                    </td>
+                    <td>
+                      <%= new Date(tx.transaction_date).toLocaleString() %>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+    <hr class="divider">
+
+    <div class="section">
+      <h2>Consultations</h2>
+      <% if (consultations.length===0) { %>
+        <div class="empty-state">No consultations found.</div>
+        <% } else { %>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Advisor</th>
+                  <th>Status</th>
+                  <th>Meet Link</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% consultations.forEach(c=> { %>
+                  <tr>
+                    <td>
+                      <%= c.session_date %>
+                    </td>
+                    <td>
+                      <%= c.session_time %> – <%= c.end_time %>
+                    </td>
+                    <td>
+                      <%= c.advisor_name %>
+                    </td>
+                    <td><span class="status-badge <%= c.status.toLowerCase() %>">
+                        <%= c.status %>
+                      </span></td>
+                    <td>
+                      <% if (c.meet_link) { %>
+                        <a href="<%= c.meet_link %>" class="view-link" target="_blank">Join</a>
+                        <% } else { %>
+                          —
+                          <% } %>
+                    </td>
+                    <td>
+                      <%= c.notes || '—' %>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+    <hr class="divider">
+
+    <div class="section">
+      <h2>Available Sessions</h2>
+      <% if (availableSessions.length===0) { %>
+        <div class="empty-state">No available sessions found.</div>
+        <% } else { %>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Advisor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% availableSessions.forEach(s=> { %>
+                  <tr>
+                    <td>
+                      <%= s.session_date %>
+                    </td>
+                    <td>
+                      <%= s.session_time %> – <%= s.end_time %>
+                    </td>
+                    <td>
+                      <%= s.advisor_name %>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
     </div>
   </div>
 </body>
-
 </html>

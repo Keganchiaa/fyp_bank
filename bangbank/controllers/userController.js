@@ -222,11 +222,11 @@ exports.renderUserDashboard = async (req, res) => {
 
 // view rejected applications
 exports.viewRejectedApplications = async (req, res) => {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
-  try {
-    // Fetch rejected bank accounts
-    const [rejectedAccounts] = await db.query(`
+    try {
+        // Fetch rejected bank accounts
+        const [rejectedAccounts] = await db.query(`
       SELECT 
         a.account_id,
         a.balance,
@@ -239,8 +239,8 @@ exports.viewRejectedApplications = async (req, res) => {
       WHERE a.userId = ? AND a.status = 'rejected'
     `, [userId]);
 
-    // Fetch rejected credit cards
-    const [rejectedCards] = await db.query(`
+        // Fetch rejected credit cards
+        const [rejectedCards] = await db.query(`
       SELECT 
         c.card_id,
         c.card_number,
@@ -254,15 +254,15 @@ exports.viewRejectedApplications = async (req, res) => {
       WHERE c.userId = ? AND c.status = 'rejected'
     `, [userId]);
 
-    res.render('rejectedApplications', {
-      user: req.session.user,
-      rejectedAccounts,
-      rejectedCards
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Failed to load rejected applications');
-  }
+        res.render('rejectedApplications', {
+            user: req.session.user,
+            rejectedAccounts,
+            rejectedCards
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Failed to load rejected applications');
+    }
 };
 
 // view user details
@@ -343,6 +343,57 @@ exports.viewUserDetails = async (req, res) => {
       WHERE k.userId = ?
     `, [userId]);
 
+        // ✅ Fetch user’s transactions
+        const [transactions] = await db.query(`
+      SELECT
+        t.transaction_id,
+        t.transaction_type,
+        t.amount,
+        t.description,
+        t.transaction_date,
+        t.balance_after,
+        a.account_number,
+        p.product_name AS account_name
+      FROM transactions t
+      JOIN accounts a ON t.account_id = a.account_id
+      JOIN products p ON a.product_id = p.product_id
+      WHERE a.userId = ?
+      ORDER BY t.transaction_date DESC
+    `, [userId]);
+
+        // ✅ Fetch user's consultations
+        const [consultations] = await db.query(`
+      SELECT 
+        c.consultation_id,
+        c.status,
+        c.notes,
+        c.meet_link,
+        s.session_date,
+        s.session_time,
+        s.end_time,
+        u.username AS advisor_name
+      FROM consultations c
+      JOIN sessions s ON c.session_id = s.session_id
+      JOIN users u ON c.advisorId = u.userId
+      WHERE c.userId = ?
+      ORDER BY s.session_date DESC
+    `, [userId]);
+
+        // ✅ Fetch all upcoming sessions (unbooked)
+        const [availableSessions] = await db.query(`
+      SELECT 
+        s.session_id,
+        s.session_date,
+        s.session_time,
+        s.end_time,
+        u.username AS advisor_name
+      FROM sessions s
+      JOIN users u ON s.advisorId = u.userId
+      WHERE s.is_booked = 0
+      AND TIMESTAMP(s.session_date, s.session_time) >= NOW()
+      ORDER BY s.session_date ASC
+    `);
+
         // Attach the KYC doc to the related account
         accounts.forEach(account => {
             const kycDoc = kycDocs.find(k => k.account_id === account.account_id);
@@ -361,6 +412,9 @@ exports.viewUserDetails = async (req, res) => {
             accounts,
             cards,
             kycDocs,
+            transactions,
+            consultations,
+            availableSessions,
             error: null,
             success: null
         });
@@ -885,80 +939,80 @@ exports.initiateProfileUpdate = async (req, res) => {
 
 // Render forgot password form
 exports.renderForgotPasswordForm = (req, res) => {
-  res.render('forgotPassword', { error: null, success: null });
+    res.render('forgotPassword', { error: null, success: null });
 };
 
 // Handle forgot password request
 exports.initiatePasswordReset = async (req, res) => {
-  const { userEmail, newPassword, confirmPassword } = req.body;
+    const { userEmail, newPassword, confirmPassword } = req.body;
 
-  const renderError = (msg) => {
-    return res.render('forgotPassword', { error: msg, success: null });
-  };
-
-  if (!newPassword || newPassword.length < 6) {
-    return renderError('Password must be at least 6 characters.');
-  }
-
-  if (newPassword !== confirmPassword) {
-    return renderError('Passwords do not match.');
-  }
-
-  try {
-    const [[user]] = await db.query(
-      'SELECT * FROM users WHERE userEmail = ?',
-      [userEmail]
-    );
-
-    if (!user) return renderError('No account found with that email.');
-
-    // ✅ Save to session for later use after OTP
-    req.session.passwordReset = {
-      userId: user.userId,
-      email: user.userEmail,
-      newPassword,
+    const renderError = (msg) => {
+        return res.render('forgotPassword', { error: msg, success: null });
     };
 
-    return res.redirect(`/otp/request-password-reset/reset/${user.userId}`);
-  } catch (err) {
-    console.error('initiatePasswordReset error:', err);
-    return renderError('Something went wrong. Please try again.');
-  }
+    if (!newPassword || newPassword.length < 6) {
+        return renderError('Password must be at least 6 characters.');
+    }
+
+    if (newPassword !== confirmPassword) {
+        return renderError('Passwords do not match.');
+    }
+
+    try {
+        const [[user]] = await db.query(
+            'SELECT * FROM users WHERE userEmail = ?',
+            [userEmail]
+        );
+
+        if (!user) return renderError('No account found with that email.');
+
+        // ✅ Save to session for later use after OTP
+        req.session.passwordReset = {
+            userId: user.userId,
+            email: user.userEmail,
+            newPassword,
+        };
+
+        return res.redirect(`/otp/request-password-reset/reset/${user.userId}`);
+    } catch (err) {
+        console.error('initiatePasswordReset error:', err);
+        return renderError('Something went wrong. Please try again.');
+    }
 };
 
 // Reset password with OTP confirmation
 exports.resetPasswordWithOTP = async (req, res) => {
-  const { otp } = req.body;
-  const { type, id: userId } = req.params;
+    const { otp } = req.body;
+    const { type, id: userId } = req.params;
 
-  if (req.originalUrl.includes('/verify/') && type === 'reset') {
-    const isValid = await validateOTP(userId, otp, 'password_reset');
-    req.session.otpError = 'Invalid or expired OTP.';
-    if (!isValid) {
-      return res.redirect(`/otp/confirm-update/${type}/${userId}?error=Invalid or expired OTP.`);
+    if (req.originalUrl.includes('/verify/') && type === 'reset') {
+        const isValid = await validateOTP(userId, otp, 'password_reset');
+        req.session.otpError = 'Invalid or expired OTP.';
+        if (!isValid) {
+            return res.redirect(`/otp/confirm-update/${type}/${userId}?error=Invalid or expired OTP.`);
+        }
+
+        req.session.otpAccess = null;
     }
 
-    req.session.otpAccess = null;
-  }
+    const resetData = req.session.passwordReset;
+    if (!resetData || resetData.userId != userId) {
+        return res.redirect('/forgot-password?error=No password reset data found.');
+    }
 
-  const resetData = req.session.passwordReset;
-  if (!resetData || resetData.userId != userId) {
-    return res.redirect('/forgot-password?error=No password reset data found.');
-  }
+    try {
+        const hashedPassword = await bcrypt.hash(resetData.newPassword, 10);
 
-  try {
-    const hashedPassword = await bcrypt.hash(resetData.newPassword, 10);
+        await db.query(
+            'UPDATE users SET userPassword = ? WHERE userId = ?',
+            [hashedPassword, userId]
+        );
 
-    await db.query(
-      'UPDATE users SET userPassword = ? WHERE userId = ?',
-      [hashedPassword, userId]
-    );
+        req.session.passwordReset = null;
 
-    req.session.passwordReset = null;
-
-    return res.redirect('/login?success=Password reset successful. You may now log in.');
-  } catch (err) {
-    console.error('resetPasswordWithOTP error:', err);
-    return res.redirect('/forgot-password?error=Failed to reset password.');
-  }
+        return res.redirect('/login?success=Password reset successful. You may now log in.');
+    } catch (err) {
+        console.error('resetPasswordWithOTP error:', err);
+        return res.redirect('/forgot-password?error=Failed to reset password.');
+    }
 };
